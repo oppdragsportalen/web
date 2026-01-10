@@ -20,8 +20,8 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-neutral-900 p-8 rounded-2xl">
+    <div className="flex justify-center py-16 p-4">
+      <div className="max-w-md w-full bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-gray-300 dark:border-neutral-800">
         <h1 className="text-2xl font-bold mb-6">Create Account</h1>
 
         <form action={handleSubmit}>
@@ -79,14 +79,14 @@ export default function SignUpPage() {
               type="button"
               onClick={() => window.history.back()}
               disabled={loading}
-              className="w-full border border-emerald-800 dark:text-white py-2 px-4 rounded-xl hover:bg-emerald-900 hover:text-white disabled:opacity-50"
+              className="w-full border border-emerald-800 dark:text-white py-2 px-4 rounded-xl hover:bg-emerald-900 hover:text-white disabled:opacity-50 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-800 text-white py-2 px-4 rounded-xl hover:bg-emerald-900 disabled:opacity-50"
+              className="w-full bg-emerald-800 text-white py-2 px-4 rounded-xl hover:bg-emerald-900 disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Creating account..." : "Sign Up"}
             </button>

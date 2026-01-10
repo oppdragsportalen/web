@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Navbar } from "./components/navbar";
 
 export const metadata: Metadata = {
   title: "Oppdragsportalen",
@@ -13,8 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-gray-100 text-gray-900 dark:bg-black dark:text-gray-100">
-        {children}
+      <body className="antialiased bg-gray-100 text-gray-900 dark:bg-black dark:text-gray-100 h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-1 overflow-scroll">
+          {children}
+        </div>
       </body>
     </html>
   );

@@ -19,7 +19,7 @@ export default async function DashboardPage() {
     .single();
 
   return (
-    <div className="min-h-screen">
+    <div>
       <h1 className="text-3xl font-bold">Hi, {profile.display_name}</h1>
     </div>
   );
