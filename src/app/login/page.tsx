@@ -70,10 +70,9 @@ export default function LoginPage() {
               </Box>
 
               <Box
+                className="overflow-hidden transition-all duration-300"
                 style={{
                   maxHeight: error ? "200px" : "0px",
-                  overflow: "hidden",
-                  transition: "max-height 0.3s ease-in-out",
                 }}
               >
                 {error && (

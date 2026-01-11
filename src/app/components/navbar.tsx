@@ -1,5 +1,15 @@
 import { createSupabaseServer } from "@/lib/supabase/server";
 import Link from "next/link";
+import {
+  Flex,
+  Text,
+  Button,
+  Avatar,
+  DropdownMenu,
+  AlertDialog,
+} from "@radix-ui/themes";
+import { ExitIcon } from "@radix-ui/react-icons";
+import { logout } from "@/app/actions/login";
 
 export async function Navbar() {
   const supabase = await createSupabaseServer();
@@ -20,24 +30,70 @@ export async function Navbar() {
   const displayName = profile?.display_name ?? user?.email ?? null;
 
   return (
-    <nav className="bg-white dark:bg-neutral-900 border-b border-gray-300 dark:border-neutral-800 h-12 flex items-center justify-between gap-4 p-2 overflow-x-scroll overflow-y-hidden">
-      <div>
-        <Link
-          href="/"
-          className="text-lg font-semibold hover:text-emerald-800 cursor-pointer"
-        >
-          Oppdragsportalen
+    <nav>
+      <Flex
+        justify="between"
+        className="h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
+      >
+        <Link href="/" className="no-underline">
+          <Text size="3" weight="bold" className="cursor-pointer">
+            Oppdragsportalen
+          </Text>
         </Link>
-      </div>
 
-      {user && displayName && (
-        <div className="flex items-center gap-2">
-          <p className="text-sm">{displayName}</p>
-          <div className="w-8 h-8 bg-emerald-800 text-white rounded-full flex items-center justify-center text-sm font-semibold">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-        </div>
-      )}
+        {user && displayName && (
+          <AlertDialog.Root>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button variant="ghost">
+                  <Flex align="center" gap="2">
+                    <Text size="2">{displayName}</Text>
+                    <Avatar
+                      size="2"
+                      alt={displayName}
+                      fallback={displayName.charAt(0).toUpperCase()}
+                    />
+                  </Flex>
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <AlertDialog.Trigger>
+                  <DropdownMenu.Item color="red" className="cursor-pointer">
+                    <Flex align="center" gap="2">
+                      <ExitIcon />
+                      Log out
+                    </Flex>
+                  </DropdownMenu.Item>
+                </AlertDialog.Trigger>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+
+            <AlertDialog.Content maxWidth="450px">
+              <AlertDialog.Title>Log out</AlertDialog.Title>
+              <AlertDialog.Description size="2">
+                Are you sure you want to log out? You'll need to sign in again
+                to access your account.
+              </AlertDialog.Description>
+
+              <Flex gap="3" mt="4" justify="end">
+                <AlertDialog.Cancel>
+                  <Button variant="soft" color="gray">
+                    Cancel
+                  </Button>
+                </AlertDialog.Cancel>
+
+                <form action={logout}>
+                  <AlertDialog.Action>
+                    <Button variant="solid" color="red" type="submit">
+                      Log out
+                    </Button>
+                  </AlertDialog.Action>
+                </form>
+              </Flex>
+            </AlertDialog.Content>
+          </AlertDialog.Root>
+        )}
+      </Flex>
     </nav>
   );
 }
