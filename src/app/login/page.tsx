@@ -1,5 +1,17 @@
 "use client";
 
+import {
+  Card,
+  Box,
+  Flex,
+  Text,
+  TextField,
+  Button,
+  Heading,
+  Callout,
+  Link as RadixLink,
+} from "@radix-ui/themes";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { login } from "@/app/actions/login";
 import { useState } from "react";
 import Link from "next/link";
@@ -8,9 +20,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setLoading(true);
     setError("");
+    const formData = new FormData(e.currentTarget);
     const result = await login(formData);
     setLoading(false);
 
@@ -20,60 +34,78 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex justify-center py-16 p-4">
-      <div className="max-w-md w-full bg-white dark:bg-neutral-900 p-8 rounded-2xl border border-gray-300 dark:border-neutral-800">
-        <h1 className="text-2xl font-bold mb-6">Log In</h1>
+    <Flex justify="center" align="center" py="9" px="4">
+      <Box width="100%" maxWidth="450px">
+        <Card size="3">
+          <form onSubmit={handleSubmit}>
+            <Flex direction="column" gap="4">
+              <Heading size="6" mb="2">
+                Log In
+              </Heading>
 
-        <form action={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl"
-            />
-          </div>
+              <Box>
+                <Text as="div" size="2" mb="1" weight="bold">
+                  Email
+                </Text>
+                <TextField.Root
+                  type="email"
+                  name="email"
+                  id="email"
+                  size="3"
+                  required
+                />
+              </Box>
 
-          <div className="mb-1">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium mb-1"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-xl"
-            />
-          </div>
+              <Box>
+                <Text as="div" size="2" mb="1" weight="bold">
+                  Password
+                </Text>
+                <TextField.Root
+                  type="password"
+                  name="password"
+                  id="password"
+                  size="3"
+                  required
+                />
+              </Box>
 
-          <div className="text-red-800 dark:text-red-500 text-sm mb-8 h-4">
-            {error}
-          </div>
+              <Box
+                style={{
+                  maxHeight: error ? "200px" : "0px",
+                  overflow: "hidden",
+                  transition: "max-height 0.3s ease-in-out",
+                }}
+              >
+                {error && (
+                  <Callout.Root color="red" size="1">
+                    <Callout.Icon>
+                      <InfoCircledIcon />
+                    </Callout.Icon>
+                    <Callout.Text>{error}</Callout.Text>
+                  </Callout.Root>
+                )}
+              </Box>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-emerald-800 text-white py-2 px-4 rounded-xl hover:bg-emerald-900 disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? "Logging in..." : "Log In"}
-          </button>
-        </form>
+              <Button
+                type="submit"
+                variant="solid"
+                color="green"
+                mt="2"
+                disabled={loading}
+              >
+                {loading ? "Logging in..." : "Log In"}
+              </Button>
 
-        <p className="mt-6 text-sm text-gray-600 dark:text-gray-200">
-          Don't have an account?{" "}
-          <Link href="/signup" className="text-emerald-600 hover:underline">
-            Sign up
-          </Link>
-        </p>
-      </div>
-    </div>
+              <Text size="2" color="gray" mt="2">
+                Don't have an account?{" "}
+                <RadixLink asChild color="green">
+                  <Link href="/signup">Sign up</Link>
+                </RadixLink>
+              </Text>
+            </Flex>
+          </form>
+        </Card>
+      </Box>
+    </Flex>
   );
 }
