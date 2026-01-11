@@ -8,7 +8,7 @@ import {
   DropdownMenu,
   AlertDialog,
 } from "@radix-ui/themes";
-import { ExitIcon } from "@radix-ui/react-icons";
+import { ExitIcon, GearIcon } from "@radix-ui/react-icons";
 import { logout } from "@/app/actions/login";
 
 export async function Navbar() {
@@ -57,6 +57,14 @@ export async function Navbar() {
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
+                <DropdownMenu.Item asChild>
+                  <Link href="/settings" className="no-underline">
+                    <Flex align="center" gap="2">
+                      <GearIcon />
+                      <Text>Settings</Text>
+                    </Flex>
+                  </Link>
+                </DropdownMenu.Item>
                 <AlertDialog.Trigger>
                   <DropdownMenu.Item color="red" className="cursor-pointer">
                     <Flex align="center" gap="2">
