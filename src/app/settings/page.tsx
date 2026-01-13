@@ -2,16 +2,19 @@ import {
   Card,
   Box,
   Flex,
+  TextField,
   Text,
   Separator,
   Button,
   Heading,
   AlertDialog,
+  Dialog,
   Link as RadixLink,
 } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { logout } from "@/app/actions/login";
+import { EditProfileDialog } from "../components/edit-profile-dialog";
 
 export default async function SettingsPage() {
   const supabase = await createSupabaseServer();
@@ -45,14 +48,20 @@ export default async function SettingsPage() {
 
             <Flex direction="column" gap="2">
               <Text size="2">
-                <Text>Email:</Text> <Text color="gray">{user.email}</Text>
+                <Text>Name:</Text>{" "}
+                <Text color="gray">{profile.display_name}</Text>
               </Text>
 
               <Text size="2">
-                <Text>User ID:</Text> <Text color="gray">{user.id}</Text>
+                <Text>Email:</Text> <Text color="gray">{user.email}</Text>
               </Text>
             </Flex>
           </Box>
+
+          <EditProfileDialog
+            displayName={profile.display_name}
+            email={user.email ?? ""}
+          />
 
           <Separator my="4" size="4" />
 

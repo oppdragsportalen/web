@@ -176,5 +176,27 @@ create policy claims_select_owner_or_self on public.assignment_claims
     )
   );
 
+-- ============================================
+-- TRIGGERS
+-- ============================================
 
+-- Sync display_name from profiles to auth.users metadata
+create or replace function sync_display_name_to_auth()
+returns trigger as $$
+begin
+  update auth.users
+  set raw_user_meta_data = jsonb_set(
+    coalesce(raw_user_meta_data, '{}'::jsonb),
+    '{display_name}',
+    to_jsonb(new.display_name)
+  )
+  where id = new.id;
+  return new;
+end;
+$$ language plpgsql security definer;
 
+create trigger on_profile_display_name_update
+  after update of display_name on public.profiles
+  for each row
+  when (old.display_name is distinct from new.display_name)
+  execute function sync_display_name_to_auth();
