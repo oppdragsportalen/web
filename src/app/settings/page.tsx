@@ -34,7 +34,7 @@ export default async function SettingsPage() {
     .single();
 
   return (
-    <Box p="6" maxWidth="800px">
+    <Box p="4" maxWidth="800px">
       <Heading size="6" mb="6">
         Settings
       </Heading>

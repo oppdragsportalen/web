@@ -16,6 +16,7 @@ export function EditProfileDialog({
 }: EditProfileDialogProps) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
@@ -28,8 +29,13 @@ export function EditProfileDialog({
       setError(result.error);
       setIsLoading(false);
     } else {
-      setOpen(false);
-      setIsLoading(false);
+      if (result.emailUpdatePending) {
+        setInfo("Email change requested. Please confirm via the email link.");
+        setIsLoading(false);
+      } else {
+        setOpen(false);
+        setIsLoading(false);
+      }
     }
   }
 
@@ -63,11 +69,16 @@ export function EditProfileDialog({
               <Text as="div" size="2" mb="1" weight="bold">
                 Email
               </Text>
-              <TextField.Root defaultValue={email} disabled />
+              <TextField.Root name="email" defaultValue={email} />
             </label>
             {error && (
               <Text color="red" size="2">
                 {error}
+              </Text>
+            )}
+            {info && (
+              <Text color="gray" size="2">
+                {info}
               </Text>
             )}
           </Flex>
