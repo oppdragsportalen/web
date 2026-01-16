@@ -34,7 +34,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <Flex justify="center" align="center" py="9" px="4">
+    <Flex justify="center" align="center" py="9" px="4" className="min-w-80">
       <Box width="100%" maxWidth="450px">
         <Card size="3">
           <form onSubmit={handleSubmit}>

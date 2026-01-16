@@ -31,9 +31,9 @@ export default async function SettingsPage() {
     .single();
 
   return (
-    <Box className="max-w-5xl m-auto">
+    <Box className="max-w-5xl min-w-80 m-auto">
       <Box p="4">
-        <Heading size="6" mb="6">
+        <Heading size="7" my="5">
           Settings
         </Heading>
 
