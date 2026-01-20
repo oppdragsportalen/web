@@ -114,20 +114,17 @@ create policy assignments_delete_owner on public.assignments
 -- Read: assignment creator or the user themselves
 create policy allowed_users_select_owner_or_self on public.assignment_allowed_users
   for select using (
-    exists (
-      select 1 from public.assignments a
-      where a.id = assignment_allowed_users.assignment_id
-        and (a.creator_id = auth.uid() or assignment_allowed_users.user_id = auth.uid())
+    auth.uid() in (
+      select creator_id from public.assignments where id = assignment_allowed_users.assignment_id
     )
+    or auth.uid() = assignment_allowed_users.user_id
   );
 
 -- Insert: only assignment creator
 create policy allowed_users_insert_owner on public.assignment_allowed_users
   for insert with check (
-    exists (
-      select 1 from public.assignments a
-      where a.id = assignment_allowed_users.assignment_id
-        and a.creator_id = auth.uid()
+    auth.uid() in (
+      select creator_id from public.assignments where id = assignment_allowed_users.assignment_id
     )
   );
 
@@ -175,6 +172,23 @@ create policy claims_select_owner_or_self on public.assignment_claims
         and a.creator_id = auth.uid()
     )
   );
+
+-- ============================================
+-- UTILITY FUNCTIONS
+-- ============================================
+
+-- Function to get user ID by email
+create or replace function get_user_id_by_email(email text)
+returns uuid as $$
+begin
+  return (
+    select id
+    from auth.users
+    where lower(auth.users.email) = lower(get_user_id_by_email.email)
+    limit 1
+  );
+end;
+$$ language plpgsql security definer;
 
 -- ============================================
 -- TRIGGERS

@@ -55,7 +55,7 @@ export async function Navbar() {
               </Link>
             </Button>
 
-            <div className="h-5 w-px bg-gray-300" />
+            <div className="h-5 w-px bg-gray-200 dark:bg-neutral-600" />
 
             <AlertDialog.Root>
               <DropdownMenu.Root>
