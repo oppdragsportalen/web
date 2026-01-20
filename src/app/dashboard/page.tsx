@@ -3,6 +3,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import TimeBasedGreeting from "@/app/components/time-based-greeting";
 import { CreateAssignmentDialog } from "@/app/components/create-assignment-dialog";
+import { PlusIcon } from "@radix-ui/react-icons";
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServer();
@@ -27,13 +28,15 @@ export default async function DashboardPage() {
         <TimeBasedGreeting displayName={profile.display_name} />
       </Box>
       <Box>
-        <Card size="2">
-          <Box>
+        <Card size="2" className="max-w-xl">
+          <Box mb="6">
             <Text size="4" className="font-bold">
               Create a new assignment
             </Text>
           </Box>
-          <CreateAssignmentDialog />
+          <CreateAssignmentDialog
+            trigger={<Button variant="solid"> <PlusIcon /> Create Assignment</Button>}
+          />
         </Card>
       </Box>
     </div>

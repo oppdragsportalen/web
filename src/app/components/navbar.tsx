@@ -7,10 +7,14 @@ import {
   Avatar,
   DropdownMenu,
   Box,
+  Separator,
   AlertDialog,
+  Tooltip,
+  IconButton,
 } from "@radix-ui/themes";
-import { ExitIcon, GearIcon } from "@radix-ui/react-icons";
+import { ExitIcon, GearIcon, PlusIcon } from "@radix-ui/react-icons";
 import { logout } from "@/app/actions/login";
+import { CreateAssignmentDialog } from "@/app/components/create-assignment-dialog";
 
 export async function Navbar() {
   const supabase = await createSupabaseServer();
@@ -44,6 +48,14 @@ export async function Navbar() {
 
         {user && displayName && (
           <Flex gap="4" align="center">
+            <CreateAssignmentDialog
+              trigger={
+                <IconButton aria-label="Create assignment">
+                  <PlusIcon />
+                </IconButton>
+              }
+            />
+
             <Button variant="ghost" color="gray">
               <Link
                 href="/dashboard"
@@ -55,7 +67,7 @@ export async function Navbar() {
               </Link>
             </Button>
 
-            <div className="h-5 w-px bg-gray-200 dark:bg-neutral-600" />
+            <Separator orientation="vertical" />
 
             <AlertDialog.Root>
               <DropdownMenu.Root>

@@ -62,6 +62,7 @@ export function EditProfileDialog({
               <TextField.Root
                 name="displayName"
                 defaultValue={displayName}
+                size="3"
                 required
               />
             </label>
@@ -69,7 +70,7 @@ export function EditProfileDialog({
               <Text as="div" size="2" mb="1" weight="bold">
                 Email
               </Text>
-              <TextField.Root name="email" defaultValue={email} />
+              <TextField.Root name="email" defaultValue={email} size="3" />
             </label>
             {error && (
               <Text color="red" size="2">
