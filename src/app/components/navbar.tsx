@@ -6,6 +6,7 @@ import {
   Button,
   Avatar,
   DropdownMenu,
+  Box,
   AlertDialog,
 } from "@radix-ui/themes";
 import { ExitIcon, GearIcon } from "@radix-ui/react-icons";
@@ -42,64 +43,79 @@ export async function Navbar() {
         </Link>
 
         {user && displayName && (
-          <AlertDialog.Root>
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <Button variant="ghost">
-                  <Flex align="center" gap="2">
-                    <Text size="2">{displayName}</Text>
-                    <Avatar
-                      size="2"
-                      alt={displayName}
-                      fallback={displayName.charAt(0).toUpperCase()}
-                    />
-                  </Flex>
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                <DropdownMenu.Item asChild>
-                  <Link href="/settings" className="no-underline">
-                    <Flex align="center" gap="2">
-                      <GearIcon />
-                      <Text>Settings</Text>
-                    </Flex>
-                  </Link>
-                </DropdownMenu.Item>
-                <AlertDialog.Trigger>
-                  <DropdownMenu.Item color="red" className="cursor-pointer">
-                    <Flex align="center" gap="2">
-                      <ExitIcon />
-                      Log out
-                    </Flex>
-                  </DropdownMenu.Item>
-                </AlertDialog.Trigger>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+          <Flex gap="4" align="center">
+            <Button variant="ghost" color="gray">
+              <Link
+                href="/dashboard"
+                className="no-underline  flex items-center justify-center"
+              >
+                <Text size="2" weight="medium" className="cursor-pointer">
+                  Dashboard
+                </Text>
+              </Link>
+            </Button>
 
-            <AlertDialog.Content maxWidth="450px">
-              <AlertDialog.Title>Log out</AlertDialog.Title>
-              <AlertDialog.Description size="2">
-                Are you sure you want to log out? You'll need to sign in again
-                to access your account.
-              </AlertDialog.Description>
+            <div className="h-5 w-px bg-gray-300" />
 
-              <Flex gap="3" mt="4" justify="end">
-                <AlertDialog.Cancel>
-                  <Button variant="soft" color="gray">
-                    Cancel
+            <AlertDialog.Root>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <Button variant="ghost">
+                    <Flex align="center" gap="2">
+                      <Text size="2">{displayName}</Text>
+                      <Avatar
+                        size="2"
+                        alt={displayName}
+                        fallback={displayName.charAt(0).toUpperCase()}
+                      />
+                    </Flex>
                   </Button>
-                </AlertDialog.Cancel>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item asChild>
+                    <Link href="/settings" className="no-underline">
+                      <Flex align="center" gap="2">
+                        <GearIcon />
+                        <Text>Settings</Text>
+                      </Flex>
+                    </Link>
+                  </DropdownMenu.Item>
+                  <AlertDialog.Trigger>
+                    <DropdownMenu.Item color="red" className="cursor-pointer">
+                      <Flex align="center" gap="2">
+                        <ExitIcon />
+                        Log out
+                      </Flex>
+                    </DropdownMenu.Item>
+                  </AlertDialog.Trigger>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
 
-                <form action={logout}>
-                  <AlertDialog.Action>
-                    <Button variant="solid" color="red" type="submit">
-                      Log out
+              <AlertDialog.Content maxWidth="450px">
+                <AlertDialog.Title>Log out</AlertDialog.Title>
+                <AlertDialog.Description size="2">
+                  Are you sure you want to log out? You'll need to sign in again
+                  to access your account.
+                </AlertDialog.Description>
+
+                <Flex gap="3" mt="4" justify="end">
+                  <AlertDialog.Cancel>
+                    <Button variant="soft" color="gray">
+                      Cancel
                     </Button>
-                  </AlertDialog.Action>
-                </form>
-              </Flex>
-            </AlertDialog.Content>
-          </AlertDialog.Root>
+                  </AlertDialog.Cancel>
+
+                  <form action={logout}>
+                    <AlertDialog.Action>
+                      <Button variant="solid" color="red" type="submit">
+                        Log out
+                      </Button>
+                    </AlertDialog.Action>
+                  </form>
+                </Flex>
+              </AlertDialog.Content>
+            </AlertDialog.Root>
+          </Flex>
         )}
       </Flex>
     </nav>
