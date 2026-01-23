@@ -4,7 +4,7 @@
 -- ============================================
 
 create type public.assignment_visibility as enum ('public','restricted');
-create type public.claim_status as enum ('accepted','declined');
+create type public.claim_status as enum ('not_taken','accepted','in_progress','finished');
 
 -- ============================================
 -- TABLES

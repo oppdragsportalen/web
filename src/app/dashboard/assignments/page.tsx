@@ -17,7 +17,7 @@ export default async function AssignmentPage() {
   return (
     <div className="p-4 min-w-80">
       <Box className="mt-4 mb-10">
-        <Text className="text-3xl font-bold">Assignments</Text>
+        <h1 className="text-3xl font-bold">Assignments</h1>
       </Box>
       <Box>
         <Tabs.Root defaultValue="authored">

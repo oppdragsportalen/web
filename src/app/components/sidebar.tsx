@@ -14,7 +14,7 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   return (
-    <Box className="w-auto border-r border-gray-200 dark:border-neutral-800 h-screen overflow-scroll">
+    <Box className="w-auto border-r border-gray-200 dark:border-neutral-800 h-full overflow-scroll">
       <Flex direction="column" gap="1" p="2">
         {NAV_ITEMS.map((item) => (
           <SidebarLink
@@ -22,7 +22,11 @@ export function Sidebar() {
             href={item.href}
             label={item.label}
             icon={item.icon}
-            isActive={usePathname() === item.href}
+            isActive={
+              item.href === "/dashboard"
+                ? usePathname() === item.href
+                : usePathname().startsWith(item.href)
+            }
           />
         ))}
       </Flex>

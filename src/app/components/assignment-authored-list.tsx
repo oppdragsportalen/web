@@ -1,7 +1,8 @@
 import React from "react";
-import { Box, Text, Card } from "@radix-ui/themes";
+import { Box, Text } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { AssignmentCard } from "./assignment-card";
 
 export default async function AssignmentAuthoredList() {
   const supabase = await createSupabaseServer();
@@ -30,24 +31,11 @@ export default async function AssignmentAuthoredList() {
       ) : (
         <Box>
           {authored.map((a) => (
-            <Card key={a.id} className="mb-3 p-3">
-              <Box className="mb-2">
-                <Text className="font-medium">{a.title}</Text>
-              </Box>
-              <Box className="mb-2">
-                <Text size="2" color="gray">
-                  {a.description}
-                </Text>
-              </Box>
-              <Box className="flex gap-4">
-                <Text size="2">
-                  Deadline: {new Date(a.deadline).toLocaleDateString()}
-                </Text>
-              </Box>
-              <Box>
-                <Text size="2">Visibility: {a.visibility}</Text>
-              </Box>
-            </Card>
+            <AssignmentCard
+              key={a.id}
+              assignment={a}
+              detailsHref={`/dashboard/assignments/${a.id}`}
+            />
           ))}
         </Box>
       )}
