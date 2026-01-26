@@ -69,15 +69,17 @@ alter table public.profiles enable row level security;
 -- PROFILES POLICIES
 -- ============================================
 
--- Users can read and update their own profile
+-- Allow profile creation during signup
+create policy profiles_insert_signup on public.profiles
+  for insert with check (true);
+
+-- Users can read their own profile
 create policy profiles_select_self on public.profiles
   for select using (auth.uid() = id);
 
+-- Users can update their own profile
 create policy profiles_update_self on public.profiles
   for update using (auth.uid() = id);
-
-create policy profiles_insert_self on public.profiles
-  for insert with check (auth.uid() = id);
 
 -- ============================================
 -- ASSIGNMENTS POLICIES

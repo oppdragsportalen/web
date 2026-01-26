@@ -10,6 +10,7 @@ import {
   Heading,
   Callout,
   Link as RadixLink,
+  Checkbox,
 } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { signUp } from "@/app/actions/signup";
@@ -19,9 +20,18 @@ import Link from "next/link";
 export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!acceptedTerms) {
+      setError(
+        "You must accept the Terms of Service and Privacy Policy to sign up.",
+      );
+      return;
+    }
+
     setLoading(true);
     setError("");
     const formData = new FormData(e.currentTarget);
@@ -79,6 +89,32 @@ export default function SignUpPage() {
                   size="3"
                   required
                 />
+              </Box>
+
+              <Box>
+                <Flex gap="2" align="start">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptedTerms}
+                    onCheckedChange={(checked) =>
+                      setAcceptedTerms(checked === true)
+                    }
+                  />
+                  <Text as="label" size="1" htmlFor="terms">
+                    I accept the{" "}
+                    <RadixLink asChild color="blue">
+                      <Link href="/terms" target="_blank">
+                        Terms of Service
+                      </Link>
+                    </RadixLink>{" "}
+                    and{" "}
+                    <RadixLink asChild color="blue">
+                      <Link href="/privacy" target="_blank">
+                        Privacy Policy
+                      </Link>
+                    </RadixLink>
+                  </Text>
+                </Flex>
               </Box>
 
               <Box
