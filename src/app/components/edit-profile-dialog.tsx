@@ -53,27 +53,36 @@ export function EditProfileDialog({
       <Dialog.Content maxWidth="450px">
         <Dialog.Title>Edit profile</Dialog.Title>
 
-        <form action={handleSubmit}>
+        <form action={handleSubmit} aria-label="Edit profile form">
           <Flex direction="column" gap="3">
-            <label>
+            <label htmlFor="displayName">
               <Text as="div" size="2" mb="1" weight="bold">
                 Name
               </Text>
               <TextField.Root
+                id="displayName"
                 name="displayName"
                 defaultValue={displayName}
                 size="3"
                 required
+                aria-required="true"
+                aria-label="Display name"
               />
             </label>
-            <label>
+            <label htmlFor="email">
               <Text as="div" size="2" mb="1" weight="bold">
                 Email
               </Text>
-              <TextField.Root name="email" defaultValue={email} size="3" />
+              <TextField.Root
+                id="email"
+                name="email"
+                defaultValue={email}
+                size="3"
+                aria-label="Email address"
+              />
             </label>
             {error && (
-              <Text color="red" size="2">
+              <Text color="red" size="2" role="alert" aria-live="polite">
                 {error}
               </Text>
             )}
@@ -90,7 +99,13 @@ export function EditProfileDialog({
                 Cancel
               </Button>
             </Dialog.Close>
-            <Button type="submit" disabled={isLoading}>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              aria-label={
+                isLoading ? "Saving changes, please wait" : "Save changes"
+              }
+            >
               {isLoading ? "Saving..." : "Save"}
             </Button>
           </Flex>

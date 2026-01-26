@@ -61,44 +61,64 @@ export function CreateAssignmentDialog({
         <form
           action={handleSubmit}
           style={{ transition: "all 0.2s ease-in-out" }}
+          aria-label="Create assignment form"
         >
           <Flex direction="column" gap="3">
-            <label>
+            <label htmlFor="title">
               <Text as="div" size="2" mb="1" weight="bold">
                 Title
               </Text>
-              <TextField.Root name="title" size="3" required />
+              <TextField.Root
+                id="title"
+                name="title"
+                size="3"
+                required
+                aria-required="true"
+                aria-label="Assignment title"
+              />
             </label>
 
-            <label>
+            <label htmlFor="description">
               <Text as="div" size="2" mb="1" weight="bold">
                 Description
               </Text>
               <TextArea
+                id="description"
                 name="description"
                 size="3"
                 rows={3}
                 style={{ maxHeight: "12em", resize: "vertical" }}
+                aria-label="Assignment description"
               />
             </label>
 
-            <label>
+            <label htmlFor="deadline">
               <Text as="div" size="2" mb="1" weight="bold">
                 Deadline
               </Text>
-              <Text as="div" size="1" color="gray" mb="1">
+              <Text as="div" size="1" color="gray" mb="1" id="deadline-hint">
                 Click to select date and time
               </Text>
               <TextField.Root
+                id="deadline"
                 type="datetime-local"
                 name="deadline"
                 size="3"
                 required
+                aria-required="true"
+                aria-label="Assignment deadline"
+                aria-describedby="deadline-hint"
               />
             </label>
 
             <div>
-              <Text as="div" size="2" mb="2" weight="bold">
+              <Text
+                as="div"
+                size="2"
+                mb="2"
+                weight="bold"
+                id="assignment-type-label"
+              >
                 Assignment Type
               </Text>
               <SegmentedControl.Root
@@ -106,6 +126,8 @@ export function CreateAssignmentDialog({
                 onValueChange={(value) =>
                   setIsRestricted(value === "restricted")
                 }
+                aria-label="Choose assignment type"
+                aria-describedby="assignment-type-label"
               >
                 <SegmentedControl.Item value="public">
                   Public
@@ -125,22 +147,25 @@ export function CreateAssignmentDialog({
                 opacity: isRestricted ? 1 : 0,
               }}
             >
-              <label>
+              <label htmlFor="assignedEmail">
                 <Text as="div" size="2" mb="1" weight="bold">
                   Assign to user
                 </Text>
                 <TextField.Root
+                  id="assignedEmail"
                   name="assignedEmail"
                   type="email"
                   placeholder="user@example.com"
                   size="3"
                   required={isRestricted}
+                  aria-required={isRestricted}
+                  aria-label="User email address"
                 />
               </label>
             </div>
 
             {error && (
-              <Callout.Root color="red">
+              <Callout.Root color="red" role="alert" aria-live="polite">
                 <Callout.Icon>
                   <ExclamationTriangleIcon />
                 </Callout.Icon>

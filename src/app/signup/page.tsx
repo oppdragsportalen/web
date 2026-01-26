@@ -47,14 +47,20 @@ export default function SignUpPage() {
     <Flex justify="center" align="center" py="9" px="4" className="min-w-80">
       <Box width="100%" maxWidth="450px">
         <Card size="3">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} aria-label="Create account form">
             <Flex direction="column" gap="4">
-              <Heading size="6" mb="2">
+              <Heading size="6" mb="2" as="h1">
                 Create Account
               </Heading>
 
               <Box>
-                <Text as="div" size="2" mb="1" weight="bold">
+                <Text
+                  as="label"
+                  size="2"
+                  mb="1"
+                  weight="bold"
+                  htmlFor="displayName"
+                >
                   Full Name
                 </Text>
                 <TextField.Root
@@ -62,11 +68,13 @@ export default function SignUpPage() {
                   id="displayName"
                   size="3"
                   required
+                  aria-required="true"
+                  aria-label="Full Name"
                 />
               </Box>
 
               <Box>
-                <Text as="div" size="2" mb="1" weight="bold">
+                <Text as="label" size="2" mb="1" weight="bold" htmlFor="email">
                   Email
                 </Text>
                 <TextField.Root
@@ -75,11 +83,20 @@ export default function SignUpPage() {
                   id="email"
                   size="3"
                   required
+                  aria-required="true"
+                  aria-label="Email address"
+                  aria-describedby={error ? "error-message" : undefined}
                 />
               </Box>
 
               <Box>
-                <Text as="div" size="2" mb="1" weight="bold">
+                <Text
+                  as="label"
+                  size="2"
+                  mb="1"
+                  weight="bold"
+                  htmlFor="password"
+                >
                   Password
                 </Text>
                 <TextField.Root
@@ -88,6 +105,9 @@ export default function SignUpPage() {
                   id="password"
                   size="3"
                   required
+                  aria-required="true"
+                  aria-label="Password"
+                  aria-describedby="password-hint"
                 />
               </Box>
 
@@ -99,17 +119,27 @@ export default function SignUpPage() {
                     onCheckedChange={(checked) =>
                       setAcceptedTerms(checked === true)
                     }
+                    aria-required="true"
+                    aria-label="Accept terms and privacy policy"
                   />
                   <Text as="label" size="1" htmlFor="terms">
                     I accept the{" "}
                     <RadixLink asChild color="blue">
-                      <Link href="/terms" target="_blank">
+                      <Link
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Terms of Service
                       </Link>
                     </RadixLink>{" "}
                     and{" "}
                     <RadixLink asChild color="blue">
-                      <Link href="/privacy" target="_blank">
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Privacy Policy
                       </Link>
                     </RadixLink>
@@ -122,9 +152,12 @@ export default function SignUpPage() {
                 style={{
                   maxHeight: error ? "200px" : "0px",
                 }}
+                role="alert"
+                aria-live="polite"
+                aria-atomic="true"
               >
                 {error && (
-                  <Callout.Root color="red" size="1">
+                  <Callout.Root color="red" size="1" id="error-message">
                     <Callout.Icon>
                       <InfoCircledIcon />
                     </Callout.Icon>
@@ -141,6 +174,7 @@ export default function SignUpPage() {
                   className="flex-1"
                   onClick={() => window.history.back()}
                   disabled={loading}
+                  aria-label="Cancel account creation"
                 >
                   Cancel
                 </Button>
@@ -149,7 +183,12 @@ export default function SignUpPage() {
                   variant="solid"
                   color="green"
                   className="flex-1"
-                  disabled={loading}
+                  disabled={loading || !acceptedTerms}
+                  aria-label={
+                    loading
+                      ? "Creating account, please wait"
+                      : "Sign up for account"
+                  }
                 >
                   {loading ? "Creating account..." : "Sign Up"}
                 </Button>
