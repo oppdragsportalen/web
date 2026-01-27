@@ -6,11 +6,13 @@ import {
   Flex,
   Badge,
   Separator,
+  AlertDialog,
 } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { TrashIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { DeleteAssignment } from "@/app/actions/delete-assignment";
 
 async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
@@ -184,10 +186,39 @@ export default async function AssignmentDetailPage({
               <Pencil1Icon />
               Edit
             </Button>
-            <Button color="red">
-              <TrashIcon />
-              Delete
-            </Button>
+            <AlertDialog.Root>
+              <AlertDialog.Trigger>
+                <Button color="red">
+                  <TrashIcon />
+                  Delete
+                </Button>
+              </AlertDialog.Trigger>
+              <AlertDialog.Content maxWidth="700px">
+                <AlertDialog.Title>Delete assignment</AlertDialog.Title>
+                <AlertDialog.Description size="2">
+                  Are you sure you want to delete{" "}
+                  <strong> {assignment.title}</strong>? This action is permanent
+                  and cannot be undone.
+                </AlertDialog.Description>
+
+                <Flex gap="3" mt="4" justify="end">
+                  <AlertDialog.Cancel>
+                    <Button variant="soft" color="gray">
+                      Cancel
+                    </Button>
+                  </AlertDialog.Cancel>
+
+                  <form action={DeleteAssignment}>
+                    <input type="hidden" name="id" value={assignment.id} />
+                    <AlertDialog.Action>
+                      <Button variant="solid" color="red" type="submit">
+                        Delete
+                      </Button>
+                    </AlertDialog.Action>
+                  </form>
+                </Flex>
+              </AlertDialog.Content>
+            </AlertDialog.Root>
           </Flex>
         </Flex>
       </Card>
