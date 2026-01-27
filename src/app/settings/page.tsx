@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   Box,
@@ -7,28 +9,48 @@ import {
   Heading,
   AlertDialog,
 } from "@radix-ui/themes";
-import { createSupabaseServer } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { logout } from "@/app/actions/login";
 import { EditProfileDialog } from "../components/edit-profile-dialog";
+import { DeleteAccountDialog } from "../components/delete-account-dialog";
 import AccountInformationDataList from "../components/account-information-data-list";
+import { useState, useEffect } from "react";
+import { createSupabaseClient } from "@/lib/supabase/client";
+import { redirect } from "next/navigation";
 
-export default async function SettingsPage() {
-  const supabase = await createSupabaseServer();
+export default function SettingsPage() {
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  useEffect(() => {
+    async function loadData() {
+      const supabase = createSupabaseClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
+      if (!user) {
+        redirect("/login");
+        return;
+      }
+
+      setUser(user);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      setProfile(profile);
+    }
+
+    loadData();
+  }, []);
+
+  if (!user || !profile) {
+    return null;
   }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
 
   return (
     <Box className="max-w-5xl min-w-80 m-auto">
@@ -48,39 +70,80 @@ export default async function SettingsPage() {
 
             <Separator my="4" size="4" />
 
-            <Box>
-              <AlertDialog.Root>
-                <AlertDialog.Trigger>
-                  <Button variant="outline" color="red" type="submit">
-                    Log out
-                  </Button>
-                </AlertDialog.Trigger>
+            <Flex direction="row" gap="3">
+              <Box>
+                <AlertDialog.Root>
+                  <AlertDialog.Trigger>
+                    <Button variant="outline" color="red" type="submit">
+                      Log out
+                    </Button>
+                  </AlertDialog.Trigger>
 
-                <AlertDialog.Content maxWidth="450px">
-                  <AlertDialog.Title>Log out</AlertDialog.Title>
-                  <AlertDialog.Description size="2">
-                    Are you sure you want to log out? You'll need to sign in
-                    again to access your account.
-                  </AlertDialog.Description>
+                  <AlertDialog.Content maxWidth="450px" className="min-w-80">
+                    <AlertDialog.Title>Log out</AlertDialog.Title>
+                    <AlertDialog.Description size="2">
+                      Are you sure you want to log out? You'll need to sign in
+                      again to access your account.
+                    </AlertDialog.Description>
 
-                  <Flex gap="3" mt="4" justify="end">
-                    <AlertDialog.Cancel>
-                      <Button variant="soft" color="gray">
-                        Cancel
-                      </Button>
-                    </AlertDialog.Cancel>
-
-                    <form action={logout}>
-                      <AlertDialog.Action>
-                        <Button variant="solid" color="red" type="submit">
-                          Log out
+                    <Flex gap="3" mt="4" justify="end">
+                      <AlertDialog.Cancel>
+                        <Button variant="soft" color="gray">
+                          Cancel
                         </Button>
-                      </AlertDialog.Action>
-                    </form>
-                  </Flex>
-                </AlertDialog.Content>
-              </AlertDialog.Root>
-            </Box>
+                      </AlertDialog.Cancel>
+
+                      <form action={logout}>
+                        <AlertDialog.Action>
+                          <Button variant="solid" color="red" type="submit">
+                            Log out
+                          </Button>
+                        </AlertDialog.Action>
+                      </form>
+                    </Flex>
+                  </AlertDialog.Content>
+                </AlertDialog.Root>
+              </Box>
+
+              <Box>
+                <AlertDialog.Root>
+                  <AlertDialog.Trigger>
+                    <Button variant="solid" color="red">
+                      Delete Account
+                    </Button>
+                  </AlertDialog.Trigger>
+
+                  <AlertDialog.Content maxWidth="450px" className="min-w-80">
+                    <AlertDialog.Title>Delete Account</AlertDialog.Title>
+                    <AlertDialog.Description size="2">
+                      Are you sure you want to delete your account? This action
+                      cannot be undone.
+                    </AlertDialog.Description>
+
+                    <Flex gap="3" mt="4" justify="end">
+                      <AlertDialog.Cancel>
+                        <Button variant="soft" color="gray">
+                          Cancel
+                        </Button>
+                      </AlertDialog.Cancel>
+
+                      <Button
+                        variant="solid"
+                        color="red"
+                        onClick={() => setShowDeleteConfirm(true)}
+                      >
+                        Delete
+                      </Button>
+                    </Flex>
+                  </AlertDialog.Content>
+                </AlertDialog.Root>
+              </Box>
+            </Flex>
+
+            <DeleteAccountDialog
+              open={showDeleteConfirm}
+              onOpenChange={setShowDeleteConfirm}
+            />
           </Flex>
         </Card>
       </Box>

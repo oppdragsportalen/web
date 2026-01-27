@@ -50,7 +50,7 @@ export function EditProfileDialog({
         </Dialog.Trigger>
       </Flex>
 
-      <Dialog.Content maxWidth="450px">
+      <Dialog.Content maxWidth="450px" className="min-w-80">
         <Dialog.Title>Edit profile</Dialog.Title>
 
         <form action={handleSubmit} aria-label="Edit profile form">

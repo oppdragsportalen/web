@@ -40,8 +40,8 @@ export async function Navbar() {
         justify="between"
         className="h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
       >
-        <Link href="/" className="no-underline">
-          <Box className="mr-16">
+        <Link href="/" className="no-underline mr-16">
+          <Box>
             <Text size="3" weight="bold" className="cursor-pointer">
               Oppdragsportalen
             </Text>
@@ -58,16 +58,16 @@ export async function Navbar() {
               }
             />
 
-            <Button variant="ghost" color="gray">
-              <Link
-                href="/dashboard"
-                className="no-underline  flex items-center justify-center"
-              >
+            <Link
+              href="/dashboard"
+              className="no-underline  flex items-center justify-center"
+            >
+              <Button variant="ghost" color="gray">
                 <Text size="2" weight="medium" className="cursor-pointer">
                   Dashboard
                 </Text>
-              </Link>
-            </Button>
+              </Button>
+            </Link>
 
             <Separator orientation="vertical" />
 
@@ -105,7 +105,7 @@ export async function Navbar() {
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
 
-              <AlertDialog.Content maxWidth="450px">
+              <AlertDialog.Content maxWidth="450px" className="min-w-80">
                 <AlertDialog.Title>Log out</AlertDialog.Title>
                 <AlertDialog.Description size="2">
                   Are you sure you want to log out? You'll need to sign in again

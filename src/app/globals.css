@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 
-html{
+html {
   height: 100%;
   overscroll-behavior: none;
   overscroll-behavior-y: none;
@@ -11,4 +11,8 @@ body {
   height: 100%;
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
