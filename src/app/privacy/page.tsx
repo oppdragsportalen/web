@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
           </Heading>
 
           <Text as="div" size="2" color="gray" mb="6">
-            Last updated: January 26, 2026
+            Last updated: January 28, 2026
           </Text>
 
           <Box mb="6">
@@ -166,7 +166,7 @@ export default function PrivacyPolicyPage() {
                 • <strong>View and Edit:</strong> Update your profile
                 information in account settings
               </Text>
-              {/* <Text as="div" size="3" mb="2">
+              <Text as="div" size="3" mb="2">
                 • <strong>Delete Assignments:</strong> Remove any assignments
                 you created at any time
               </Text>
@@ -180,8 +180,8 @@ export default function PrivacyPolicyPage() {
               </Text>
               <Text as="div" size="3" mb="2">
                 • <strong>Account Deletion:</strong> Delete your account and all
-                associated data by contacting us
-              </Text> */}
+                associated data
+              </Text>
             </Box>
           </Box>
 
