@@ -1,30 +1,12 @@
 # Oppdragsportalen
 
-A assignment management platform built with Next.js and Supabase. Create assignments with public or restricted visibility.
-
-## Features
-
-### Authentication & User Management
-
-- Secure signup/login with Supabase Auth
-- User profiles with display names
-- SSR-aware authentication
-- Profile editing in settings
-
-### Assignment Management
-
-- **Create Assignments**: Title, description, and deadline
-- **Visibility Control**:
-  - Public assignments (visible to all)
-  - Restricted assignments (specific users only)
-- **Allowed Users**: Add specific users to restricted assignments
+Assignment management platform built with Next.js and Supabase. Users can create assignments with public or restricted visibility and manage who has access.
 
 ## Tech Stack
 
-- **Framework**: Next.js 16 (App Router), React 19, TypeScript
-- **Database**: Supabase (PostgreSQL + Auth)
-- **UI**: Radix Themes/Icons, Tailwind v4, next-themes
-- **Authentication**: Supabase SSR (@supabase/ssr)
+- **Framework**: Next.js 16, React 19, TypeScript
+- **Backend / DB**: Supabase (PostgreSQL, Auth, RLS)
+- **UI**: Radix Themes/Icons, Tailwind CSS v4
 
 ## Setup
 
@@ -36,18 +18,21 @@ npm install
 
 ### 2. Configure Environment Variables
 
-Create a `.env.local` file in the root directory:
+Create a `.env.local` file:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
+
+> The service role key is only used in server-side code (e.g. admin Supabase client, server actions) and is never exposed to the browser.
 
 ### 3. Set Up Database
 
-1. Create a new Supabase project
-2. Run the SQL schema from `database/schema.sql` in the Supabase SQL Editor
-3. Enable email/password authentication in Supabase Dashboard
+1. Create a Supabase project.
+2. Run `database/schema.sql` in the Supabase SQL Editor to create tables, RLS policies and helper functions.
+3. Enable email/password auth in the Supabase Dashboard.
 
 ### 4. Run Development Server
 
@@ -55,23 +40,3 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 npm run dev
 ```
 
-## Database Schema
-
-### Tables
-
-- **profiles**: User profiles with display names
-- **assignments**: Assignment data with visibility settings
-- **assignment_allowed_users**: Access control for restricted assignments
-- **assignment_claims**: User responses (accept/decline) to assignments
-
-### Security
-
-- Row Level Security (RLS) policies on all tables
-- Users can only see/edit their own data and accessible assignments
-- Assignment creators have full control over their assignments
-- Public assignments are visible to all authenticated users
-- Restricted assignments require explicit user allowlist
-
----
-
-> AI-generated with Claude Sonnet 4.5 on 2026-01-21.
