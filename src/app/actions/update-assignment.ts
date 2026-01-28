@@ -56,6 +56,14 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: `Failed to update assignment: ${assignmentError.message}` };
   }
 
+  // Delete allowed user for public assignment
+  if (visibility === "public") {
+    await supabase
+      .from("assignment_allowed_users")
+      .delete()
+      .eq("assignment_id", assignment.id);
+  }
+
   // Update allowed users for restricted assignment
   if (visibility === "restricted" && assignment && assignedEmail) {
     const email = assignedEmail.trim().toLowerCase();

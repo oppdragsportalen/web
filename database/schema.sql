@@ -192,6 +192,23 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- Function to get email by user ID
+create or replace function public.get_user_email_by_id(user_id uuid)
+returns text
+language plpgsql
+security definer
+set search_path = public, auth
+as $$
+begin
+  return (
+    select email
+    from auth.users
+    where id = get_user_email_by_id.user_id
+    limit 1
+  );
+end;
+$$;
+
 -- ============================================
 -- TRIGGERS
 -- ============================================

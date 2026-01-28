@@ -25,6 +25,24 @@ async function getAssignment(id: string, userId: string) {
     .eq("creator_id", userId)
     .single();
 
+  if (assignment && assignment.visibility === "restricted") {
+    const { data: allowedUsers } = await supabase
+      .from("assignment_allowed_users")
+      .select("user_id")
+      .eq("assignment_id", assignment.id)
+      .single();
+
+    if (allowedUsers?.user_id) {
+      const { data: userEmail } = await supabase.rpc("get_user_email_by_id", {
+        user_id: allowedUsers.user_id,
+      });
+
+      if (userEmail) {
+        (assignment as any).assignedEmail = userEmail;
+      }
+    }
+  }
+
   return { assignment, error };
 }
 
@@ -192,6 +210,7 @@ export default async function AssignmentDetailPage({
                 description: assignment.description,
                 deadline: assignment.deadline,
                 visibility: assignment.visibility,
+                assignedEmail: (assignment as any).assignedEmail,
               }}
               trigger={
                 <Button>

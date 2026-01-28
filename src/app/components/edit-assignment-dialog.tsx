@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   AlertDialog,
@@ -45,6 +45,16 @@ export function EditAssignmentDialog({
   const [isRestricted, setIsRestricted] = useState(
     assignment.visibility === "restricted",
   );
+  const [assignedEmail, setAssignedEmail] = useState(
+    assignment.assignedEmail || "",
+  );
+
+  useEffect(() => {
+    if (open) {
+      setIsRestricted(assignment.visibility === "restricted");
+      setAssignedEmail(assignment.assignedEmail || "");
+    }
+  }, [open, assignment.visibility, assignment.assignedEmail]);
 
   const handleSubmit = async (formData: FormData) => {
     setError("");
@@ -60,7 +70,6 @@ export function EditAssignmentDialog({
       setError(result.error);
     } else {
       setOpen(false);
-      setIsRestricted(false);
     }
   };
 
@@ -179,7 +188,8 @@ export function EditAssignmentDialog({
                   required={isRestricted}
                   aria-required={isRestricted}
                   aria-label="User email address"
-                  defaultValue={assignment.assignedEmail || ""}
+                  value={assignedEmail}
+                  onChange={(e) => setAssignedEmail(e.target.value)}
                 />
               </label>
             </div>
