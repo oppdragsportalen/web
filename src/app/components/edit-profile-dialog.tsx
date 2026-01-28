@@ -8,11 +8,13 @@ import { updateProfile } from "@/app/actions/update-profile";
 interface EditProfileDialogProps {
   displayName: string;
   email: string;
+  loadData?: () => void;
 }
 
 export function EditProfileDialog({
   displayName,
   email,
+  loadData,
 }: EditProfileDialogProps) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +37,7 @@ export function EditProfileDialog({
       } else {
         setOpen(false);
         setIsLoading(false);
+        loadData?.();
       }
     }
   }

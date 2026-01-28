@@ -22,29 +22,29 @@ export default function SettingsPage() {
   const [profile, setProfile] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  useEffect(() => {
-    async function loadData() {
-      const supabase = createSupabaseClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  async function loadData() {
+    const supabase = createSupabaseClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-      if (!user) {
-        redirect("/login");
-        return;
-      }
-
-      setUser(user);
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      setProfile(profile);
+    if (!user) {
+      redirect("/login");
+      return;
     }
 
+    setUser(user);
+
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    setProfile(profile);
+  }
+
+  useEffect(() => {
     loadData();
   }, []);
 
@@ -66,6 +66,7 @@ export default function SettingsPage() {
             <EditProfileDialog
               displayName={profile.display_name}
               email={user.email ?? ""}
+              loadData={loadData}
             />
 
             <Separator my="4" size="4" />
