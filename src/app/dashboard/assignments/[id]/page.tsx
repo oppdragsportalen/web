@@ -13,6 +13,7 @@ import { redirect } from "next/navigation";
 import { TrashIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { DeleteAssignment } from "@/app/actions/delete-assignment";
+import { EditAssignmentDialog } from "@/app/components/edit-assignment-dialog";
 
 async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
@@ -105,16 +106,18 @@ export default async function AssignmentDetailPage({
           </Flex>
         </Flex>
 
-        <Box mb="5">
-          <Box>
-            <Text size="2" weight="medium" color="gray">
-              Description
-            </Text>
+        {assignment.description && (
+          <Box mb="5">
+            <Box>
+              <Text size="2" weight="medium" color="gray">
+                Description
+              </Text>
+            </Box>
+            <Card>
+              <Text size="2">{assignment.description}</Text>
+            </Card>
           </Box>
-          <Card>
-            <Text size="2">{assignment.description}</Text>
-          </Card>
-        </Box>
+        )}
 
         <Box mb="5">
           <Flex gap="4">
@@ -182,10 +185,21 @@ export default async function AssignmentDetailPage({
           </Text>
 
           <Flex gap="3">
-            <Button>
-              <Pencil1Icon />
-              Edit
-            </Button>
+            <EditAssignmentDialog
+              assignment={{
+                id: assignment.id,
+                title: assignment.title,
+                description: assignment.description,
+                deadline: assignment.deadline,
+                visibility: assignment.visibility,
+              }}
+              trigger={
+                <Button>
+                  <Pencil1Icon />
+                  Edit
+                </Button>
+              }
+            />
             <AlertDialog.Root>
               <AlertDialog.Trigger>
                 <Button color="red">
