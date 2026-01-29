@@ -8,6 +8,7 @@ import {
   Button,
   Heading,
   AlertDialog,
+  Skeleton,
 } from "@radix-ui/themes";
 import { logout } from "@/app/actions/login";
 import { EditProfileDialog } from "../components/edit-profile-dialog";
@@ -16,6 +17,7 @@ import AccountInformationDataList from "../components/account-information-data-l
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
+import { Footer } from "@/app/components/footer";
 
 export default function SettingsPage() {
   const [user, setUser] = useState<any>(null);
@@ -49,12 +51,31 @@ export default function SettingsPage() {
   }, []);
 
   if (!user || !profile) {
-    return null;
+    return (
+      <Box className="max-w-5xl m-auto" minWidth="400px">
+        <Box p="4">
+          <Skeleton>
+            <Heading size="7" my="5">
+              Settings
+            </Heading>
+          </Skeleton>
+
+          <Skeleton>
+            <Card size="3">
+              <Box style={{ height: 300 }} />
+            </Card>
+          </Skeleton>
+        </Box>
+      </Box>
+    );
   }
 
   return (
-    <Box className="max-w-5xl min-w-80 m-auto">
-      <Box p="4">
+    <Box
+      className="max-w-5xl m-auto min-h-full"
+      minWidth="400px"
+    >
+      <Box p="4" className="flex-1">
         <Heading size="7" my="5">
           Settings
         </Heading>
@@ -148,6 +169,7 @@ export default function SettingsPage() {
           </Flex>
         </Card>
       </Box>
+      <Footer />
     </Box>
   );
 }
