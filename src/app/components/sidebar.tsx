@@ -3,12 +3,13 @@
 import { Box, Flex, Text, Inset } from "@radix-ui/themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GearIcon, HomeIcon, FileTextIcon } from "@radix-ui/react-icons";
+import { GearIcon, HomeIcon, FileTextIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
 
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
-  { href: "/dashboard/assignments", label: "Assignments", icon: FileTextIcon },
+  { href: "/dashboard/explore", label: "Explore", icon: MagnifyingGlassIcon },
+  { href: "/dashboard/assignments", label: "My Assignments", icon: FileTextIcon },
   { href: "/settings", label: "Settings", icon: GearIcon },
 ];
 

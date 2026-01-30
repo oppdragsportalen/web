@@ -17,7 +17,9 @@ export default async function AssignmentAuthoredList() {
 
   const { data: authored, error: authoredError } = await supabase
     .from("assignments")
-    .select("id, title, description, deadline, visibility, created_at")
+    .select(
+      "id, title, description, deadline, visibility, created_at, assignment_claims(status)",
+    )
     .eq("creator_id", user.id);
 
   return (
@@ -30,10 +32,13 @@ export default async function AssignmentAuthoredList() {
         <Text size="2">You haven't created any assignments yet.</Text>
       ) : (
         <Box>
-          {authored.map((a) => (
+          {authored.map((a: any) => (
             <AssignmentCard
               key={a.id}
-              assignment={a}
+              assignment={{
+                ...a,
+                status: a.assignment_claims?.[0]?.status ?? "not_taken",
+              }}
               detailsHref={`/dashboard/assignments/${a.id}`}
             />
           ))}

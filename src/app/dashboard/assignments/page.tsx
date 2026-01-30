@@ -2,6 +2,7 @@ import { Box, Card, Tabs, Text } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
+import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
 
 export default async function AssignmentPage() {
   const supabase = await createSupabaseServer();
@@ -20,7 +21,7 @@ export default async function AssignmentPage() {
         <h1 className="text-3xl font-bold">Assignments</h1>
       </Box>
       <Box>
-        <Tabs.Root defaultValue="authored">
+        <Tabs.Root defaultValue="assigned">
           <Tabs.List
             className="sticky top-0 z-10"
             style={{ backgroundColor: "var(--color-background)" }}
@@ -31,7 +32,7 @@ export default async function AssignmentPage() {
 
           <Box pt="3">
             <Tabs.Content value="assigned">
-              <Text size="2">Assignments assigned to you.</Text>
+              <AssignmentAssignedList />
             </Tabs.Content>
 
             <Tabs.Content value="authored">
