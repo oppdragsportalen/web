@@ -165,6 +165,10 @@ create policy claims_insert_allowed on public.assignment_claims
 create policy claims_update_self on public.assignment_claims
   for update using (auth.uid() = user_id);
 
+-- Delete: only own claim
+create policy claims_delete_self on public.assignment_claims
+  for delete using (auth.uid() = user_id);
+
 -- Read: assignment creator sees all claims; user sees own claim
 create policy claims_select_owner_or_self on public.assignment_claims
   for select using (

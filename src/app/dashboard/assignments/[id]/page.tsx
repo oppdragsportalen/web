@@ -14,36 +14,82 @@ import { TrashIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { DeleteAssignment } from "@/app/actions/delete-assignment";
 import { EditAssignmentDialog } from "@/app/components/edit-assignment-dialog";
+import { AssignmentActionButton } from "@/app/components/assignment-action-button";
 
 async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
 
-  const { data: assignment, error } = await supabase
+  // Get assignment authored by the user
+  const { data: assignment } = await supabase
     .from("assignments")
-    .select("id, title, description, deadline, visibility, created_at")
+    .select(
+      "id, title, description, deadline, visibility, created_at, creator_id",
+    )
     .eq("id", id)
     .eq("creator_id", userId)
     .single();
 
-  if (assignment && assignment.visibility === "restricted") {
-    const { data: allowedUsers } = await supabase
-      .from("assignment_allowed_users")
-      .select("user_id")
+  if (assignment) {
+    // Assignment authored by user
+    let fullAssignment: any = assignment;
+    const { data: claim } = await supabase
+      .from("assignment_claims")
+      .select("status")
       .eq("assignment_id", assignment.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .single();
 
-    if (allowedUsers?.user_id) {
-      const { data: userEmail } = await supabase.rpc("get_user_email_by_id", {
-        user_id: allowedUsers.user_id,
-      });
+    if (claim?.status) {
+      fullAssignment.claimStatus = claim.status;
+    }
+    if (assignment.visibility === "restricted") {
+      const { data: allowedUsers } = await supabase
+        .from("assignment_allowed_users")
+        .select("user_id")
+        .eq("assignment_id", assignment.id)
+        .single();
 
-      if (userEmail) {
-        (assignment as any).assignedEmail = userEmail;
+      if (allowedUsers?.user_id) {
+        const { data: userEmail } = await supabase.rpc("get_user_email_by_id", {
+          user_id: allowedUsers.user_id,
+        });
+
+        if (userEmail) {
+          fullAssignment.assignedEmail = userEmail;
+        }
       }
     }
+    return { assignment: fullAssignment, isAuthor: true, error: null };
   }
 
-  return { assignment, error };
+  // Get assigned assignment
+  const { data: claim } = await supabase
+    .from("assignment_claims")
+    .select(
+      `
+      status,
+      assignments:assignment_id (
+        id,
+        title,
+        description,
+        deadline,
+        visibility,
+        created_at,
+        creator_id
+      )
+    `,
+    )
+    .eq("assignment_id", id)
+    .eq("user_id", userId)
+    .single();
+
+  if (claim && claim.assignments) {
+    const fullAssignment = { ...claim.assignments, claimStatus: claim.status };
+    return { assignment: fullAssignment, isAuthor: false, error: null };
+  }
+
+  return { assignment: null, isAuthor: false, error: "Assignment not found" };
 }
 
 function getStatusBadge(status?: string) {
@@ -88,7 +134,7 @@ export default async function AssignmentDetailPage({
     redirect("/login");
   }
 
-  const { assignment, error } = await getAssignment(id, user.id);
+  const { assignment, isAuthor, error } = await getAssignment(id, user.id);
 
   if (error || !assignment) {
     redirect("/dashboard/assignments");
@@ -98,11 +144,19 @@ export default async function AssignmentDetailPage({
     <div className="p-4 min-w-xl">
       <Box className="mt-4 mb-10">
         <Flex align="center" gap="2" className="mb-6">
-          <Link href="/dashboard/assignments">
-            <h1 className="text-3xl font-bold text-(--gray-9) hover:underline hover:text-(--color-text)">
-              Assignments
-            </h1>
-          </Link>
+          {isAuthor ? (
+            <Link href="/dashboard/assignments?tab=authored">
+              <h1 className="text-3xl font-bold text-(--gray-9) hover:underline hover:text-(--color-text)">
+                Assignments
+              </h1>
+            </Link>
+          ) : (
+            <Link href="/dashboard/assignments">
+              <h1 className="text-3xl font-bold text-(--gray-9) hover:underline hover:text-(--color-text)">
+                Assignments
+              </h1>
+            </Link>
+          )}
           <Text size="4" color="gray">
             /
           </Text>
@@ -120,7 +174,9 @@ export default async function AssignmentDetailPage({
 
           <Flex gap="2" wrap="wrap" align="center">
             {getVisibilityBadge(assignment.visibility)}
-            {getStatusBadge((assignment as any).status)}
+            {getStatusBadge(
+              (assignment as any).claimStatus || (assignment as any).status,
+            )}
           </Flex>
         </Flex>
 
@@ -166,7 +222,9 @@ export default async function AssignmentDetailPage({
               <Card className="w-full">
                 <Text size="2" className="capitalize">
                   {(() => {
-                    const status = (assignment as any).status;
+                    const status =
+                      (assignment as any).claimStatus ||
+                      (assignment as any).status;
                     if (status === "accepted") return "Taken";
                     if (status === "in_progress") return "In Progress";
                     if (status === "finished") return "Finished";
@@ -202,57 +260,64 @@ export default async function AssignmentDetailPage({
             })}
           </Text>
 
-          <Flex gap="3">
-            <EditAssignmentDialog
-              assignment={{
-                id: assignment.id,
-                title: assignment.title,
-                description: assignment.description,
-                deadline: assignment.deadline,
-                visibility: assignment.visibility,
-                assignedEmail: (assignment as any).assignedEmail,
-              }}
-              trigger={
-                <Button>
-                  <Pencil1Icon />
-                  Edit
-                </Button>
-              }
-            />
-            <AlertDialog.Root>
-              <AlertDialog.Trigger>
-                <Button color="red">
-                  <TrashIcon />
-                  Delete
-                </Button>
-              </AlertDialog.Trigger>
-              <AlertDialog.Content maxWidth="700px">
-                <AlertDialog.Title>Delete assignment</AlertDialog.Title>
-                <AlertDialog.Description size="2">
-                  Are you sure you want to delete{" "}
-                  <strong> {assignment.title}</strong>? This action is permanent
-                  and cannot be undone.
-                </AlertDialog.Description>
+          {isAuthor ? (
+            <Flex gap="3">
+              <EditAssignmentDialog
+                assignment={{
+                  id: assignment.id,
+                  title: assignment.title,
+                  description: assignment.description,
+                  deadline: assignment.deadline,
+                  visibility: assignment.visibility,
+                  assignedEmail: (assignment as any).assignedEmail,
+                }}
+                trigger={
+                  <Button>
+                    <Pencil1Icon />
+                    Edit
+                  </Button>
+                }
+              />
+              <AlertDialog.Root>
+                <AlertDialog.Trigger>
+                  <Button color="red">
+                    <TrashIcon />
+                    Delete
+                  </Button>
+                </AlertDialog.Trigger>
+                <AlertDialog.Content maxWidth="700px">
+                  <AlertDialog.Title>Delete assignment</AlertDialog.Title>
+                  <AlertDialog.Description size="2">
+                    Are you sure you want to delete{" "}
+                    <strong> {assignment.title}</strong>? This action is
+                    permanent and cannot be undone.
+                  </AlertDialog.Description>
 
-                <Flex gap="3" mt="4" justify="end">
-                  <AlertDialog.Cancel>
-                    <Button variant="soft" color="gray">
-                      Cancel
-                    </Button>
-                  </AlertDialog.Cancel>
-
-                  <form action={DeleteAssignment}>
-                    <input type="hidden" name="id" value={assignment.id} />
-                    <AlertDialog.Action>
-                      <Button variant="solid" color="red" type="submit">
-                        Delete
+                  <Flex gap="3" mt="4" justify="end">
+                    <AlertDialog.Cancel>
+                      <Button variant="soft" color="gray">
+                        Cancel
                       </Button>
-                    </AlertDialog.Action>
-                  </form>
-                </Flex>
-              </AlertDialog.Content>
-            </AlertDialog.Root>
-          </Flex>
+                    </AlertDialog.Cancel>
+
+                    <form action={DeleteAssignment}>
+                      <input type="hidden" name="id" value={assignment.id} />
+                      <AlertDialog.Action>
+                        <Button variant="solid" color="red" type="submit">
+                          Delete
+                        </Button>
+                      </AlertDialog.Action>
+                    </form>
+                  </Flex>
+                </AlertDialog.Content>
+              </AlertDialog.Root>
+            </Flex>
+          ) : (
+            <AssignmentActionButton
+              assignmentId={assignment.id}
+              isTaken={!!(assignment as any).claimStatus}
+            />
+          )}
         </Flex>
       </Card>
     </div>
