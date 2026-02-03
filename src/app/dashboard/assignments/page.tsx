@@ -1,8 +1,20 @@
+import { Suspense } from "react";
 import { Box, Card, Tabs, Text } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
 import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
+import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
+
+function AssignmentListSkeleton() {
+  return (
+    <Box>
+      <AssignmentCardSkeleton />
+      <AssignmentCardSkeleton />
+      <AssignmentCardSkeleton />
+    </Box>
+  );
+}
 
 export default async function AssignmentPage({
   searchParams,
@@ -39,11 +51,15 @@ export default async function AssignmentPage({
 
           <Box pt="3">
             <Tabs.Content value="assigned">
-              <AssignmentAssignedList />
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAssignedList />
+              </Suspense>
             </Tabs.Content>
 
             <Tabs.Content value="authored">
-              <AssignmentAuthoredList />
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAuthoredList />
+              </Suspense>
             </Tabs.Content>
           </Box>
         </Tabs.Root>
