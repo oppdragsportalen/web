@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Text, TextField } from "@radix-ui/themes";
+import { Box, Text, TextField, Spinner } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { AssignmentCard } from "@/app/components/assignment-card";
 import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
@@ -42,13 +42,7 @@ export default function ExploreClient({
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
-
-  const normalizedQuery = query.trim().toLowerCase();
-  const filteredAssignments = normalizedQuery
-    ? assignments.filter((a) =>
-        `${a.title} ${a.description}`.toLowerCase().includes(normalizedQuery),
-      )
-    : assignments;
+  const initializedRef = useRef(false);
 
   const loadMore = async () => {
     if (isLoading || !hasMore) return;
@@ -56,11 +50,9 @@ export default function ExploreClient({
     setIsLoading(true);
     try {
       const { assignments: newAssignments, hasMore: moreAvailable } =
-        await GetAvailableAssignments(batchIndex);
+        await GetAvailableAssignments(batchIndex, query.trim());
 
-      setAssignments((prev) =>
-        appendUniqueAssignments(prev, newAssignments ?? []),
-      );
+      setAssignments((prev) => appendUniqueAssignments(prev, newAssignments));
       setHasMore(moreAvailable);
       setBatchIndex((prev) => prev + 1);
     } catch (error) {
@@ -69,6 +61,42 @@ export default function ExploreClient({
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!initializedRef.current) {
+      initializedRef.current = true;
+      if (!query.trim()) return;
+    }
+
+    let isActive = true;
+
+    const runSearch = async () => {
+      setIsLoading(true);
+      try {
+        const { assignments: newAssignments, hasMore: moreAvailable } =
+          await GetAvailableAssignments(0, query.trim());
+
+        if (!isActive) return;
+        setAssignments(newAssignments);
+        setHasMore(moreAvailable);
+        setBatchIndex(1);
+      } catch (error) {
+        if (isActive) {
+          console.error("Error searching assignments:", error);
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    runSearch();
+
+    return () => {
+      isActive = false;
+    };
+  }, [query]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -85,9 +113,9 @@ export default function ExploreClient({
     }
 
     return () => observer.disconnect();
-  }, [hasMore, isLoading, batchIndex]);
+  }, [hasMore, isLoading, batchIndex, query]);
 
-  if (assignments.length === 0 && !isLoading) {
+  if (!query.trim() && assignments.length === 0 && !isLoading) {
     return (
       <Text size="2" color="gray">
         No available assignments yet. Check back later or create your own.
@@ -106,8 +134,6 @@ export default function ExploreClient({
             linear-gradient(
               to bottom,
               rgba(var(--color-background-rgb), 0.95) 0%,
-              rgba(var(--color-background-rgb), 0.75) 45%,
-              rgba(var(--color-background-rgb), 0.25) 75%,
               rgba(var(--color-background-rgb), 0) 100%
             )
           `,
@@ -128,16 +154,17 @@ export default function ExploreClient({
             <TextField.Slot>
               <MagnifyingGlassIcon />
             </TextField.Slot>
+            <TextField.Slot>{isLoading && <Spinner />}</TextField.Slot>
           </TextField.Root>
         </Box>
       </Box>
 
-      {filteredAssignments.length === 0 && !isLoading ? (
+      {assignments.length === 0 && !isLoading && query.trim() ? (
         <Text size="2" color="gray">
           No assignments match your search.
         </Text>
       ) : (
-        filteredAssignments.map((a) => (
+        assignments.map((a) => (
           <AssignmentCard
             key={a.id}
             assignment={a}
