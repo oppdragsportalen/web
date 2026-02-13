@@ -40,8 +40,15 @@ export async function GetAvailableAssignments(
       },
     )
     .eq("visibility", "public")
-    .neq("creator_id", user.id)
-    .not("id", "in", claimedIds.length ? `(${claimedIds.join(",")})` : "0");
+    .neq("creator_id", user.id);
+
+  if (claimedIds.length > 0) {
+    assignmentsQuery = assignmentsQuery.not(
+      "id",
+      "in",
+      `(${claimedIds.join(",")})`,
+    );
+  }
 
   if (normalizedQuery) {
     assignmentsQuery = assignmentsQuery.or(
