@@ -119,9 +119,11 @@ export default function ExploreClient({
 
   if (!query.trim() && assignments.length === 0 && !isLoading) {
     return (
-      <Text size="2" color="gray">
-        No available assignments yet. Check back later or create your own.
-      </Text>
+      <div className="mt-4">
+        <Text size="2" color="gray">
+          No available assignments yet. Check back later or create your own.
+        </Text>
+      </div>
     );
   }
 

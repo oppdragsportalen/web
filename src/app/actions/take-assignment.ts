@@ -30,8 +30,18 @@ export async function TakeAssignment(formData: FormData) {
     return { error: "Assignment not found" };
   }
 
-  if (assignment.visibility !== "public") {
-    return { error: "This assignment is not available to take" };
+  // Check if user is allowed to take this assignment
+  if (assignment.visibility === "restricted") {
+    const { data: allowed } = await supabase
+      .from("assignment_allowed_users")
+      .select("user_id")
+      .eq("assignment_id", assignmentId)
+      .eq("user_id", user.id)
+      .single();
+
+    if (!allowed) {
+      return { error: "You are not allowed to take this assignment" };
+    }
   }
 
   if (assignment.creator_id === user.id) {

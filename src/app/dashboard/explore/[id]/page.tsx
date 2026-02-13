@@ -11,11 +11,23 @@ async function getAssignment(id: string, userId: string) {
     .from("assignments")
     .select("id, title, description, deadline, visibility, created_at")
     .eq("id", id)
-    .eq("visibility", "public")
     .single();
 
   if (error || !assignment) {
     return { assignment: null, error };
+  }
+
+  if (assignment.visibility === "restricted") {
+    const { data: allowed } = await supabase
+      .from("assignment_allowed_users")
+      .select("user_id")
+      .eq("assignment_id", id)
+      .eq("user_id", userId)
+      .single();
+
+    if (!allowed) {
+      return { assignment: null, error: { message: "Access denied" } };
+    }
   }
 
   // Get claim status
