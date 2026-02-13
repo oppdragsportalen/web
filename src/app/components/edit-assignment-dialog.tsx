@@ -13,6 +13,7 @@ import {
   TextArea,
 } from "@radix-ui/themes";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
+import { Pencil1Icon } from "@radix-ui/react-icons";
 import { UpdateAssignment } from "@/app/actions/update-assignment";
 
 function UpdateButton() {
@@ -34,10 +35,8 @@ type Assignment = {
 };
 
 export function EditAssignmentDialog({
-  trigger,
   assignment,
 }: {
-  trigger: React.ReactNode;
   assignment: Assignment;
 }) {
   const [open, setOpen] = useState(false);
@@ -75,7 +74,12 @@ export function EditAssignmentDialog({
 
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Trigger>{trigger}</AlertDialog.Trigger>
+      <AlertDialog.Trigger>
+        <Button>
+          <Pencil1Icon />
+          Edit
+        </Button>
+      </AlertDialog.Trigger>
 
       <AlertDialog.Content style={{ transition: "height 0.2s ease-in-out" }}>
         <AlertDialog.Title>Edit Assignment</AlertDialog.Title>
@@ -121,9 +125,6 @@ export function EditAssignmentDialog({
               <Text as="div" size="2" mb="1" weight="bold">
                 Deadline
               </Text>
-              <Text as="div" size="1" color="gray" mb="1" id="deadline-hint">
-                Click to select date and time
-              </Text>
               <TextField.Root
                 id="deadline"
                 type="datetime-local"
@@ -136,6 +137,7 @@ export function EditAssignmentDialog({
                 defaultValue={new Date(assignment.deadline)
                   .toISOString()
                   .slice(0, 16)}
+                min={new Date().toISOString().slice(0, 16)}
               />
             </label>
 
@@ -190,6 +192,8 @@ export function EditAssignmentDialog({
                   aria-label="User email address"
                   value={assignedEmail}
                   onChange={(e) => setAssignedEmail(e.target.value)}
+                  disabled={!isRestricted}
+                  tabIndex={isRestricted ? 0 : -1}
                 />
               </label>
             </div>

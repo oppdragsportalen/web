@@ -23,6 +23,12 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Deadline is required" };
   }
 
+  // Validate deadline
+  const deadlineDate = new Date(deadline);
+  if (deadlineDate <= new Date()) {
+    return { error: "Invalid deadline" };
+  }
+
   if (visibility === "restricted" && !assignedEmail) {
     return {
       error: "Please enter a user for this restricted assignment",
@@ -88,6 +94,10 @@ export async function UpdateAssignment(formData: FormData) {
 
     if (!userId) {
       return { error: `No user found with email: ${email}` };
+    }
+
+    if (userId === user.id) {
+      return { error: "You cannot assign an assignment to yourself" };
     }
 
     const { error: allowedUserError } = await supabase
