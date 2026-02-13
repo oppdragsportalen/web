@@ -33,9 +33,12 @@ export async function GetAvailableAssignments(
 
   let assignmentsQuery = supabase
     .from("assignments")
-    .select("id, title, description, deadline, visibility, created_at", {
-      count: "exact",
-    })
+    .select(
+      "id, title, description, deadline, creator_id, visibility, created_at",
+      {
+        count: "exact",
+      },
+    )
     .eq("visibility", "public")
     .neq("creator_id", user.id)
     .not("id", "in", claimedIds.length ? `(${claimedIds.join(",")})` : "0");
@@ -46,7 +49,7 @@ export async function GetAvailableAssignments(
     );
   }
 
-  const {
+  let {
     data: assignments,
     error,
     count,
@@ -59,6 +62,33 @@ export async function GetAvailableAssignments(
   }
 
   const hasMore = count ? (batchIndex + 1) * ITEMS_PER_LOAD < count : false;
+
+  const creatorIds = [
+    ...new Set((assignments ?? []).map((a) => a.creator_id).filter(Boolean)),
+  ];
+
+  const creatorEmailMap = new Map<string, string>();
+
+  if (creatorIds.length > 0) {
+    const { data: emailsList, error: emailError } = await supabase.rpc(
+      "get_user_emails_by_ids",
+      {
+        user_ids: creatorIds,
+      },
+    );
+
+    if (emailsList && !emailError) {
+      (emailsList as Array<{ id: string; email: string }>).forEach((row) => {
+        creatorEmailMap.set(row.id, row.email);
+      });
+    }
+  }
+
+  // Add creator email to assignments
+  assignments = (assignments ?? []).map((assignment) => ({
+    ...assignment,
+    creator_email: creatorEmailMap.get(assignment.creator_id),
+  }));
 
   return { assignments: assignments ?? [], hasMore, error: null };
 }

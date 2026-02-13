@@ -213,6 +213,21 @@ begin
 end;
 $$;
 
+-- Function to get emails by array of user IDs
+create or replace function get_user_emails_by_ids(user_ids uuid[])
+returns table (
+  id uuid,
+  email text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select id, email
+  from auth.users
+  where id = any(user_ids);
+$$;
+
 -- ============================================
 -- TRIGGERS
 -- ============================================

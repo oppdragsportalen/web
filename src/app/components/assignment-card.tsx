@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Card, Box, Text, Badge, Flex } from "@radix-ui/themes";
+import { Card, Box, Text, Badge, Flex, Tooltip } from "@radix-ui/themes";
 
 type Props = {
   assignment: {
@@ -7,6 +7,7 @@ type Props = {
     title: string;
     description: string;
     deadline: string;
+    creator_email?: string;
     visibility: string;
     status?: "not_taken" | "accepted" | "in_progress" | "finished";
   };
@@ -31,7 +32,11 @@ function getVisibilityBadge(visibility: string) {
     case "public":
       return <Badge color="cyan">Public</Badge>;
     default:
-      return <Badge color="gray" variant="outline">Restricted</Badge>;
+      return (
+        <Badge color="gray" variant="outline">
+          Restricted
+        </Badge>
+      );
   }
 }
 
@@ -46,16 +51,25 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
             {getStatusBadge(assignment.status)}
           </Flex>
         </Flex>
-        <Box>
-          <Text size="2" color="gray">
-            Due:{" "}
-            {new Date(assignment.deadline).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </Text>
-        </Box>
+        <Flex justify="between">
+          <Box>
+            <Text size="2" color="gray">
+              Due:{" "}
+              {new Date(assignment.deadline).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </Text>
+          </Box>
+          <Box>
+            <Tooltip content={`Created by ${assignment.creator_email} `}>
+              <Text size="2" color="gray">
+                {assignment.creator_email}
+              </Text>
+            </Tooltip>
+          </Box>
+        </Flex>
       </Card>
     </Link>
   );
