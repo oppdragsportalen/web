@@ -18,6 +18,12 @@ export async function CreateAssignment(formData: FormData) {
     return { error: "Deadline is required" };
   }
 
+  // Validate deadline
+  const deadlineDate = new Date(deadline);
+  if (deadlineDate <= new Date()) {
+    return { error: "Invalid deadline" };
+  }
+
   if (visibility === "restricted" && !assignedEmail) {
     return {
       error: "Please enter a user for this restricted assignment",
@@ -74,6 +80,12 @@ export async function CreateAssignment(formData: FormData) {
     if (!userId) {
       await supabase.from("assignments").delete().eq("id", assignment.id);
       return { error: `No user found with email: ${email}` };
+    }
+
+    // Prevent self-assignment
+    if (userId === user.id) {
+      await supabase.from("assignments").delete().eq("id", assignment.id);
+      return { error: "You cannot assign an assignment to yourself" };
     }
 
     // Insert allowed user

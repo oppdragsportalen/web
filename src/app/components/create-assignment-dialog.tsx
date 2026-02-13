@@ -33,6 +33,13 @@ export function CreateAssignmentDialog({
   const [error, setError] = useState("");
   const [isRestricted, setIsRestricted] = useState(false);
 
+  // Set default deadline to 24 hours from now
+  const getDefaultDeadline = () => {
+    const now = new Date();
+    now.setHours(now.getHours() + 24);
+    return now.toISOString().slice(0, 16);
+  };
+
   const handleSubmit = async (formData: FormData) => {
     setError("");
 
@@ -96,9 +103,6 @@ export function CreateAssignmentDialog({
               <Text as="div" size="2" mb="1" weight="bold">
                 Deadline
               </Text>
-              <Text as="div" size="1" color="gray" mb="1" id="deadline-hint">
-                Click to select date and time
-              </Text>
               <TextField.Root
                 id="deadline"
                 type="datetime-local"
@@ -108,6 +112,8 @@ export function CreateAssignmentDialog({
                 aria-required="true"
                 aria-label="Assignment deadline"
                 aria-describedby="deadline-hint"
+                defaultValue={getDefaultDeadline()}
+                min={new Date().toISOString().slice(0, 16)}
               />
             </label>
 
@@ -160,6 +166,8 @@ export function CreateAssignmentDialog({
                   required={isRestricted}
                   aria-required={isRestricted}
                   aria-label="User email address"
+                  disabled={!isRestricted}
+                  tabIndex={isRestricted ? 0 : -1}
                 />
               </label>
             </div>

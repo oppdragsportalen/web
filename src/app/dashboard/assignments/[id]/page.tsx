@@ -48,7 +48,8 @@ async function getAssignment(id: string, userId: string) {
         .from("assignment_allowed_users")
         .select("user_id")
         .eq("assignment_id", assignment.id)
-        .single();
+        .limit(1)
+        .maybeSingle();
 
       if (allowedUsers?.user_id) {
         const { data: userEmail } = await supabase.rpc("get_user_email_by_id", {
