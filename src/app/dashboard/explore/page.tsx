@@ -1,7 +1,8 @@
-import { Box, Text } from "@radix-ui/themes";
+import { Box, Text, Tabs } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { GetAvailableAssignments } from "@/app/actions/get-available-assignments";
+import { GetRestrictedAssignments } from "@/app/actions/get-restricted-assignments";
 import ExploreClient from "@/app/components/explore-client";
 import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
 import { Suspense } from "react";
@@ -40,6 +41,40 @@ async function ExploreContent() {
   );
 }
 
+async function RestrictedContent() {
+  const supabase = await createSupabaseServer();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const {
+    assignments: initialAssignments,
+    hasMore,
+    error,
+  } = await GetRestrictedAssignments(0);
+
+  if (error) {
+    return (
+      <Text size="2" color="red">
+        {error}
+      </Text>
+    );
+  }
+
+  return (
+    <ExploreClient
+      initialAssignments={initialAssignments}
+      initialHasMore={hasMore}
+      fetchAction={GetRestrictedAssignments}
+    />
+  );
+}
+
 export default function ExplorePage() {
   return (
     <div className="p-4 min-w-80">
@@ -58,7 +93,30 @@ export default function ExplorePage() {
           </>
         }
       >
-        <ExploreContent />
+        <Tabs.Root defaultValue="public">
+          <Tabs.List>
+            <Tabs.Trigger value="public">Public</Tabs.Trigger>
+            <Tabs.Trigger value="restricted">Assigned to you</Tabs.Trigger>
+          </Tabs.List>
+
+          <Tabs.Content value="public">
+            <ExploreContent />
+          </Tabs.Content>
+
+          <Tabs.Content value="restricted">
+            <Suspense
+              fallback={
+                <>
+                  <AssignmentCardSkeleton />
+                  <AssignmentCardSkeleton />
+                  <AssignmentCardSkeleton />
+                </>
+              }
+            >
+              <RestrictedContent />
+            </Suspense>
+          </Tabs.Content>
+        </Tabs.Root>
       </Suspense>
     </div>
   );

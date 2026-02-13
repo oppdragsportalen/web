@@ -113,13 +113,9 @@ create policy assignments_delete_owner on public.assignments
 -- ALLOWED USERS POLICIES
 -- ============================================
 
--- Read: assignment creator or the user themselves
-create policy allowed_users_select_owner_or_self on public.assignment_allowed_users
+-- Read: only the assigned user (creators can access allowed users by querying their own assignments and joining to this table)
   for select using (
-    auth.uid() in (
-      select creator_id from public.assignments where id = assignment_allowed_users.assignment_id
-    )
-    or auth.uid() = assignment_allowed_users.user_id
+    auth.uid() = assignment_allowed_users.user_id
   );
 
 -- Insert: only assignment creator

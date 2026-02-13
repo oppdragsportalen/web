@@ -19,6 +19,7 @@ type Assignment = {
 type ExploreClientProps = {
   initialAssignments: Assignment[];
   initialHasMore: boolean;
+  fetchAction?: typeof GetAvailableAssignments;
 };
 
 function appendUniqueAssignments(
@@ -34,6 +35,7 @@ function appendUniqueAssignments(
 export default function ExploreClient({
   initialAssignments,
   initialHasMore,
+  fetchAction = GetAvailableAssignments,
 }: ExploreClientProps) {
   const [assignments, setAssignments] =
     useState<Assignment[]>(initialAssignments);
@@ -50,7 +52,7 @@ export default function ExploreClient({
     setIsLoading(true);
     try {
       const { assignments: newAssignments, hasMore: moreAvailable } =
-        await GetAvailableAssignments(batchIndex, query.trim());
+        await fetchAction(batchIndex, query.trim());
 
       setAssignments((prev) => appendUniqueAssignments(prev, newAssignments));
       setHasMore(moreAvailable);
@@ -74,7 +76,7 @@ export default function ExploreClient({
       setIsLoading(true);
       try {
         const { assignments: newAssignments, hasMore: moreAvailable } =
-          await GetAvailableAssignments(0, query.trim());
+          await fetchAction(0, query.trim());
 
         if (!isActive) return;
         setAssignments(newAssignments);
