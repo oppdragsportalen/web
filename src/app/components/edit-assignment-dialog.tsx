@@ -48,6 +48,13 @@ export function EditAssignmentDialog({
     assignment.assignedEmail || "",
   );
 
+  // Set max deadline to 1 year from now
+  const getMaxDeadline = () => {
+    const now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    return now.toISOString().slice(0, 16);
+  };
+
   useEffect(() => {
     if (open) {
       setIsRestricted(assignment.visibility === "restricted");
@@ -138,6 +145,7 @@ export function EditAssignmentDialog({
                   .toISOString()
                   .slice(0, 16)}
                 min={new Date().toISOString().slice(0, 16)}
+                max={getMaxDeadline()}
               />
             </label>
 

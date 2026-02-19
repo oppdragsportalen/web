@@ -20,8 +20,11 @@ export async function CreateAssignment(formData: FormData) {
 
   // Validate deadline
   const deadlineDate = new Date(deadline);
-  if (deadlineDate <= new Date()) {
-    return { error: "Invalid deadline" };
+  const now = new Date();
+  const max = new Date(now.setFullYear(now.getFullYear() + 1));
+
+  if (!(deadlineDate > new Date() && deadlineDate <= max)) {
+    return { error: "Invalid deadline date" };
   }
 
   if (visibility === "restricted" && !assignedEmail) {

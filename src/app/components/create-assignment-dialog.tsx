@@ -40,6 +40,13 @@ export function CreateAssignmentDialog({
     return now.toISOString().slice(0, 16);
   };
 
+  // Set max deadline to 1 year from now
+  const getMaxDeadline = () => {
+    const now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    return now.toISOString().slice(0, 16);
+  };
+
   const handleSubmit = async (formData: FormData) => {
     setError("");
 
@@ -114,6 +121,7 @@ export function CreateAssignmentDialog({
                 aria-describedby="deadline-hint"
                 defaultValue={getDefaultDeadline()}
                 min={new Date().toISOString().slice(0, 16)}
+                max={getMaxDeadline()}
               />
             </label>
 
