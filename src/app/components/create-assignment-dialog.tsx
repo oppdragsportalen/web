@@ -14,6 +14,12 @@ import {
 } from "@radix-ui/themes";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { CreateAssignment } from "@/app/actions/create-assignment";
+import {
+  getLocalNowDatetime,
+  getLocalDefaultDatetime,
+  getLocalMaxDatetime,
+  localDatetimeToUTC,
+} from "@/lib/timezone";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -33,22 +39,17 @@ export function CreateAssignmentDialog({
   const [error, setError] = useState("");
   const [isRestricted, setIsRestricted] = useState(false);
 
-  // Set default deadline to 24 hours from now
-  const getDefaultDeadline = () => {
-    const now = new Date();
-    now.setHours(now.getHours() + 24);
-    return now.toISOString().slice(0, 16);
-  };
-
-  // Set max deadline to 1 year from now
-  const getMaxDeadline = () => {
-    const now = new Date();
-    now.setFullYear(now.getFullYear() + 1);
-    return now.toISOString().slice(0, 16);
-  };
-
   const handleSubmit = async (formData: FormData) => {
     setError("");
+
+    // Convert local datetime to UTC
+    const deadlineLocal = formData.get("deadline") as string;
+    const deadlineUTC = localDatetimeToUTC(deadlineLocal);
+    if (!deadlineUTC) {
+      setError("Invalid deadline format");
+      return;
+    }
+    formData.set("deadline", deadlineUTC);
 
     formData.append("visibility", isRestricted ? "restricted" : "public");
     if (isRestricted) {
@@ -119,9 +120,9 @@ export function CreateAssignmentDialog({
                 aria-required="true"
                 aria-label="Assignment deadline"
                 aria-describedby="deadline-hint"
-                defaultValue={getDefaultDeadline()}
-                min={new Date().toISOString().slice(0, 16)}
-                max={getMaxDeadline()}
+                defaultValue={getLocalDefaultDatetime()}
+                min={getLocalNowDatetime()}
+                max={getLocalMaxDatetime()}
               />
             </label>
 

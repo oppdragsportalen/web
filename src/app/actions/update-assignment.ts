@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getMaxDeadlineUTC } from "@/lib/timezone";
 
 export async function UpdateAssignment(formData: FormData) {
   const id = formData.get("id") as string;
@@ -23,12 +24,17 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Deadline is required" };
   }
 
+  // Validate ISO string
+  if (!deadline.includes("Z")) {
+    return { error: "Invalid deadline format" };
+  }
+
   // Validate deadline
   const deadlineDate = new Date(deadline);
   const now = new Date();
-  const max = new Date(now.setFullYear(now.getFullYear() + 1));
+  const max = getMaxDeadlineUTC();
 
-  if (!(deadlineDate > new Date() && deadlineDate <= max)) {
+  if (!(deadlineDate > now && deadlineDate <= max)) {
     return { error: "Invalid deadline date" };
   }
 

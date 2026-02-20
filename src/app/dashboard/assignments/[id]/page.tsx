@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AssignmentAuthorActions } from "@/app/components/assignment-author-actions";
 import { AssignmentActionButton } from "@/app/components/assignment-action-button";
+import { formatDateToLocal } from "@/lib/timezone";
 
 async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
@@ -192,15 +193,7 @@ export default async function AssignmentDetailPage({
                 </Text>
               </Box>
               <Card>
-                <Text size="2">
-                  {new Date(assignment.deadline).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </Text>
+                <Text size="2">{formatDateToLocal(assignment.deadline)}</Text>
               </Card>
             </Box>
             <Box>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, Box, Text, Badge, Flex, Tooltip } from "@radix-ui/themes";
+import { formatDateToLocal } from "@/lib/timezone";
 
 type Props = {
   assignment: {
@@ -54,12 +55,7 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
         <Flex justify="between">
           <Box>
             <Text size="2" color="gray">
-              Due:{" "}
-              {new Date(assignment.deadline).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
+              Due: {formatDateToLocal(assignment.deadline, { year: "numeric", month: "short", day: "numeric" })}
             </Text>
           </Box>
           <Box>

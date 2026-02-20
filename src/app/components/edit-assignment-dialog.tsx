@@ -15,6 +15,12 @@ import {
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Pencil1Icon } from "@radix-ui/react-icons";
 import { UpdateAssignment } from "@/app/actions/update-assignment";
+import {
+  utcToLocalDatetime,
+  getLocalNowDatetime,
+  getLocalMaxDatetime,
+  localDatetimeToUTC,
+} from "@/lib/timezone";
 
 function UpdateButton() {
   const { pending } = useFormStatus();
@@ -48,13 +54,6 @@ export function EditAssignmentDialog({
     assignment.assignedEmail || "",
   );
 
-  // Set max deadline to 1 year from now
-  const getMaxDeadline = () => {
-    const now = new Date();
-    now.setFullYear(now.getFullYear() + 1);
-    return now.toISOString().slice(0, 16);
-  };
-
   useEffect(() => {
     if (open) {
       setIsRestricted(assignment.visibility === "restricted");
@@ -64,6 +63,15 @@ export function EditAssignmentDialog({
 
   const handleSubmit = async (formData: FormData) => {
     setError("");
+
+    // Convert local datetime to UTC
+    const deadlineLocal = formData.get("deadline") as string;
+    const deadlineUTC = localDatetimeToUTC(deadlineLocal);
+    if (!deadlineUTC) {
+      setError("Invalid deadline format");
+      return;
+    }
+    formData.set("deadline", deadlineUTC);
 
     formData.append("visibility", isRestricted ? "restricted" : "public");
     if (isRestricted) {
@@ -141,11 +149,9 @@ export function EditAssignmentDialog({
                 aria-required="true"
                 aria-label="Assignment deadline"
                 aria-describedby="deadline-hint"
-                defaultValue={new Date(assignment.deadline)
-                  .toISOString()
-                  .slice(0, 16)}
-                min={new Date().toISOString().slice(0, 16)}
-                max={getMaxDeadline()}
+                defaultValue={utcToLocalDatetime(assignment.deadline)}
+                min={getLocalNowDatetime()}
+                max={getLocalMaxDatetime()}
               />
             </label>
 
