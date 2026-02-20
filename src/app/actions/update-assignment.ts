@@ -54,43 +54,15 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Not logged in" };
   }
 
-  const { data: assignment, error: assignmentError } = await supabase
-    .from("assignments")
-    .update({
-      title,
-      description,
-      deadline,
-      visibility,
-    })
-    .eq("id", id)
-    .eq("creator_id", user.id)
-    .select()
-    .single();
+  // Validate restricted assignment
+  let targetUserId: string | null = null;
 
-  if (assignmentError) {
-    return { error: `Failed to update assignment: ${assignmentError.message}` };
-  }
-
-  // Delete allowed user for public assignment
-  if (visibility === "public") {
-    await supabase
-      .from("assignment_allowed_users")
-      .delete()
-      .eq("assignment_id", assignment.id);
-  }
-
-  // Update allowed users for restricted assignment
-  if (visibility === "restricted" && assignment && assignedEmail) {
+  if (visibility === "restricted" && assignedEmail) {
     const email = assignedEmail.trim().toLowerCase();
 
     if (!email) {
       return { error: "Please enter a valid email" };
     }
-
-    await supabase
-      .from("assignment_allowed_users")
-      .delete()
-      .eq("assignment_id", assignment.id);
 
     const { data: userId, error: userError } = await supabase.rpc(
       "get_user_id_by_email",
@@ -109,11 +81,46 @@ export async function UpdateAssignment(formData: FormData) {
       return { error: "You cannot assign an assignment to yourself" };
     }
 
+    targetUserId = userId;
+  }
+
+  // Update assignment
+  const { data: assignment, error: assignmentError } = await supabase
+    .from("assignments")
+    .update({
+      title,
+      description,
+      deadline,
+      visibility,
+    })
+    .eq("id", id)
+    .eq("creator_id", user.id)
+    .select()
+    .single();
+
+  if (assignmentError) {
+    return { error: `Failed to update assignment: ${assignmentError.message}` };
+  }
+
+  if (!assignment) {
+    return {
+      error: "Assignment not found or you don't have permission to update it",
+    };
+  }
+
+  // Delete existing allowed users
+  await supabase
+    .from("assignment_allowed_users")
+    .delete()
+    .eq("assignment_id", assignment.id);
+
+  // Add new allowed user if restricted
+  if (visibility === "restricted" && targetUserId) {
     const { error: allowedUserError } = await supabase
       .from("assignment_allowed_users")
       .insert({
         assignment_id: assignment.id,
-        user_id: userId,
+        user_id: targetUserId,
       });
 
     if (allowedUserError) {
