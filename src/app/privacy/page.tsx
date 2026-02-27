@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: January 28, 2026
+              Last updated: February 27, 2026
             </Text>
 
             <Box mb="6">
@@ -100,6 +100,10 @@ export default function PrivacyPolicyPage() {
                 <strong>Private Assignments:</strong> Private assignments are
                 only visible to you and users you explicitly grant access to via
                 their email addresses.
+              </Text>
+              <Text as="p" size="3" mb="3">
+                <strong>Email Visibility:</strong> Your email address is visible
+                to all users for contact purposes.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Third-Party Services:</strong> We use Supabase, a secure
