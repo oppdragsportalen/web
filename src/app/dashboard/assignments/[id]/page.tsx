@@ -6,7 +6,7 @@ import { AssignmentAuthorActions } from "@/app/components/assignment-author-acti
 import { AssignmentActionButton } from "@/app/components/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
 
-async function getAssignment(id: string, userId: string) {
+async function getAssignment(id: string, userId: string, userEmail?: string) {
   const supabase = await createSupabaseServer();
 
   // Get assignment authored by the user
@@ -76,8 +76,30 @@ async function getAssignment(id: string, userId: string) {
     .single();
 
   if (claim && claim.assignments) {
-    const fullAssignment = { ...claim.assignments, claimStatus: claim.status };
-    return { assignment: fullAssignment, isAuthor: false, error: null };
+    const assignment = Array.isArray(claim.assignments)
+      ? claim.assignments[0]
+      : claim.assignments;
+    let creatorEmail: string | null = null;
+
+    // Get creator email
+    if (assignment.creator_id) {
+      const { data: email } = await supabase.rpc("get_user_email_by_id", {
+        user_id: assignment.creator_id,
+      });
+      creatorEmail = email;
+    }
+
+    return {
+      assignment: {
+        ...assignment,
+        claimStatus: claim.status,
+        ...(assignment.visibility === "restricted" &&
+          userEmail && { assignedEmail: userEmail }),
+        ...(creatorEmail && { creator_email: creatorEmail }),
+      },
+      isAuthor: false,
+      error: null,
+    };
   }
 
   return { assignment: null, isAuthor: false, error: "Assignment not found" };
@@ -125,7 +147,11 @@ export default async function AssignmentDetailPage({
     redirect("/login");
   }
 
-  const { assignment, isAuthor, error } = await getAssignment(id, user.id);
+  const { assignment, isAuthor, error } = await getAssignment(
+    id,
+    user.id,
+    user.email ?? undefined,
+  );
 
   if (error || !assignment) {
     redirect("/dashboard/assignments");
@@ -185,7 +211,7 @@ export default async function AssignmentDetailPage({
         )}
 
         <Box mb="5">
-          <Flex gap="4">
+          <div className="flex flex-wrap gap-4">
             <Box>
               <Box>
                 <Text size="2" weight="medium" color="gray">
@@ -193,7 +219,9 @@ export default async function AssignmentDetailPage({
                 </Text>
               </Box>
               <Card>
-                <Text size="2">{formatDateToLocal(assignment.deadline)}</Text>
+                <Text size="2" className="whitespace-nowrap">
+                  {formatDateToLocal(assignment.deadline)}
+                </Text>
               </Card>
             </Box>
             <Box>
@@ -202,8 +230,8 @@ export default async function AssignmentDetailPage({
                   Status
                 </Text>
               </Box>
-              <Card className="w-full">
-                <Text size="2" className="capitalize">
+              <Card>
+                <Text size="2" className="capitalize whitespace-nowrap">
                   {(() => {
                     const status =
                       (assignment as any).claimStatus ||
@@ -222,13 +250,42 @@ export default async function AssignmentDetailPage({
                   Assignment Type
                 </Text>
               </Box>
-              <Card className="w-full">
-                <Text size="2" className="capitalize">
+              <Card>
+                <Text size="2" className="capitalize whitespace-nowrap">
                   {assignment.visibility}
                 </Text>
               </Card>
             </Box>
-          </Flex>
+            {!isAuthor && (assignment as any).creator_email && (
+              <Box>
+                <Box>
+                  <Text size="2" weight="medium" color="gray">
+                    Created By
+                  </Text>
+                </Box>
+                <Card>
+                  <Text size="2" className="whitespace-nowrap">
+                    {(assignment as any).creator_email}
+                  </Text>
+                </Card>
+              </Box>
+            )}
+            {assignment.visibility === "restricted" &&
+              (assignment as any).assignedEmail && (
+                <Box>
+                  <Box>
+                    <Text size="2" weight="medium" color="gray">
+                      Assigned To
+                    </Text>
+                  </Box>
+                  <Card>
+                    <Text size="2" className="whitespace-nowrap">
+                      {(assignment as any).assignedEmail}
+                    </Text>
+                  </Card>
+                </Box>
+              )}
+          </div>
         </Box>
 
         <Separator size="4" />

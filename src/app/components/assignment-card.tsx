@@ -9,6 +9,7 @@ type Props = {
     description: string;
     deadline: string;
     creator_email?: string;
+    assigned_email?: string;
     visibility: string;
     status?: "not_taken" | "accepted" | "in_progress" | "finished";
   };
@@ -55,16 +56,30 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
         <Flex justify="between">
           <Box>
             <Text size="2" color="gray">
-              Due: {formatDateToLocal(assignment.deadline, { year: "numeric", month: "short", day: "numeric" })}
+              Due:{" "}
+              {formatDateToLocal(assignment.deadline, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
             </Text>
           </Box>
           <Box>
-            <Tooltip content={`Created by ${assignment.creator_email} `}>
+            <Tooltip content={`Assigned to ${assignment.assigned_email} `}>
               <Text size="2" color="gray">
-                {assignment.creator_email}
+                {assignment.assigned_email}
               </Text>
             </Tooltip>
           </Box>
+          {assignment.creator_email && (
+            <Box>
+              <Tooltip content={`Created by ${assignment.creator_email} `}>
+                <Text size="2" color="gray">
+                  {assignment.creator_email}
+                </Text>
+              </Tooltip>
+            </Box>
+          )}
         </Flex>
       </Card>
     </Link>

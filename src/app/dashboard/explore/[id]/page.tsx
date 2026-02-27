@@ -10,13 +10,18 @@ async function getAssignment(id: string, userId: string) {
 
   const { data: assignment, error } = await supabase
     .from("assignments")
-    .select("id, title, description, deadline, visibility, created_at")
+    .select(
+      "id, title, description, deadline, visibility, created_at, creator_id",
+    )
     .eq("id", id)
     .single();
 
   if (error || !assignment) {
     return { assignment: null, error };
   }
+
+  let assignedEmail: string | null = null;
+  let creatorEmail: string | null = null;
 
   if (assignment.visibility === "restricted") {
     const { data: allowed } = await supabase
@@ -29,6 +34,22 @@ async function getAssignment(id: string, userId: string) {
     if (!allowed) {
       return { assignment: null, error: { message: "Access denied" } };
     }
+
+    // Get assigned user email for restricted assignments
+    if (allowed?.user_id) {
+      const { data: email } = await supabase.rpc("get_user_email_by_id", {
+        user_id: allowed.user_id,
+      });
+      assignedEmail = email;
+    }
+  }
+
+  // Get creator email
+  if (assignment.creator_id) {
+    const { data: email } = await supabase.rpc("get_user_email_by_id", {
+      user_id: assignment.creator_id,
+    });
+    creatorEmail = email;
   }
 
   // Get claim status
@@ -40,7 +61,12 @@ async function getAssignment(id: string, userId: string) {
     .single();
 
   return {
-    assignment: { ...assignment, claimStatus: claim?.status },
+    assignment: {
+      ...assignment,
+      claimStatus: claim?.status,
+      ...(assignedEmail && { assignedEmail }),
+      ...(creatorEmail && { creator_email: creatorEmail }),
+    },
     error: null,
   };
 }
@@ -137,7 +163,7 @@ export default async function AssignmentDetailPage({
         )}
 
         <Box mb="5">
-          <Flex gap="4">
+          <div className="flex flex-wrap gap-4">
             <Box>
               <Box>
                 <Text size="2" weight="medium" color="gray">
@@ -145,7 +171,9 @@ export default async function AssignmentDetailPage({
                 </Text>
               </Box>
               <Card>
-                <Text size="2">{formatDateToLocal(assignment.deadline)}</Text>
+                <Text size="2" className="whitespace-nowrap">
+                  {formatDateToLocal(assignment.deadline)}
+                </Text>
               </Card>
             </Box>
             <Box>
@@ -154,8 +182,8 @@ export default async function AssignmentDetailPage({
                   Status
                 </Text>
               </Box>
-              <Card className="w-full">
-                <Text size="2" className="capitalize">
+              <Card>
+                <Text size="2" className="capitalize whitespace-nowrap">
                   {(() => {
                     const status = (assignment as any).claimStatus;
                     if (status === "accepted") return "Taken";
@@ -172,18 +200,53 @@ export default async function AssignmentDetailPage({
                   Assignment Type
                 </Text>
               </Box>
-              <Card className="w-full">
-                <Text size="2" className="capitalize">
+              <Card>
+                <Text size="2" className="capitalize whitespace-nowrap">
                   {assignment.visibility}
                 </Text>
               </Card>
             </Box>
-          </Flex>
+            <Box>
+              <Box>
+                <Text size="2" weight="medium" color="gray">
+                  Created By
+                </Text>
+              </Box>
+              <Card>
+                <Text size="2" className="whitespace-nowrap">
+                  {(assignment as any).creator_email}
+                </Text>
+              </Card>
+            </Box>
+            {assignment.visibility === "restricted" &&
+              (assignment as any).assignedEmail && (
+                <Box>
+                  <Box>
+                    <Text size="2" weight="medium" color="gray">
+                      Assigned To
+                    </Text>
+                  </Box>
+                  <Card>
+                    <Text size="2" className="whitespace-nowrap">
+                      {(assignment as any).assignedEmail}
+                    </Text>
+                  </Card>
+                </Box>
+              )}
+          </div>
         </Box>
 
         <Separator size="4" />
 
-        <Flex justify="end" align="center" gap="3" mt="4">
+        <Flex justify="between" align="center" gap="3" wrap="wrap" mt="2">
+          <Text size="2" color="gray">
+            Created{" "}
+            {new Date(assignment.created_at).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })}
+          </Text>
           <AssignmentActionButton
             assignmentId={assignment.id}
             isTaken={(assignment as any).claimStatus === "accepted"}

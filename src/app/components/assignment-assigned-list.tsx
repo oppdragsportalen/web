@@ -27,7 +27,8 @@ export default async function AssignmentAssignedList() {
         description,
         deadline,
         visibility,
-        created_at
+        created_at,
+        creator_id
       )
     `,
     )
@@ -60,12 +61,34 @@ export default async function AssignmentAssignedList() {
     );
   }
 
+  const creatorIds = [
+    ...new Set((assignments ?? []).map((a: any) => a.assignments?.creator_id).filter(Boolean)),
+  ];
+
+  const creatorEmailMap = new Map<string, string>();
+
+  if (creatorIds.length > 0) {
+    const { data: emailsList } = await supabase.rpc(
+      "get_user_emails_by_ids",
+      {
+        user_ids: creatorIds,
+      },
+    );
+
+    if (emailsList) {
+      (emailsList as Array<{ id: string; email: string }>).forEach((row) => {
+        creatorEmailMap.set(row.id, row.email);
+      });
+    }
+  }
+
   return (
     <Box>
       {assignments
         .map((claim: any) => ({
           ...claim.assignments,
           status: claim.status,
+          creator_email: creatorEmailMap.get(claim.assignments?.creator_id),
         }))
         .filter((a: any) => a.id)
         .map((a: any) => (

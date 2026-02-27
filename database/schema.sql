@@ -32,10 +32,10 @@ create table if not exists public.assignments (
 
 -- Allowed users for restricted assignments
 create table if not exists public.assignment_allowed_users (
-  assignment_id uuid not null references public.assignments(id) on delete cascade,
+  assignment_id uuid not null unique references public.assignments(id) on delete cascade,
   user_id uuid not null references auth.users(id) on delete cascade,
   added_at timestamptz default now(),
-  primary key (assignment_id, user_id)
+  primary key (assignment_id)
 );
 
 -- Assignment claims (accept/decline)
@@ -113,9 +113,11 @@ create policy assignments_delete_owner on public.assignments
 -- ALLOWED USERS POLICIES
 -- ============================================
 
--- Read: only the assigned user (creators can access allowed users by querying their own assignments and joining to this table)
+-- Read: assigned user or assignment creator
+create policy allowed_users_select_self_or_creator on public.assignment_allowed_users
   for select using (
     auth.uid() = assignment_allowed_users.user_id
+    or public.is_assignment_creator(assignment_allowed_users.assignment_id)
   );
 
 -- Insert: only assignment creator
@@ -178,6 +180,21 @@ create policy claims_select_owner_or_self on public.assignment_claims
 -- ============================================
 -- UTILITY FUNCTIONS
 -- ============================================
+
+-- Helper to check assignment creator without RLS recursion
+create or replace function public.is_assignment_creator(p_assignment_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.assignments a
+    where a.id = p_assignment_id
+      and a.creator_id = auth.uid()
+  );
+$$;
 
 -- Function to get user ID by email
 create or replace function get_user_id_by_email(email text)

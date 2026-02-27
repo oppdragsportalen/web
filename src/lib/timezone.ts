@@ -62,7 +62,7 @@ export function formatDateToLocal(
     hour12: false,
   };
 
-  return date.toLocaleString("en-GB", options || defaultOptions);
+  return date.toLocaleString("en-US", options || defaultOptions);
 }
 
 // Convert a UTC datetime to local datetime-local format
