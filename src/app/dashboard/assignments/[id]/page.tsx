@@ -1,7 +1,16 @@
-import { Card, Box, Text, Flex, Badge, Separator } from "@radix-ui/themes";
+import {
+  Card,
+  Box,
+  Text,
+  Flex,
+  Badge,
+  Separator,
+  Button,
+} from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
 import { AssignmentAuthorActions } from "@/app/components/assignment-author-actions";
 import { AssignmentActionButton } from "@/app/components/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
@@ -314,7 +323,36 @@ export default async function AssignmentDetailPage({
                 </Box>
               )}
           </div>
+
         </Box>
+
+          <Flex gap="2" mb="5" wrap="wrap" align="center">
+            {isAuthor ? (
+              <>
+                {(assignment as any).claimed_by_email && (
+                  <Button asChild variant="soft" color="gray">
+                    <a
+                      href={`mailto:${(assignment as any).claimed_by_email}?subject=Re: ${assignment.title}`}
+                    >
+                      <EnvelopeClosedIcon />
+                      Contact Assignee
+                    </a>
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <Button asChild variant="soft" color="gray">
+                  <a
+                    href={`mailto:${(assignment as any).creator_email}?subject=Re: ${assignment.title}`}
+                  >
+                    <EnvelopeClosedIcon />
+                    Contact Author
+                  </a>
+                </Button>
+              </>
+            )}
+          </Flex>
 
         <Separator size="4" />
 
