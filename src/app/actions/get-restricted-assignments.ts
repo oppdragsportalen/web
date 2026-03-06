@@ -21,10 +21,13 @@ export async function GetRestrictedAssignments(
   // Get claimed assignment IDs
   const { data: claims } = await supabase
     .from("assignment_claims")
-    .select("assignment_id")
-    .eq("status", "accepted");
+    .select("assignment_id, status")
+    .in("status", ["accepted", "in_progress", "finished"]);
 
   const claimedIds = claims?.map((c) => c.assignment_id) || [];
+  const claimStatusByAssignmentId = new Map<string, string>(
+    (claims ?? []).map((c) => [c.assignment_id, c.status]),
+  );
 
   const rangeStart = batchIndex * ITEMS_PER_LOAD;
   const rangeEnd = rangeStart + ITEMS_PER_LOAD - 1;
@@ -41,9 +44,9 @@ export async function GetRestrictedAssignments(
     .eq("assignment_allowed_users.user_id", user.id);
 
   if (claimedIds.length > 0) {
-    assignmentsQuery = assignmentsQuery.not(
+    assignmentsQuery = assignmentsQuery.filter(
       "id",
-      "in",
+      "not.in",
       `(${claimedIds.join(",")})`,
     );
   }
@@ -88,10 +91,11 @@ export async function GetRestrictedAssignments(
     }
   }
 
-  // Add creator email to assignments
+  // Add creator email and claim status to assignments
   assignments = (assignments ?? []).map((assignment) => ({
     ...assignment,
     creator_email: creatorEmailMap.get(assignment.creator_id),
+    status: claimStatusByAssignmentId.get(assignment.id),
   }));
 
   return { assignments, hasMore, error: null };
