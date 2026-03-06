@@ -22,7 +22,7 @@ export async function GetAvailableAssignments(
   const { data: claims } = await supabase
     .from("assignment_claims")
     .select("assignment_id")
-    .eq("status", "accepted");
+    .in("status", ["accepted", "in_progress", "finished"]);
 
   const claimedIds = claims?.map((c) => c.assignment_id) || [];
 
@@ -43,9 +43,9 @@ export async function GetAvailableAssignments(
     .neq("creator_id", user.id);
 
   if (claimedIds.length > 0) {
-    assignmentsQuery = assignmentsQuery.not(
+    assignmentsQuery = assignmentsQuery.filter(
       "id",
-      "in",
+      "not.in",
       `(${claimedIds.join(",")})`,
     );
   }

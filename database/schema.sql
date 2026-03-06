@@ -55,6 +55,11 @@ create index if not exists idx_assignments_created_at on public.assignments(crea
 create index if not exists idx_assignments_creator on public.assignments(creator_id);
 create index if not exists idx_claims_assignment on public.assignment_claims(assignment_id);
 
+-- Unique constraint: only one active claim per assignment
+create unique index if not exists idx_assignment_claims_unique_active 
+  on public.assignment_claims(assignment_id) 
+  where status in ('accepted', 'in_progress', 'finished');
+
 -- ============================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
@@ -174,6 +179,17 @@ create policy claims_select_owner_or_self on public.assignment_claims
       select 1 from public.assignments a
       where a.id = assignment_claims.assignment_id
         and a.creator_id = auth.uid()
+    )
+  );
+
+-- Read: anyone can see active claims on public assignments
+create policy claims_select_active_public on public.assignment_claims
+  for select using (
+    status in ('accepted', 'in_progress', 'finished') 
+    and exists (
+      select 1 from public.assignments a
+      where a.id = assignment_claims.assignment_id
+        and a.visibility = 'public'
     )
   );
 

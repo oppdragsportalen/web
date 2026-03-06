@@ -108,13 +108,13 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
 function getStatusBadge(status?: string) {
   switch (status) {
     case "accepted":
-      return <Badge color="blue">Taken</Badge>;
+      return <Badge color="blue">Accepted</Badge>;
     case "in_progress":
       return <Badge color="amber">In Progress</Badge>;
     case "finished":
-      return <Badge color="green">Finished</Badge>;
+      return <Badge color="green">Completed</Badge>;
     default:
-      return <Badge color="gray">Not Taken</Badge>;
+      return <Badge color="gray">Available</Badge>;
   }
 }
 
@@ -233,13 +233,11 @@ export default async function AssignmentDetailPage({
               <Card>
                 <Text size="2" className="capitalize whitespace-nowrap">
                   {(() => {
-                    const status =
-                      (assignment as any).claimStatus ||
-                      (assignment as any).status;
-                    if (status === "accepted") return "Taken";
+                    const status = (assignment as any).claimStatus;
+                    if (status === "accepted") return "Accepted";
                     if (status === "in_progress") return "In Progress";
-                    if (status === "finished") return "Finished";
-                    return "Not Taken";
+                    if (status === "finished") return "Completed";
+                    return "Available";
                   })()}
                 </Text>
               </Card>
@@ -315,6 +313,7 @@ export default async function AssignmentDetailPage({
             <AssignmentActionButton
               assignmentId={assignment.id}
               isTaken={!!(assignment as any).claimStatus}
+              status={(assignment as any).claimStatus}
             />
           )}
         </Flex>

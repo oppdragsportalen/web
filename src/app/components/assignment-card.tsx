@@ -19,13 +19,13 @@ type Props = {
 function getStatusBadge(status?: string) {
   switch (status) {
     case "accepted":
-      return <Badge color="blue">Taken</Badge>;
+      return <Badge color="blue">Accepted</Badge>;
     case "in_progress":
       return <Badge color="amber">In Progress</Badge>;
     case "finished":
-      return <Badge color="green">Finished</Badge>;
+      return <Badge color="green">Completed</Badge>;
     default:
-      return <Badge color="gray">Not Taken</Badge>;
+      return <Badge color="gray">Available</Badge>;
   }
 }
 
