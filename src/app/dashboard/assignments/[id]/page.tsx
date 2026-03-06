@@ -24,14 +24,27 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
     let fullAssignment: any = assignment;
     const { data: claim } = await supabase
       .from("assignment_claims")
-      .select("status")
+      .select("status, user_id")
       .eq("assignment_id", assignment.id)
-      .order("created_at", { ascending: false })
+      .in("status", ["accepted", "in_progress", "finished"])
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (claim?.status) {
       fullAssignment.claimStatus = claim.status;
+
+      // Get the email of who claimed it
+      if (claim.user_id) {
+        const { data: claimedByEmail } = await supabase.rpc(
+          "get_user_email_by_id",
+          {
+            user_id: claim.user_id,
+          },
+        );
+        if (claimedByEmail) {
+          fullAssignment.claimed_by_email = claimedByEmail;
+        }
+      }
     }
     if (assignment.visibility === "restricted") {
       const { data: allowedUsers } = await supabase
@@ -60,6 +73,7 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
     .select(
       `
       status,
+      user_id,
       assignments:assignment_id (
         id,
         title,
@@ -93,6 +107,7 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
       assignment: {
         ...assignment,
         claimStatus: claim.status,
+        claimed_by_email: userEmail,
         ...(assignment.visibility === "restricted" &&
           userEmail && { assignedEmail: userEmail }),
         ...(creatorEmail && { creator_email: creatorEmail }),
@@ -268,6 +283,21 @@ export default async function AssignmentDetailPage({
                 </Card>
               </Box>
             )}
+            {!(assignment.visibility === "restricted") &&
+              (assignment as any).claimed_by_email && (
+                <Box>
+                  <Box>
+                    <Text size="2" weight="medium" color="gray">
+                      Claimed By
+                    </Text>
+                  </Box>
+                  <Card>
+                    <Text size="2" className="whitespace-nowrap">
+                      {(assignment as any).claimed_by_email}
+                    </Text>
+                  </Card>
+                </Box>
+              )}
             {assignment.visibility === "restricted" &&
               (assignment as any).assignedEmail && (
                 <Box>
