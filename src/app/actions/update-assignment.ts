@@ -91,6 +91,19 @@ export async function UpdateAssignment(formData: FormData) {
     targetUserId = userId;
   }
 
+  let currentActiveClaimUserId: string | null = null;
+
+  if (visibility === "restricted") {
+    const { data: activeClaim } = await supabase
+      .from("assignment_claims")
+      .select("user_id")
+      .eq("assignment_id", id)
+      .in("status", ["accepted", "in_progress", "finished"])
+      .maybeSingle();
+
+    currentActiveClaimUserId = activeClaim?.user_id ?? null;
+  }
+
   // Update assignment
   const { data: assignment, error: assignmentError } = await supabase
     .from("assignments")
@@ -132,6 +145,24 @@ export async function UpdateAssignment(formData: FormData) {
 
     if (allowedUserError) {
       return { error: `Failed to assign user: ${allowedUserError.message}` };
+    }
+  }
+
+  // Remove the old claimant's claim if a different user is assigned.
+  if (
+    visibility === "restricted" &&
+    targetUserId &&
+    currentActiveClaimUserId &&
+    currentActiveClaimUserId !== targetUserId
+  ) {
+    const { error: claimsResetError } = await supabase
+      .from("assignment_claims")
+      .delete()
+      .eq("assignment_id", assignment.id)
+      .eq("user_id", currentActiveClaimUserId);
+
+    if (claimsResetError) {
+      return { error: `Failed to reset claims: ${claimsResetError.message}` };
     }
   }
 

@@ -4,7 +4,7 @@
 -- ============================================
 
 create type public.assignment_visibility as enum ('public','restricted');
-create type public.claim_status as enum ('not_taken','accepted','in_progress','finished');
+create type public.claim_status as enum ('accepted','in_progress','finished');
 
 -- ============================================
 -- TABLES
@@ -172,7 +172,14 @@ create policy claims_update_self on public.assignment_claims
 
 -- Delete: only own claim
 create policy claims_delete_self on public.assignment_claims
-  for delete using (auth.uid() = user_id);
+  for delete using (
+    auth.uid() = user_id
+    or exists (
+      select 1 from public.assignments a
+      where a.id = assignment_claims.assignment_id
+        and a.creator_id = auth.uid()
+    )
+  );
 
 -- Read: assignment creator sees all claims; user sees own claim
 create policy claims_select_owner_or_self on public.assignment_claims
