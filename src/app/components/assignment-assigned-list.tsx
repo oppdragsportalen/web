@@ -3,6 +3,33 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { AssignmentCard } from "./assignment-card";
 import { redirect } from "next/navigation";
 
+type Profile = {
+  id: string;
+  display_name: string | null;
+  username: string | null;
+};
+
+async function getProfileMapByIds(userIds: string[]) {
+  const uniqueUserIds = [...new Set(userIds.filter(Boolean))];
+  const map = new Map<string, Profile>();
+
+  if (uniqueUserIds.length === 0) {
+    return map;
+  }
+
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, display_name, username")
+    .in("id", uniqueUserIds);
+
+  (data ?? []).forEach((profile) => {
+    map.set(profile.id, profile as Profile);
+  });
+
+  return map;
+}
+
 export default async function AssignmentAssignedList() {
   const supabase = await createSupabaseServer();
 
@@ -62,25 +89,14 @@ export default async function AssignmentAssignedList() {
   }
 
   const creatorIds = [
-    ...new Set((assignments ?? []).map((a: any) => a.assignments?.creator_id).filter(Boolean)),
+    ...new Set(
+      (assignments ?? [])
+        .map((a: any) => a.assignments?.creator_id)
+        .filter(Boolean),
+    ),
   ];
 
-  const creatorEmailMap = new Map<string, string>();
-
-  if (creatorIds.length > 0) {
-    const { data: emailsList } = await supabase.rpc(
-      "get_user_emails_by_ids",
-      {
-        user_ids: creatorIds,
-      },
-    );
-
-    if (emailsList) {
-      (emailsList as Array<{ id: string; email: string }>).forEach((row) => {
-        creatorEmailMap.set(row.id, row.email);
-      });
-    }
-  }
+  const profileMap = await getProfileMapByIds(creatorIds);
 
   return (
     <Box>
@@ -88,7 +104,7 @@ export default async function AssignmentAssignedList() {
         .map((claim: any) => ({
           ...claim.assignments,
           status: claim.status,
-          creator_email: creatorEmailMap.get(claim.assignments?.creator_id),
+          creator_profile: profileMap.get(claim.assignments?.creator_id),
         }))
         .filter((a: any) => a.id)
         .map((a: any) => (

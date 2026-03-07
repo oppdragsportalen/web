@@ -10,7 +10,6 @@ import {
   IconButton,
   Popover,
   Text,
-  Link,
 } from "@radix-ui/themes";
 import { CopyIcon } from "@radix-ui/react-icons";
 
@@ -21,6 +20,7 @@ type Props = {
   };
   profile: {
     display_name?: string | null;
+    username?: string | null;
   };
 };
 
@@ -65,10 +65,7 @@ const AccountInformationDataList = ({ user, profile }: Props) => {
                     <CopyIcon />
                   </IconButton>
                 </Popover.Trigger>
-                <Popover.Content
-                  side="right"
-                  align="center"
-                >
+                <Popover.Content side="right" align="center">
                   <Text size="1">Copied</Text>
                 </Popover.Content>
               </Popover.Root>
@@ -81,9 +78,11 @@ const AccountInformationDataList = ({ user, profile }: Props) => {
         </DataList.Item>
         <DataList.Item>
           <DataList.Label minWidth="2px">Email</DataList.Label>
-          <DataList.Value>
-            <Link href={`mailto:${user.email ?? ""}`}>{user.email ?? ""}</Link>
-          </DataList.Value>
+          <DataList.Value>{user.email}</DataList.Value>
+        </DataList.Item>
+        <DataList.Item>
+          <DataList.Label minWidth="2px">Username</DataList.Label>
+          <DataList.Value>@{profile.username}</DataList.Value>
         </DataList.Item>
       </DataList.Root>
     </Box>

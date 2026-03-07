@@ -53,7 +53,10 @@ export function CreateAssignmentDialog({
 
     formData.append("visibility", isRestricted ? "restricted" : "public");
     if (isRestricted) {
-      formData.append("assignedEmail", formData.get("assignedEmail") as string);
+      formData.append(
+        "assignedUsername",
+        formData.get("assignedUsername") as string,
+      );
     }
 
     const result = await CreateAssignment(formData);
@@ -162,19 +165,18 @@ export function CreateAssignmentDialog({
                 opacity: isRestricted ? 1 : 0,
               }}
             >
-              <label htmlFor="assignedEmail">
+              <label htmlFor="assignedUsername">
                 <Text as="div" size="2" mb="1" weight="bold">
                   Assign to user
                 </Text>
                 <TextField.Root
-                  id="assignedEmail"
-                  name="assignedEmail"
-                  type="email"
-                  placeholder="user@example.com"
+                  id="assignedUsername"
+                  name="assignedUsername"
+                  placeholder="username"
                   size="3"
                   required={isRestricted}
                   aria-required={isRestricted}
-                  aria-label="User email address"
+                  aria-label="Assigned username"
                   disabled={!isRestricted}
                   tabIndex={isRestricted ? 0 : -1}
                 />

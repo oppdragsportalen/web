@@ -37,7 +37,7 @@ type Assignment = {
   description: string;
   deadline: string;
   visibility: "public" | "restricted";
-  assignedEmail?: string;
+  assignedUsername?: string;
 };
 
 export function EditAssignmentDialog({
@@ -50,16 +50,16 @@ export function EditAssignmentDialog({
   const [isRestricted, setIsRestricted] = useState(
     assignment.visibility === "restricted",
   );
-  const [assignedEmail, setAssignedEmail] = useState(
-    assignment.assignedEmail || "",
+  const [assignedUsername, setAssignedUsername] = useState(
+    assignment.assignedUsername || "",
   );
 
   useEffect(() => {
     if (open) {
       setIsRestricted(assignment.visibility === "restricted");
-      setAssignedEmail(assignment.assignedEmail || "");
+      setAssignedUsername(assignment.assignedUsername || "");
     }
-  }, [open, assignment.visibility, assignment.assignedEmail]);
+  }, [open, assignment.visibility, assignment.assignedUsername]);
 
   const handleSubmit = async (formData: FormData) => {
     setError("");
@@ -75,7 +75,10 @@ export function EditAssignmentDialog({
 
     formData.append("visibility", isRestricted ? "restricted" : "public");
     if (isRestricted) {
-      formData.append("assignedEmail", formData.get("assignedEmail") as string);
+      formData.append(
+        "assignedUsername",
+        formData.get("assignedUsername") as string,
+      );
     }
 
     const result = await UpdateAssignment(formData);
@@ -191,21 +194,20 @@ export function EditAssignmentDialog({
                 opacity: isRestricted ? 1 : 0,
               }}
             >
-              <label htmlFor="assignedEmail">
+              <label htmlFor="assignedUsername">
                 <Text as="div" size="2" mb="1" weight="bold">
                   Assign to user
                 </Text>
                 <TextField.Root
-                  id="assignedEmail"
-                  name="assignedEmail"
-                  type="email"
-                  placeholder="user@example.com"
+                  id="assignedUsername"
+                  name="assignedUsername"
+                  placeholder="username"
                   size="3"
                   required={isRestricted}
                   aria-required={isRestricted}
-                  aria-label="User email address"
-                  value={assignedEmail}
-                  onChange={(e) => setAssignedEmail(e.target.value)}
+                  aria-label="Assigned username"
+                  value={assignedUsername}
+                  onChange={(e) => setAssignedUsername(e.target.value)}
                   disabled={!isRestricted}
                   tabIndex={isRestricted ? 0 : -1}
                 />

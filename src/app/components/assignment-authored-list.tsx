@@ -4,6 +4,33 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AssignmentCard } from "./assignment-card";
 
+type Profile = {
+  id: string;
+  display_name: string | null;
+  username: string | null;
+};
+
+async function getProfileMapByIds(userIds: string[]) {
+  const uniqueUserIds = [...new Set(userIds.filter(Boolean))];
+  const map = new Map<string, Profile>();
+
+  if (uniqueUserIds.length === 0) {
+    return map;
+  }
+
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, display_name, username")
+    .in("id", uniqueUserIds);
+
+  (data ?? []).forEach((profile) => {
+    map.set(profile.id, profile as Profile);
+  });
+
+  return map;
+}
+
 export default async function AssignmentAuthoredList() {
   const supabase = await createSupabaseServer();
 
@@ -30,22 +57,7 @@ export default async function AssignmentAuthoredList() {
     ),
   ];
 
-  const allowedUserEmailMap = new Map<string, string>();
-
-  if (allowedUserIds.length > 0) {
-    const { data: emailsList, error: emailError } = await supabase.rpc(
-      "get_user_emails_by_ids",
-      {
-        user_ids: allowedUserIds,
-      },
-    );
-
-    if (emailsList) {
-      (emailsList as Array<{ id: string; email: string }>).forEach((row) => {
-        allowedUserEmailMap.set(row.id, row.email);
-      });
-    }
-  }
+  const profileMap = await getProfileMapByIds(allowedUserIds);
 
   return (
     <div>
@@ -63,7 +75,7 @@ export default async function AssignmentAuthoredList() {
               assignment={{
                 ...a,
                 status: a.assignment_claims?.[0]?.status ?? "not_taken",
-                assigned_email: allowedUserEmailMap.get(
+                assigned_profile: profileMap.get(
                   a.assignment_allowed_users?.user_id,
                 ),
               }}

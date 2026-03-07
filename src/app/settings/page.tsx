@@ -71,10 +71,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <Box
-      className="max-w-5xl m-auto min-h-full"
-      minWidth="400px"
-    >
+    <Box className="max-w-5xl m-auto min-h-full" minWidth="400px">
       <Box p="4" className="flex-1">
         <Heading size="7" my="5">
           Settings
@@ -86,6 +83,7 @@ export default function SettingsPage() {
 
             <EditProfileDialog
               displayName={profile.display_name}
+              username={profile.username ?? ""}
               email={user.email ?? ""}
               loadData={loadData}
             />

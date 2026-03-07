@@ -10,12 +10,11 @@ import {
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { EnvelopeClosedIcon } from "@radix-ui/react-icons";
 import { AssignmentAuthorActions } from "@/app/components/assignment-author-actions";
 import { AssignmentActionButton } from "@/app/components/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
 
-async function getAssignment(id: string, userId: string, userEmail?: string) {
+async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
 
   // Get assignment authored by the user
@@ -42,16 +41,13 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
     if (claim?.status) {
       fullAssignment.claimStatus = claim.status;
 
-      // Get the email of who claimed it
+      // Get the profile of who claimed it
       if (claim.user_id) {
-        const { data: claimedByEmail } = await supabase.rpc(
-          "get_user_email_by_id",
-          {
-            user_id: claim.user_id,
-          },
-        );
-        if (claimedByEmail) {
-          fullAssignment.claimed_by_email = claimedByEmail;
+        const { data: profiles } = await supabase.rpc("get_profiles_by_ids", {
+          user_ids: [claim.user_id],
+        });
+        if (profiles && profiles.length > 0) {
+          fullAssignment.claimed_by_profile = profiles[0];
         }
       }
     }
@@ -64,12 +60,13 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
         .maybeSingle();
 
       if (allowedUsers?.user_id) {
-        const { data: userEmail } = await supabase.rpc("get_user_email_by_id", {
-          user_id: allowedUsers.user_id,
+        const { data: profiles } = await supabase.rpc("get_profiles_by_ids", {
+          user_ids: [allowedUsers.user_id],
         });
 
-        if (userEmail) {
-          fullAssignment.assignedEmail = userEmail;
+        if (profiles && profiles.length > 0) {
+          fullAssignment.assignedUsername = profiles[0].username;
+          fullAssignment.assigned_profile = profiles[0];
         }
       }
     }
@@ -102,24 +99,33 @@ async function getAssignment(id: string, userId: string, userEmail?: string) {
     const assignment = Array.isArray(claim.assignments)
       ? claim.assignments[0]
       : claim.assignments;
-    let creatorEmail: string | null = null;
+    let creatorProfile = null;
 
-    // Get creator email
+    // Get creator profile
     if (assignment.creator_id) {
-      const { data: email } = await supabase.rpc("get_user_email_by_id", {
-        user_id: assignment.creator_id,
+      const { data: profiles } = await supabase.rpc("get_profiles_by_ids", {
+        user_ids: [assignment.creator_id],
       });
-      creatorEmail = email;
+      if (profiles && profiles.length > 0) {
+        creatorProfile = profiles[0];
+      }
     }
+
+    // Get current user profile for claimed_by
+    const { data: userProfiles } = await supabase.rpc("get_profiles_by_ids", {
+      user_ids: [userId],
+    });
+    const userProfile =
+      userProfiles && userProfiles.length > 0 ? userProfiles[0] : null;
 
     return {
       assignment: {
         ...assignment,
         claimStatus: claim.status,
-        claimed_by_email: userEmail,
+        claimed_by_profile: userProfile,
         ...(assignment.visibility === "restricted" &&
-          userEmail && { assignedEmail: userEmail }),
-        ...(creatorEmail && { creator_email: creatorEmail }),
+          userProfile && { assigned_profile: userProfile }),
+        ...(creatorProfile && { creator_profile: creatorProfile }),
       },
       isAuthor: false,
       error: null,
@@ -171,11 +177,7 @@ export default async function AssignmentDetailPage({
     redirect("/login");
   }
 
-  const { assignment, isAuthor, error } = await getAssignment(
-    id,
-    user.id,
-    user.email ?? undefined,
-  );
+  const { assignment, isAuthor, error } = await getAssignment(id, user.id);
 
   if (error || !assignment) {
     redirect("/dashboard/assignments");
@@ -278,7 +280,7 @@ export default async function AssignmentDetailPage({
                 </Text>
               </Card>
             </Box>
-            {!isAuthor && (assignment as any).creator_email && (
+            {!isAuthor && (assignment as any).creator_profile && (
               <Box>
                 <Box>
                   <Text size="2" weight="medium" color="gray">
@@ -287,13 +289,14 @@ export default async function AssignmentDetailPage({
                 </Box>
                 <Card>
                   <Text size="2" className="whitespace-nowrap">
-                    {(assignment as any).creator_email}
+                    {assignment.creator_profile.display_name} (@
+                    {assignment.creator_profile.username})
                   </Text>
                 </Card>
               </Box>
             )}
             {!(assignment.visibility === "restricted") &&
-              (assignment as any).claimed_by_email && (
+              (assignment as any).claimed_by_profile && (
                 <Box>
                   <Box>
                     <Text size="2" weight="medium" color="gray">
@@ -302,13 +305,14 @@ export default async function AssignmentDetailPage({
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {(assignment as any).claimed_by_email}
+                      {assignment.claimed_by_profile.display_name} (@
+                      {assignment.claimed_by_profile.username})
                     </Text>
                   </Card>
                 </Box>
               )}
             {assignment.visibility === "restricted" &&
-              (assignment as any).assignedEmail && (
+              (assignment as any).assigned_profile && (
                 <Box>
                   <Box>
                     <Text size="2" weight="medium" color="gray">
@@ -317,42 +321,14 @@ export default async function AssignmentDetailPage({
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {(assignment as any).assignedEmail}
+                      {assignment.assigned_profile.display_name} (@
+                      {assignment.assigned_profile.username})
                     </Text>
                   </Card>
                 </Box>
               )}
           </div>
-
         </Box>
-
-          <Flex gap="2" mb="5" wrap="wrap" align="center">
-            {isAuthor ? (
-              <>
-                {(assignment as any).claimed_by_email && (
-                  <Button asChild variant="soft" color="gray">
-                    <a
-                      href={`mailto:${(assignment as any).claimed_by_email}?subject=Re: ${assignment.title}`}
-                    >
-                      <EnvelopeClosedIcon />
-                      Contact Assignee
-                    </a>
-                  </Button>
-                )}
-              </>
-            ) : (
-              <>
-                <Button asChild variant="soft" color="gray">
-                  <a
-                    href={`mailto:${(assignment as any).creator_email}?subject=Re: ${assignment.title}`}
-                  >
-                    <EnvelopeClosedIcon />
-                    Contact Author
-                  </a>
-                </Button>
-              </>
-            )}
-          </Flex>
 
         <Separator size="4" />
 
@@ -374,7 +350,7 @@ export default async function AssignmentDetailPage({
                 description: assignment.description,
                 deadline: assignment.deadline,
                 visibility: assignment.visibility,
-                assignedEmail: (assignment as any).assignedEmail,
+                assignedUsername: (assignment as any).assignedUsername,
               }}
             />
           ) : (

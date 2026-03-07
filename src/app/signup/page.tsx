@@ -74,6 +74,26 @@ export default function SignUpPage() {
               </Box>
 
               <Box>
+                <Text
+                  as="label"
+                  size="2"
+                  mb="1"
+                  weight="bold"
+                  htmlFor="username"
+                >
+                  Username
+                </Text>
+                <TextField.Root
+                  name="username"
+                  id="username"
+                  size="3"
+                  required
+                  aria-required="true"
+                  aria-label="Username"
+                />
+              </Box>
+
+              <Box>
                 <Text as="label" size="2" mb="1" weight="bold" htmlFor="email">
                   Email
                 </Text>
@@ -107,7 +127,6 @@ export default function SignUpPage() {
                   required
                   aria-required="true"
                   aria-label="Password"
-                  aria-describedby="password-hint"
                 />
               </Box>
 

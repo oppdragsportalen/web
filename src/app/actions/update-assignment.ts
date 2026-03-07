@@ -4,13 +4,27 @@ import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getMaxDeadlineUTC } from "@/lib/timezone";
 
+async function getUserIdByUsername(username: string) {
+  const normalizedUsername = username.trim().toLowerCase();
+  if (!normalizedUsername) return null;
+
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("username", normalizedUsername)
+    .maybeSingle();
+
+  return data?.id ?? null;
+}
+
 export async function UpdateAssignment(formData: FormData) {
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const deadline = formData.get("deadline") as string;
   const visibility = formData.get("visibility") as "public" | "restricted";
-  const assignedEmail = formData.get("assignedEmail") as string | null;
+  const assignedUsername = formData.get("assignedUsername") as string | null;
 
   if (!id) {
     return { error: "Assignment ID is required" };
@@ -38,7 +52,7 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Invalid deadline date" };
   }
 
-  if (visibility === "restricted" && !assignedEmail) {
+  if (visibility === "restricted" && !assignedUsername) {
     return {
       error: "Please enter a user for this restricted assignment",
     };
@@ -57,24 +71,17 @@ export async function UpdateAssignment(formData: FormData) {
   // Validate restricted assignment
   let targetUserId: string | null = null;
 
-  if (visibility === "restricted" && assignedEmail) {
-    const email = assignedEmail.trim().toLowerCase();
+  if (visibility === "restricted" && assignedUsername) {
+    const username = assignedUsername.trim().toLowerCase();
 
-    if (!email) {
-      return { error: "Please enter a valid email" };
+    if (!username) {
+      return { error: "Please enter a valid username" };
     }
 
-    const { data: userId, error: userError } = await supabase.rpc(
-      "get_user_id_by_email",
-      { email },
-    );
-
-    if (userError) {
-      return { error: `Failed to lookup user: ${userError.message}` };
-    }
+    const userId = await getUserIdByUsername(username);
 
     if (!userId) {
-      return { error: `No user found with email: ${email}` };
+      return { error: `No user found with username: @${username}` };
     }
 
     if (userId === user.id) {

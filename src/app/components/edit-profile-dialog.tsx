@@ -1,18 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, Button, Flex, TextField, Text } from "@radix-ui/themes";
+import {
+  Dialog,
+  Button,
+  Flex,
+  TextField,
+  Text,
+  Callout,
+} from "@radix-ui/themes";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import { updateProfile } from "@/app/actions/update-profile";
 
 interface EditProfileDialogProps {
   displayName: string;
+  username: string;
   email: string;
   loadData?: () => void;
 }
 
 export function EditProfileDialog({
   displayName,
+  username,
   email,
   loadData,
 }: EditProfileDialogProps) {
@@ -72,6 +81,20 @@ export function EditProfileDialog({
                 aria-label="Display name"
               />
             </label>
+            <label htmlFor="username">
+              <Text as="div" size="2" mb="1" weight="bold">
+                Username
+              </Text>
+              <TextField.Root
+                id="username"
+                name="username"
+                defaultValue={username}
+                size="3"
+                required
+                aria-required="true"
+                aria-label="Username"
+              />
+            </label>
             <label htmlFor="email">
               <Text as="div" size="2" mb="1" weight="bold">
                 Email
@@ -82,12 +105,13 @@ export function EditProfileDialog({
                 defaultValue={email}
                 size="3"
                 aria-label="Email address"
+                disabled
               />
             </label>
             {error && (
-              <Text color="red" size="2" role="alert" aria-live="polite">
-                {error}
-              </Text>
+              <Callout.Root color="red" size="1" id="error-message">
+                <Callout.Text>{error}</Callout.Text>
+              </Callout.Root>
             )}
             {info && (
               <Text color="gray" size="2">

@@ -20,8 +20,8 @@ async function getAssignment(id: string, userId: string) {
     return { assignment: null, error };
   }
 
-  let assignedEmail: string | null = null;
-  let creatorEmail: string | null = null;
+  let assignedProfile = null;
+  let creatorProfile = null;
 
   if (assignment.visibility === "restricted") {
     const { data: allowed } = await supabase
@@ -35,21 +35,25 @@ async function getAssignment(id: string, userId: string) {
       return { assignment: null, error: { message: "Access denied" } };
     }
 
-    // Get assigned user email for restricted assignments
+    // Get assigned user profile for restricted assignments
     if (allowed?.user_id) {
-      const { data: email } = await supabase.rpc("get_user_email_by_id", {
-        user_id: allowed.user_id,
+      const { data: profiles } = await supabase.rpc("get_profiles_by_ids", {
+        user_ids: [allowed.user_id],
       });
-      assignedEmail = email;
+      if (profiles && profiles.length > 0) {
+        assignedProfile = profiles[0];
+      }
     }
   }
 
-  // Get creator email
+  // Get creator profile
   if (assignment.creator_id) {
-    const { data: email } = await supabase.rpc("get_user_email_by_id", {
-      user_id: assignment.creator_id,
+    const { data: profiles } = await supabase.rpc("get_profiles_by_ids", {
+      user_ids: [assignment.creator_id],
     });
-    creatorEmail = email;
+    if (profiles && profiles.length > 0) {
+      creatorProfile = profiles[0];
+    }
   }
 
   // Get claim status
@@ -64,8 +68,8 @@ async function getAssignment(id: string, userId: string) {
     assignment: {
       ...assignment,
       claimStatus: claim?.status,
-      ...(assignedEmail && { assignedEmail }),
-      ...(creatorEmail && { creator_email: creatorEmail }),
+      ...(assignedProfile && { assigned_profile: assignedProfile }),
+      ...(creatorProfile && { creator_profile: creatorProfile }),
     },
     error: null,
   };
@@ -214,12 +218,13 @@ export default async function AssignmentDetailPage({
               </Box>
               <Card>
                 <Text size="2" className="whitespace-nowrap">
-                  {(assignment as any).creator_email}
+                  {assignment.creator_profile.display_name} (@
+                  {assignment.creator_profile.username})
                 </Text>
               </Card>
             </Box>
             {assignment.visibility === "restricted" &&
-              (assignment as any).assignedEmail && (
+              (assignment as any).assigned_profile && (
                 <Box>
                   <Box>
                     <Text size="2" weight="medium" color="gray">
@@ -228,7 +233,8 @@ export default async function AssignmentDetailPage({
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {(assignment as any).assignedEmail}
+                      {assignment.assigned_profile.display_name} (@
+                      {assignment.assigned_profile.username})
                     </Text>
                   </Card>
                 </Box>

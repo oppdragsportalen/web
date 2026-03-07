@@ -2,14 +2,20 @@ import Link from "next/link";
 import { Card, Box, Text, Badge, Flex, Tooltip } from "@radix-ui/themes";
 import { formatDateToLocal } from "@/lib/timezone";
 
+type Profile = {
+  id: string;
+  display_name: string | null;
+  username: string | null;
+};
+
 type Props = {
   assignment: {
     id: string;
     title: string;
     description: string;
     deadline: string;
-    creator_email?: string;
-    assigned_email?: string;
+    creator_profile?: Profile;
+    assigned_profile?: Profile;
     visibility: string;
     status?: "not_taken" | "accepted" | "in_progress" | "finished";
   };
@@ -64,18 +70,26 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
               })}
             </Text>
           </Box>
-          <Box>
-            <Tooltip content={`Assigned to ${assignment.assigned_email} `}>
-              <Text size="2" color="gray">
-                {assignment.assigned_email}
-              </Text>
-            </Tooltip>
-          </Box>
-          {assignment.creator_email && (
+          {assignment.assigned_profile && (
             <Box>
-              <Tooltip content={`Created by ${assignment.creator_email} `}>
+              <Tooltip
+                content={`Assigned to ${assignment.assigned_profile?.display_name} (@${assignment.assigned_profile?.username}) `}
+              >
                 <Text size="2" color="gray">
-                  {assignment.creator_email}
+                  {/* {assignment.assigned_profile?.display_name}*/}@
+                  {assignment.assigned_profile.username}
+                </Text>
+              </Tooltip>
+            </Box>
+          )}
+          {assignment.creator_profile && (
+            <Box>
+              <Tooltip
+                content={`Created by ${assignment.creator_profile?.display_name} (@${assignment.creator_profile?.username}) `}
+              >
+                <Text size="2" color="gray">
+                  {/* {assignment.creator_profile.display_name} */}@
+                  {assignment.creator_profile.username}
                 </Text>
               </Tooltip>
             </Box>

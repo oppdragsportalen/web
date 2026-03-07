@@ -12,7 +12,7 @@ type Props = {
     description: string;
     deadline: string;
     visibility: "public" | "restricted";
-    assignedEmail?: string;
+    assignedUsername?: string;
   };
 };
 

@@ -14,6 +14,7 @@ create type public.claim_status as enum ('not_taken','accepted','in_progress','f
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   display_name text,
+  username text,
   role text check (role in ('user','admin')) default 'user',
   created_at timestamptz default now()
 );
@@ -54,6 +55,7 @@ create table if not exists public.assignment_claims (
 create index if not exists idx_assignments_created_at on public.assignments(created_at desc);
 create index if not exists idx_assignments_creator on public.assignments(creator_id);
 create index if not exists idx_claims_assignment on public.assignment_claims(assignment_id);
+create unique index if not exists idx_profiles_username_unique on public.profiles(lower(username)) where username is not null;
 
 -- Unique constraint: only one active claim per assignment
 create unique index if not exists idx_assignment_claims_unique_active 
@@ -78,9 +80,9 @@ alter table public.profiles enable row level security;
 create policy profiles_insert_signup on public.profiles
   for insert with check (true);
 
--- Users can read their own profile
-create policy profiles_select_self on public.profiles
-  for select using (auth.uid() = id);
+-- All authenticated users can read all profiles (display_name, username)
+create policy profiles_select_all on public.profiles
+  for select using (auth.role() = 'authenticated');
 
 -- Users can update their own profile
 create policy profiles_update_self on public.profiles
@@ -225,6 +227,19 @@ begin
 end;
 $$ language plpgsql security definer;
 
+-- Function to get user ID by username
+create or replace function get_user_id_by_username(input_username text)
+returns uuid as $$
+begin
+  return (
+    select id
+    from public.profiles
+    where lower(username) = lower(input_username)
+    limit 1
+  );
+end;
+$$ language plpgsql security definer;
+
 -- Function to get email by user ID
 create or replace function public.get_user_email_by_id(user_id uuid)
 returns text
@@ -257,6 +272,22 @@ as $$
   where id = any(user_ids);
 $$;
 
+-- Function to get profile labels by array of user IDs
+create or replace function get_profiles_by_ids(user_ids uuid[])
+returns table (
+  id uuid,
+  display_name text,
+  username text
+)
+language sql
+security definer
+set search_path = public
+as $$
+  select p.id, p.display_name, p.username
+  from public.profiles p
+  where p.id = any(user_ids);
+$$;
+
 -- ============================================
 -- TRIGGERS
 -- ============================================
@@ -276,7 +307,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
-create trigger on_profile_display_name_update
+create or replace trigger on_profile_display_name_update
   after update of display_name on public.profiles
   for each row
   when (old.display_name is distinct from new.display_name)

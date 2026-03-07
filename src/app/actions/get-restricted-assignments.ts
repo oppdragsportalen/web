@@ -2,6 +2,27 @@
 
 import { createSupabaseServer } from "@/lib/supabase/server";
 
+async function getProfileMapByIds(userIds: string[]) {
+  const uniqueUserIds = [...new Set(userIds.filter(Boolean))];
+  const map = new Map();
+
+  if (uniqueUserIds.length === 0) {
+    return map;
+  }
+
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, display_name, username")
+    .in("id", uniqueUserIds);
+
+  (data ?? []).forEach((profile) => {
+    map.set(profile.id, profile);
+  });
+
+  return map;
+}
+
 const ITEMS_PER_LOAD = 12;
 
 export async function GetRestrictedAssignments(
@@ -19,15 +40,12 @@ export async function GetRestrictedAssignments(
   }
 
   // Get claimed assignment IDs
-  const { data: claims } = await supabase
+  const { data: claimedAssignments } = await supabase
     .from("assignment_claims")
-    .select("assignment_id, status")
-    .in("status", ["accepted", "in_progress", "finished"]);
+    .select("assignment_id")
+    .eq("user_id", user.id);
 
-  const claimedIds = claims?.map((c) => c.assignment_id) || [];
-  const claimStatusByAssignmentId = new Map<string, string>(
-    (claims ?? []).map((c) => [c.assignment_id, c.status]),
-  );
+  const claimedIds = claimedAssignments?.map((c) => c.assignment_id) || [];
 
   const rangeStart = batchIndex * ITEMS_PER_LOAD;
   const rangeEnd = rangeStart + ITEMS_PER_LOAD - 1;
@@ -44,9 +62,9 @@ export async function GetRestrictedAssignments(
     .eq("assignment_allowed_users.user_id", user.id);
 
   if (claimedIds.length > 0) {
-    assignmentsQuery = assignmentsQuery.filter(
+    assignmentsQuery = assignmentsQuery.not(
       "id",
-      "not.in",
+      "in",
       `(${claimedIds.join(",")})`,
     );
   }
@@ -74,28 +92,12 @@ export async function GetRestrictedAssignments(
   const creatorIds = [
     ...new Set((assignments ?? []).map((a) => a.creator_id).filter(Boolean)),
   ];
-  const creatorEmailMap = new Map<string, string>();
+  const profileMap = await getProfileMapByIds(creatorIds);
 
-  if (creatorIds.length > 0) {
-    const { data: emailsList, error: emailError } = await supabase.rpc(
-      "get_user_emails_by_ids",
-      {
-        user_ids: creatorIds,
-      },
-    );
-
-    if (emailsList && !emailError) {
-      (emailsList as Array<{ id: string; email: string }>).forEach((row) => {
-        creatorEmailMap.set(row.id, row.email);
-      });
-    }
-  }
-
-  // Add creator email and claim status to assignments
+  // Add creator profile to assignments
   assignments = (assignments ?? []).map((assignment) => ({
     ...assignment,
-    creator_email: creatorEmailMap.get(assignment.creator_id),
-    status: claimStatusByAssignmentId.get(assignment.id),
+    creator_profile: profileMap.get(assignment.creator_id),
   }));
 
   return { assignments, hasMore, error: null };
