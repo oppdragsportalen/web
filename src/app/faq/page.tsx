@@ -13,7 +13,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "How do I restrict an assignment to a specific user?",
-    a: 'When creating or editing an assignment, select "Restricted" and enter the user\'s email address. The system links access to that user account.',
+    a: 'When creating or editing an assignment, select "Restricted" and enter the user\'s username. The system links access to that user account.',
   },
   {
     q: "Can I change an assignment from Restricted to Public?",

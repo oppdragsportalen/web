@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: February 27, 2026
+              Last updated: March 8, 2026
             </Text>
 
             <Box mb="6">
@@ -34,15 +34,15 @@ export default function PrivacyPolicyPage() {
               </Heading>
               <Text as="p" size="3" mb="3">
                 <strong>Account Information:</strong> When you create an
-                account, we collect your name, email address, and password
-                encrypted.
+                account, we collect your name, username, email address, and
+                password encrypted.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Assignment Data:</strong> We store assignments you
                 create, including titles, descriptions, deadlines, and
                 visibility settings (public or private). For private
-                assignments, we also store the email addresses of users you
-                grant access to.
+                assignments, we also store the username of the user you assign
+                access to.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Assignment Claims:</strong> We track which assignments
@@ -99,11 +99,11 @@ export default function PrivacyPolicyPage() {
               <Text as="p" size="3" mb="3">
                 <strong>Private Assignments:</strong> Private assignments are
                 only visible to you and users you explicitly grant access to via
-                their email addresses.
+                their username.
               </Text>
               <Text as="p" size="3" mb="3">
-                <strong>Email Visibility:</strong> Your email address is visible
-                to all users for contact purposes.
+                <strong>Profile Visibility:</strong> Your display name and
+                username are visible to all users.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Third-Party Services:</strong> We use Supabase, a secure
