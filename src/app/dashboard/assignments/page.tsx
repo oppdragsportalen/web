@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
 import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
 import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
+import AssignmentSearch from "@/app/components/assignment-search";
 
 function AssignmentListSkeleton() {
   return (
@@ -19,7 +20,7 @@ function AssignmentListSkeleton() {
 export default async function AssignmentPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string }>;
+  searchParams: Promise<{ tab?: string; q?: string }>;
 }) {
   const supabase = await createSupabaseServer();
 
@@ -31,7 +32,7 @@ export default async function AssignmentPage({
     redirect("/login");
   }
 
-  const { tab } = await searchParams;
+  const { tab, q } = await searchParams;
   const defaultTab = tab || "assigned";
 
   return (
@@ -41,24 +42,23 @@ export default async function AssignmentPage({
       </Box>
       <Box>
         <Tabs.Root defaultValue={defaultTab}>
-          <Tabs.List
-            className="sticky top-0 z-10"
-            style={{ backgroundColor: "var(--color-background)" }}
-          >
+          <Tabs.List>
             <Tabs.Trigger value="assigned">Assigned</Tabs.Trigger>
             <Tabs.Trigger value="authored">Authored</Tabs.Trigger>
           </Tabs.List>
 
+          <AssignmentSearch />
+
           <Box pt="3">
             <Tabs.Content value="assigned">
               <Suspense fallback={<AssignmentListSkeleton />}>
-                <AssignmentAssignedList />
+                <AssignmentAssignedList search={q} />
               </Suspense>
             </Tabs.Content>
 
             <Tabs.Content value="authored">
               <Suspense fallback={<AssignmentListSkeleton />}>
-                <AssignmentAuthoredList />
+                <AssignmentAuthoredList search={q} />
               </Suspense>
             </Tabs.Content>
           </Box>

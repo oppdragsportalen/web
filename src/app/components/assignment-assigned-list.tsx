@@ -30,7 +30,11 @@ async function getProfileMapByIds(userIds: string[]) {
   return map;
 }
 
-export default async function AssignmentAssignedList() {
+export default async function AssignmentAssignedList({
+  search,
+}: {
+  search?: string;
+}) {
   const supabase = await createSupabaseServer();
 
   const {
@@ -42,7 +46,7 @@ export default async function AssignmentAssignedList() {
   }
 
   // Get assigned assignments
-  const { data: assignments, error } = await supabase
+  let query = supabase
     .from("assignment_claims")
     .select(
       `
@@ -61,6 +65,12 @@ export default async function AssignmentAssignedList() {
     )
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
+
+  if (search) {
+    query = query.ilike("assignments.title", `%${search}%`);
+  }
+
+  const { data: assignments, error } = await query;
 
   if (error) {
     return (

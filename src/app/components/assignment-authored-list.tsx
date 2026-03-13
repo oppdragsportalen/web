@@ -31,7 +31,11 @@ async function getProfileMapByIds(userIds: string[]) {
   return map;
 }
 
-export default async function AssignmentAuthoredList() {
+export default async function AssignmentAuthoredList({
+  search,
+}: {
+  search?: string;
+}) {
   const supabase = await createSupabaseServer();
 
   const {
@@ -42,12 +46,28 @@ export default async function AssignmentAuthoredList() {
     redirect("/login");
   }
 
-  const { data: authored, error: authoredError } = await supabase
+  let query = supabase
     .from("assignments")
     .select(
-      "id, title, description, deadline, visibility, created_at, assignment_claims(status), assignment_allowed_users(user_id)",
+      `
+      id,
+      title,
+      description,
+      deadline,
+      visibility,
+      created_at,
+      assignment_claims(status),
+      assignment_allowed_users(user_id)
+    `,
     )
-    .eq("creator_id", user.id);
+    .eq("creator_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (search?.trim()) {
+    query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
+  }
+
+  const { data: authored, error: authoredError } = await query;
 
   const allowedUserIds = [
     ...new Set(
