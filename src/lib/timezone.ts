@@ -1,5 +1,14 @@
 // ====== TIMEZONE UTILITY FUNCTIONS ======
 
+export const DEFAULT_LOCAL_DATETIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
 // Convert datetime-local input value to UTC ISO string
 export function localDatetimeToUTC(localDatetimeString: string): string {
   if (!localDatetimeString) return "";
@@ -53,16 +62,9 @@ export function formatDateToLocal(
   if (!utcString) return "";
 
   const date = new Date(utcString);
-  const defaultOptions: Intl.DateTimeFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  };
+  if (Number.isNaN(date.getTime())) return "";
 
-  return date.toLocaleString("en-US", options || defaultOptions);
+  return date.toLocaleString("en-US", options || DEFAULT_LOCAL_DATETIME_OPTIONS);
 }
 
 // Convert a UTC datetime to local datetime-local format
