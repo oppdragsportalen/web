@@ -38,7 +38,7 @@ export async function Navbar() {
     <nav>
       <Flex
         justify="between"
-        className="h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
+        className="navbar h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
       >
         <Link href="/" className="no-underline mr-16">
           <Box>

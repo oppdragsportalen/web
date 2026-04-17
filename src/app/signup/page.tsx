@@ -16,6 +16,7 @@ import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { signUp } from "@/app/actions/signup";
 import { useState } from "react";
 import Link from "next/link";
+import LightRays from '@/app/components/light-rays';
 
 export default function SignUpPage() {
   const [error, setError] = useState("");
@@ -44,7 +45,31 @@ export default function SignUpPage() {
   }
 
   return (
-    <Flex justify="center" align="center" py="9" px="4" className="min-w-80">
+    <Flex
+      data-hide-navbar-border="true"
+      justify="center"
+      align="center"
+      py="9"
+      px="4"
+      className="min-w-80"
+    >
+      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-screen overflow-hidden pointer-events-none">
+        <LightRays
+          raysOrigin="top-center"
+          raysColor="#30a4ff"
+          raysSpeed={1}
+          lightSpread={0.5}
+          rayLength={3}
+          followMouse={true}
+          mouseInfluence={0.1}
+          noiseAmount={0}
+          distortion={0}
+          className="w-full h-full custom-rays"
+          pulsating={false}
+          fadeDistance={1}
+          saturation={1}
+        />
+      </Box>
       <Box width="100%" maxWidth="450px">
         <Card size="3">
           <form onSubmit={handleSubmit} aria-label="Create account form">

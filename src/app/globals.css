@@ -16,3 +16,9 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
+@media (prefers-color-scheme: dark) {
+  body:has([data-hide-navbar-border="true"]) .navbar {
+    border-bottom-color: transparent;
+  }
+}

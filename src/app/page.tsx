@@ -1,8 +1,11 @@
-import { Card, Box } from "@radix-ui/themes";
+import { Box, Flex, Text, Button, Heading, Badge } from "@radix-ui/themes";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { Footer } from "@/app/components/footer";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
+import LightRays from "@/app/components/light-rays";
 
 export default async function Home() {
   const supabase = await createSupabaseServer();
@@ -15,52 +18,73 @@ export default async function Home() {
   }
 
   return (
-    <Box className="max-w-5xl m-auto min-h-full" minWidth="400px">
-      <div className="flex justify-center py-16 p-4">
-        <Card
-          size="5"
-          className="flex w-full max-w-3xl flex-col items-center justify-between py-32 px-16 sm:items-start rounded-2xl"
+    <div data-hide-navbar-border="true" className="flex min-h-full flex-col min-w-80">
+      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-screen overflow-hidden pointer-events-none">
+        <LightRays
+          className="w-full h-full custom-rays"
+          pulsating={false}
+          fadeDistance={1}
+          saturation={1}
+        />
+      </Box>
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        className="px-6 pt-24 pb-24 text-center md:pt-40"
+      >
+        <Image
+          width={100}
+          height={100}
+          alt="appicon"
+          src="/favicon.ico"
+          className="w-16 sm:w-20 md:w-24"
+        />
+
+        <Badge
+          size="2"
+          variant="surface"
+          color="gray"
+          radius="full"
+          className="mt-1 mb-5"
         >
-          <div className="flex flex-col gap-16 text-base font-medium sm:flex-row">
-            <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-              <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-                Oppdragsportalen
-              </h1>
-            </div>
-            <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-              <a
-                className="flex h-12 w-full min-w-30 items-center justify-center gap-2 rounded-full bg-black dark:bg-white  px-5 text-white dark:text-black transition-colors hover:bg-[#212121] dark:hover:bg-[#ccc] md:w-39.5"
-                href="/login"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  className="dark:invert"
-                  src="/vercel.svg"
-                  alt="Vercel logomark"
-                  width={16}
-                  height={16}
-                />
-                Log in
-              </a>
-              <a
-                className="flex h-12 w-full min-w-30 items-center justify-center gap-2 rounded-full bg-black dark:bg-white px-5 text-white dark:text-black transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-39.5"
-                href="/signup"
-                rel="noopener noreferrer"
-              >
-                <Image
-                  className="dark:invert"
-                  src="/vercel.svg"
-                  alt="Vercel logomark"
-                  width={16}
-                  height={16}
-                />
-                Sign up
-              </a>
-            </div>
-          </div>
-        </Card>
-      </div>
+          Assign. Track. Complete.
+        </Badge>
+
+        <Heading
+          as="h1"
+          size="8"
+          weight="bold"
+          className="text-4xl sm:text-5xl md:text-7xl"
+        >
+          Oppdragsportalen
+        </Heading>
+
+        <Box className="my-4">
+          <Text
+            as="p"
+            size="3"
+            color="gray"
+            className="max-w-md text-sm sm:text-base md:text-lg"
+          >
+            Reduce friction in your workflow. Create, assign, and track
+            assignments instantly.
+          </Text>
+        </Box>
+
+        <Flex gap="3" justify="center" wrap="wrap">
+          <Button asChild size="3" variant="solid">
+            <Link href="/signup">
+              Get started
+              <ArrowRightIcon />
+            </Link>
+          </Button>
+          <Button asChild size="3" variant="outline" color="gray">
+            <Link href="/login">Log in</Link>
+          </Button>
+        </Flex>
+      </Flex>
       <Footer />
-    </Box>
+    </div>
   );
 }

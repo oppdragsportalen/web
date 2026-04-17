@@ -24,6 +24,7 @@ export default function RootLayout({
             appearance="inherit"
             accentColor="green"
             className="h-full flex flex-col"
+            radius="large"
           >
             <Navbar />
             <div className="flex-1 overflow-scroll">{children}</div>
