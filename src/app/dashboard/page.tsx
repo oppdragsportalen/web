@@ -1,9 +1,27 @@
-import { Box, Card, Text, Button } from "@radix-ui/themes";
+import { Suspense } from "react";
+import { Box, Card, Text, Button, Flex } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import TimeBasedGreeting from "@/app/components/time-based-greeting";
 import { CreateAssignmentDialog } from "@/app/components/create-assignment-dialog";
-import { PlusIcon } from "@radix-ui/react-icons";
+import {
+  PlusIcon,
+  FileTextIcon,
+  MagnifyingGlassIcon,
+} from "@radix-ui/react-icons";
+import Link from "next/link";
+import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
+import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
+import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
+
+function AssignmentListSkeleton() {
+  return (
+    <Box>
+      <AssignmentCardSkeleton />
+      <AssignmentCardSkeleton />
+    </Box>
+  );
+}
 
 export default async function DashboardPage() {
   const supabase = await createSupabaseServer();
@@ -23,21 +41,62 @@ export default async function DashboardPage() {
     .single();
 
   return (
-    <div className="p-4 min-w-80">
+    <div className="p-4 min-w-137.5">
       <Box className="mt-4 mb-10">
         <TimeBasedGreeting displayName={profile.display_name} />
       </Box>
-      <Box>
-        <Card size="2" className="max-w-xl">
-          <Box mb="6">
-            <Text size="4" className="font-bold">
-              Create a new assignment
-            </Text>
-          </Box>
-          <CreateAssignmentDialog
-            trigger={<Button variant="solid"> <PlusIcon /> Create Assignment</Button>}
-          />
-        </Card>
+      <Flex className="gap-2">
+        <CreateAssignmentDialog
+          trigger={
+            <Button variant="solid">
+              <PlusIcon /> Create Assignment
+            </Button>
+          }
+        />
+        <Link href="/dashboard/explore">
+          <Button variant="surface">
+            <MagnifyingGlassIcon /> Explore
+          </Button>
+        </Link>
+        <Link href="/dashboard/assignments">
+          <Button variant="surface">
+            <FileTextIcon /> My Assignments
+          </Button>
+        </Link>
+      </Flex>
+
+      <Box my="8">
+        <Text className="text-xl font-bold">Assignments</Text>
+
+        <Flex gap="4" className="mt-4 flex-col lg:flex-row lg:items-start">
+          <Card size="2" className="flex-1 h-fit self-start w-full">
+            <Flex justify="between" align="center" mb="4">
+              <Text size="4" className="font-bold">
+                Assigned
+              </Text>
+            </Flex>
+            <Suspense fallback={<AssignmentListSkeleton />}>
+              <AssignmentAssignedList limit={5} />
+            </Suspense>
+            <Button variant="outline">
+              <Link href="/dashboard/assignments">View all</Link>
+            </Button>
+          </Card>
+
+          <Card size="2" className="flex-1 h-fit self-start w-full">
+            <Flex justify="between" align="center" mb="4">
+              <Text size="4" className="font-bold">
+                Authored
+              </Text>
+            </Flex>
+            <Suspense fallback={<AssignmentListSkeleton />}>
+              <AssignmentAuthoredList limit={5} />
+            </Suspense>
+            <Button variant="outline">
+              <Link href="/dashboard/assignments?tab=authored">View all</Link>
+            </Button>
+          </Card>
+        </Flex>
       </Box>
     </div>
   );

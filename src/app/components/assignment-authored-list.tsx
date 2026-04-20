@@ -33,8 +33,10 @@ async function getProfileMapByIds(userIds: string[]) {
 
 export default async function AssignmentAuthoredList({
   search,
+  limit,
 }: {
   search?: string;
+  limit?: number;
 }) {
   const supabase = await createSupabaseServer();
 
@@ -67,12 +69,16 @@ export default async function AssignmentAuthoredList({
     query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%`);
   }
 
+  if (typeof limit === "number" && limit > 0) {
+    query = query.range(0, limit - 1);
+  }
+
   const { data: authored, error: authoredError } = await query;
 
   const allowedUserIds = [
     ...new Set(
       (authored ?? [])
-        .map((a: any) => a.assignment_allowed_users?.user_id)
+        .map((a: any) => a.assignment_allowed_users?.[0]?.user_id)
         .filter(Boolean),
     ),
   ];
@@ -96,7 +102,7 @@ export default async function AssignmentAuthoredList({
                 ...a,
                 status: a.assignment_claims?.[0]?.status ?? "not_taken",
                 assigned_profile: profileMap.get(
-                  a.assignment_allowed_users?.user_id,
+                  a.assignment_allowed_users?.[0]?.user_id,
                 ),
               }}
               detailsHref={`/dashboard/assignments/${a.id}`}

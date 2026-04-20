@@ -32,8 +32,10 @@ async function getProfileMapByIds(userIds: string[]) {
 
 export default async function AssignmentAssignedList({
   search,
+  limit,
 }: {
   search?: string;
+  limit?: number;
 }) {
   const supabase = await createSupabaseServer();
 
@@ -68,6 +70,10 @@ export default async function AssignmentAssignedList({
 
   if (search) {
     query = query.ilike("assignments.title", `%${search}%`);
+  }
+
+  if (typeof limit === "number" && limit > 0) {
+    query = query.range(0, limit - 1);
   }
 
   const { data: assignments, error } = await query;
@@ -124,10 +130,12 @@ export default async function AssignmentAssignedList({
             detailsHref={`/dashboard/assignments/${a.id}`}
           />
         ))}
-      <Text size="2" color="gray" className="mb-3 block">
-        {assignments.length} assignment
-        {assignments.length === 1 ? "" : "s"}
-      </Text>
+      {typeof limit !== "number" && (
+        <Text size="2" color="gray" className="mb-3 block">
+          {assignments.length} assignment
+          {assignments.length === 1 ? "" : "s"}
+        </Text>
+      )}
     </Box>
   );
 }
