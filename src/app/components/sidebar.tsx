@@ -1,19 +1,28 @@
 "use client";
 
-import { Box, Flex, Text, Inset } from "@radix-ui/themes";
+import { Box, Flex, Text } from "@radix-ui/themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GearIcon, HomeIcon, FileTextIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons";
-
+import {
+  GearIcon,
+  HomeIcon,
+  FileTextIcon,
+  MagnifyingGlassIcon,
+} from "@radix-ui/react-icons";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
   { href: "/dashboard/explore", label: "Explore", icon: MagnifyingGlassIcon },
-  { href: "/dashboard/assignments", label: "My Assignments", icon: FileTextIcon },
+  {
+    href: "/dashboard/assignments",
+    label: "My Assignments",
+    icon: FileTextIcon,
+  },
   { href: "/settings", label: "Settings", icon: GearIcon },
 ];
 
 export function Sidebar() {
+  const pathname = usePathname();
   return (
     <Box className="w-auto border-r border-gray-200 dark:border-neutral-800 h-full overflow-scroll">
       <Flex direction="column" gap="1" p="2">
@@ -25,8 +34,8 @@ export function Sidebar() {
             icon={item.icon}
             isActive={
               item.href === "/dashboard"
-                ? usePathname() === item.href
-                : usePathname().startsWith(item.href)
+                ? pathname === item.href
+                : pathname.startsWith(item.href)
             }
           />
         ))}
@@ -43,7 +52,7 @@ function SidebarLink({
 }: {
   href: string;
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ width: string; height: string }>;
   isActive: boolean;
 }) {
   return (
