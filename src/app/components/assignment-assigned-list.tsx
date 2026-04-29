@@ -77,6 +77,7 @@ export default async function AssignmentAssignedList({
   }
 
   const { data: assignments, error } = await query;
+  const assignmentCount = assignments?.length ?? 0;
 
   if (error) {
     return (
@@ -86,7 +87,7 @@ export default async function AssignmentAssignedList({
     );
   }
 
-  if (!assignments || assignments.length === 0) {
+  if (assignmentCount === 0) {
     return (
       <Box>
         <Text size="2" color="gray">

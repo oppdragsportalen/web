@@ -40,6 +40,18 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
+  const [{ count: assignedCount }, { count: authoredCount }] = await Promise.all([
+    supabase
+      .from("assignment_claims")
+      .select("assignment_id, assignments:assignment_id(id)", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .not("assignments.id", "is", null),
+    supabase
+      .from("assignments")
+      .select("id", { count: "exact", head: true })
+      .eq("creator_id", user.id),
+  ]);
+
   return (
     <div className="p-4 min-w-137.5">
       <Box className="mt-4 mb-10">
@@ -78,9 +90,11 @@ export default async function DashboardPage() {
             <Suspense fallback={<AssignmentListSkeleton />}>
               <AssignmentAssignedList limit={5} />
             </Suspense>
-            <Button variant="outline">
-              <Link href="/dashboard/assignments">View all</Link>
-            </Button>
+            {assignedCount ? (
+              <Button variant="outline" mt="3">
+                <Link href="/dashboard/assignments">View all</Link>
+              </Button>
+            ) : null}
           </Card>
 
           <Card size="2" className="flex-1 h-fit self-start w-full">
@@ -92,9 +106,11 @@ export default async function DashboardPage() {
             <Suspense fallback={<AssignmentListSkeleton />}>
               <AssignmentAuthoredList limit={5} />
             </Suspense>
-            <Button variant="outline">
-              <Link href="/dashboard/assignments?tab=authored">View all</Link>
-            </Button>
+            {authoredCount ? (
+              <Button variant="outline" mt="3">
+                <Link href="/dashboard/assignments?tab=authored">View all</Link>
+              </Button>
+            ) : null}
           </Card>
         </Flex>
       </Box>

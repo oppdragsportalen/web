@@ -74,6 +74,7 @@ export default async function AssignmentAuthoredList({
   }
 
   const { data: authored, error: authoredError } = await query;
+  const authoredCount = authored?.length ?? 0;
 
   const allowedUserIds = [
     ...new Set(
@@ -91,7 +92,7 @@ export default async function AssignmentAuthoredList({
         <Text size="2" color="red">
           {authoredError.message}
         </Text>
-      ) : !authored || authored.length === 0 ? (
+      ) : authoredCount === 0 ? (
         <Text size="2">You haven't created any assignments yet.</Text>
       ) : (
         <Box>
