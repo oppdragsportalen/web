@@ -48,6 +48,24 @@ create table if not exists public.assignment_claims (
   primary key (assignment_id, user_id)
 );
 
+-- dm rooms
+create table public.dm_rooms (
+  id uuid primary key default gen_random_uuid(),
+  user_a uuid not null references auth.users(id) on delete cascade,
+  user_b uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz default now()
+);
+
+-- messages
+create table public.messages (
+  id uuid primary key default gen_random_uuid(),
+  room_id uuid not null references public.dm_rooms(id) on delete cascade,
+  sender_id uuid not null references auth.users(id) on delete cascade,
+  body text not null,
+  metadata jsonb,
+  created_at timestamptz default now()
+);
+
 -- ============================================
 -- INDEXES
 -- ============================================
@@ -56,6 +74,8 @@ create index if not exists idx_assignments_created_at on public.assignments(crea
 create index if not exists idx_assignments_creator on public.assignments(creator_id);
 create index if not exists idx_claims_assignment on public.assignment_claims(assignment_id);
 create unique index if not exists idx_profiles_username_unique on public.profiles(lower(username)) where username is not null;
+create index if not exists idx_messages_room_created_at on public.messages(room_id, created_at desc);
+create unique index idx_dm_rooms_unique_pair on public.dm_rooms (least(user_a, user_b), greatest(user_a, user_b));
 
 -- Unique constraint: only one active claim per assignment
 create unique index if not exists idx_assignment_claims_unique_active 
@@ -71,6 +91,8 @@ alter table public.assignments enable row level security;
 alter table public.assignment_allowed_users enable row level security;
 alter table public.assignment_claims enable row level security;
 alter table public.profiles enable row level security;
+alter table public.dm_rooms enable row level security;
+alter table public.messages enable row level security;
 
 -- ============================================
 -- PROFILES POLICIES
@@ -201,6 +223,44 @@ create policy claims_select_active_public on public.assignment_claims
         and a.visibility = 'public'
     )
   );
+
+-- ============================================
+-- MESSAGES POLICIES
+-- ============================================
+
+-- room: only participants can select
+create policy dm_rooms_select_participant on public.dm_rooms
+  for select using (auth.uid() = user_a or auth.uid() = user_b);
+
+-- messages: only participants can select
+create policy messages_select_participant on public.messages
+  for select using (
+    exists (
+      select 1 from public.dm_rooms r
+      where r.id = messages.room_id and (auth.uid() = r.user_a or auth.uid() = r.user_b)
+    )
+  );
+
+-- insert: sender must be auth.uid() and a participant of the room
+create policy messages_insert_participant
+on public.messages
+for insert
+with check (
+  auth.uid() = sender_id
+  and exists (
+    select 1
+    from public.dm_rooms r
+    where r.id = room_id
+      and (auth.uid() = r.user_a or auth.uid() = r.user_b)
+  )
+);
+
+-- Allow users to create DM rooms with other users
+create policy dm_rooms_insert_users on public.dm_rooms
+  for insert with check (auth.uid() = user_a or auth.uid() = user_b);
+
+create policy messages_update_sender on public.messages for update using (auth.uid() = sender_id);
+create policy messages_delete_sender on public.messages for delete using (auth.uid() = sender_id);
 
 -- ============================================
 -- UTILITY FUNCTIONS

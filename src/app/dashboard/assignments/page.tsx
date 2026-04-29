@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Box, Card, Tabs, Text } from "@radix-ui/themes";
+import { Box, Tabs } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
