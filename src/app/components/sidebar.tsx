@@ -8,11 +8,13 @@ import {
   HomeIcon,
   FileTextIcon,
   MagnifyingGlassIcon,
+  ChatBubbleIcon,
 } from "@radix-ui/react-icons";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
   { href: "/dashboard/explore", label: "Explore", icon: MagnifyingGlassIcon },
+  { href: "/dashboard/messages", label: "Messages", icon: ChatBubbleIcon },
   {
     href: "/dashboard/assignments",
     label: "My Assignments",
