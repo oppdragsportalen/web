@@ -3,14 +3,11 @@
 import { Box, Text, Card } from "@radix-ui/themes";
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/date-utils";
+import type { Profile } from "@/types";
 
 type ChatItemProps = {
   id: string;
-  recipient: {
-    id: string;
-    username: string;
-    display_name: string | null;
-  } | null;
+  recipient: Profile | null;
   lastMessage: {
     id: string;
     body: string;

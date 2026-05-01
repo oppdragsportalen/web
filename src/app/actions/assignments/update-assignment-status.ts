@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
-
-type ClaimStatus = "accepted" | "in_progress" | "finished";
+import type { ClaimStatus } from "@/types";
 
 export async function UpdateAssignmentStatus(formData: FormData) {
   const assignmentId = formData.get("assignmentId") as string;

@@ -10,7 +10,7 @@ import {
   Callout,
 } from "@radix-ui/themes";
 import { Pencil2Icon } from "@radix-ui/react-icons";
-import { updateProfile } from "@/app/actions/update-profile";
+import { updateProfile } from "@/app/actions/profile/update-profile";
 
 interface EditProfileDialogProps {
   displayName: string;

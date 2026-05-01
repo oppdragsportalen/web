@@ -9,12 +9,11 @@ import {
   Box,
   Separator,
   AlertDialog,
-  Tooltip,
   IconButton,
 } from "@radix-ui/themes";
 import { ExitIcon, GearIcon, PlusIcon } from "@radix-ui/react-icons";
-import { logout } from "@/app/actions/login";
-import { CreateAssignmentDialog } from "@/app/components/create-assignment-dialog";
+import { logout } from "@/app/actions/auth/login";
+import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
 
 export async function Navbar() {
   const supabase = await createSupabaseServer();

@@ -2,8 +2,8 @@
 
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { DeleteAssignment } from "@/app/actions/delete-assignment";
-import { EditAssignmentDialog } from "@/app/components/edit-assignment-dialog";
+import { DeleteAssignment } from "@/app/actions/assignments/delete-assignment";
+import { EditAssignmentDialog } from "@/app/components/assignments/edit-assignment-dialog";
 
 type Props = {
   assignment: {

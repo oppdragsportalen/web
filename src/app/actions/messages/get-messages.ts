@@ -2,7 +2,7 @@
 
 import { createSupabaseServer } from "@/lib/supabase/server";
 
-export async function getChatMessages(roomId: string) {
+export async function getMessages(roomId: string) {
   if (!roomId) {
     return { error: "Room ID is required" };
   }

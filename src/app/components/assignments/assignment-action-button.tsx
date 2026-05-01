@@ -1,12 +1,11 @@
 "use client";
 
 import { Button, Spinner, Flex, Tabs } from "@radix-ui/themes";
-import { TakeAssignment } from "@/app/actions/take-assignment";
-import { UntakeAssignment } from "@/app/actions/untake-assignment";
-import { UpdateAssignmentStatus } from "@/app/actions/update-assignment-status";
+import { TakeAssignment } from "@/app/actions/assignments/take-assignment";
+import { UntakeAssignment } from "@/app/actions/assignments/untake-assignment";
+import { UpdateAssignmentStatus } from "@/app/actions/assignments/update-assignment-status";
 import { useState } from "react";
-
-type ClaimStatus = "accepted" | "in_progress" | "finished";
+import type { ClaimStatus } from "@/types";
 
 export function AssignmentActionButton({
   assignmentId,

@@ -1,18 +1,11 @@
-import {
-  Card,
-  Box,
-  Text,
-  Flex,
-  Badge,
-  Separator,
-  Button,
-} from "@radix-ui/themes";
+import { Card, Box, Text, Flex, Badge, Separator } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AssignmentAuthorActions } from "@/app/components/assignment-author-actions";
-import { AssignmentActionButton } from "@/app/components/assignment-action-button";
+import { AssignmentAuthorActions } from "@/app/components/assignments/assignment-author-actions";
+import { AssignmentActionButton } from "@/app/components/assignments/assignment-action-button";
 import { LocalDateTimeText } from "@/app/components/local-date-time-text";
+import type { Assignment } from "@/types";
 
 async function getAssignment(id: string, userId: string) {
   const supabase = await createSupabaseServer();
@@ -29,7 +22,7 @@ async function getAssignment(id: string, userId: string) {
 
   if (assignment) {
     // Assignment authored by user
-    let fullAssignment: any = assignment;
+    const fullAssignment: Assignment = assignment;
     const { data: claim } = await supabase
       .from("assignment_claims")
       .select("status, user_id")

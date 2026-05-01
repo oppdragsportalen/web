@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from "@radix-ui/themes";
-import { getUserChats } from "@/app/actions/get-user-chats";
+import { getUserChats } from "@/app/actions/messages/get-user-chats";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { ChatListClient } from "@/app/components/chat-list-client";
-import { StartNewChatDialog } from "@/app/components/start-new-chat-dialog";
+import { ChatListClient } from "@/app/components/messages/chat-list-client";
+import { StartNewChatDialog } from "@/app/components/messages/start-new-chat-dialog";
 import { redirect } from "next/navigation";
 
 

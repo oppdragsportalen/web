@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { Card, Box, Text, Badge, Flex, Tooltip } from "@radix-ui/themes";
 import { formatDateToLocal } from "@/lib/timezone";
-
-type Profile = {
-  id: string;
-  display_name: string | null;
-  username: string | null;
-};
+import type { Profile } from "@/types";
 
 type Props = {
   assignment: {

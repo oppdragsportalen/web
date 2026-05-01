@@ -3,22 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Text, TextField, Button } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
-import { sendMessage } from "@/app/actions/send-message";
-import { deleteMessage } from "@/app/actions/delete-message";
+import { sendMessage } from "@/app/actions/messages/send-message";
+import { deleteMessage } from "@/app/actions/messages/delete-message";
 import { formatTimeAgo } from "@/lib/date-utils";
 import { createSupabaseClient } from "@/lib/supabase/client";
-
-type Message = {
-  id: string;
-  body: string;
-  sender_id: string;
-  created_at: string;
-  sender: {
-    id: string;
-    username: string;
-    display_name: string | null;
-  };
-};
+import type { Message } from "@/types";
 
 type ChatDetailClientProps = {
   roomId: string;

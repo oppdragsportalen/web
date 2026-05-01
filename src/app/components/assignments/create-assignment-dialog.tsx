@@ -13,7 +13,7 @@ import {
   TextArea,
 } from "@radix-ui/themes";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { CreateAssignment } from "@/app/actions/create-assignment";
+import { CreateAssignment } from "@/app/actions/assignments/create-assignment";
 import {
   getLocalNowDatetime,
   getLocalDefaultDatetime,

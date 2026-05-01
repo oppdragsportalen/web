@@ -12,7 +12,7 @@ import {
   Spinner,
 } from "@radix-ui/themes";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { DeleteProfile } from "@/app/actions/delete-profile";
+import { DeleteProfile } from "@/app/actions/profile/delete-profile";
 
 interface DeleteAccountDialogProps {
   open: boolean;

@@ -2,10 +2,14 @@ import { Card, Box, Text, Flex, Badge, Separator } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { AssignmentActionButton } from "@/app/components/assignment-action-button";
+import { AssignmentActionButton } from "@/app/components/assignments/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
+import type { Assignment } from "@/types";
 
-async function getAssignment(id: string, userId: string) {
+async function getAssignment(
+  id: string,
+  userId: string,
+): Promise<{ assignment: Assignment | null; error: { message: string } | null }> {
   const supabase = await createSupabaseServer();
 
   const { data: assignment, error } = await supabase
@@ -144,7 +148,7 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
 
           <Flex gap="2" wrap="wrap" align="center">
             {getVisibilityBadge(assignment.visibility)}
-            {getStatusBadge((assignment as any).claimStatus)}
+            {getStatusBadge(assignment.claimStatus)}
           </Flex>
         </Flex>
 
@@ -184,7 +188,7 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
               <Card>
                 <Text size="2" className="capitalize whitespace-nowrap">
                   {(() => {
-                    const status = (assignment as any).claimStatus;
+                    const status = assignment.claimStatus;
                     if (status === "accepted") return "Accepted";
                     if (status === "in_progress") return "In Progress";
                     if (status === "finished") return "Completed";
@@ -219,7 +223,7 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
               </Card>
             </Box>
             {assignment.visibility === "restricted" &&
-              (assignment as any).assigned_profile && (
+              assignment.assigned_profile && (
                 <Box>
                   <Box>
                     <Text size="2" weight="medium" color="gray">
@@ -250,8 +254,8 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
           </Text>
           <AssignmentActionButton
             assignmentId={assignment.id}
-            isTaken={!!(assignment as any).claimStatus}
-            status={(assignment as any).claimStatus}
+            isTaken={!!assignment.claimStatus}
+            status={assignment.claimStatus}
           />
         </Flex>
       </Card>

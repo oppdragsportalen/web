@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Dialog, Flex, Button, TextField, Box, Text } from "@radix-ui/themes";
-import { getDMRoom } from "@/app/actions/get-dm-room";
-import { createDMRoom } from "@/app/actions/create-dm-room";
+import { getDMRoom } from "@/app/actions/messages/get-dm-room";
+import { createDMRoom } from "@/app/actions/messages/create-dm-room";
 import { useRouter } from "next/navigation";
 
 type StartNewChatDialogProps = {

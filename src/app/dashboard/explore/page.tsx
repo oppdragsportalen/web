@@ -1,10 +1,10 @@
 import { Box, Text, Tabs } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { GetAvailableAssignments } from "@/app/actions/get-available-assignments";
-import { GetRestrictedAssignments } from "@/app/actions/get-restricted-assignments";
-import ExploreClient from "@/app/components/explore-client";
-import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
+import { GetAvailableAssignments } from "@/app/actions/assignments/get-available-assignments";
+import { GetRestrictedAssignments } from "@/app/actions/assignments/get-restricted-assignments";
+import ExploreClient from "@/app/components/assignments/explore-client";
+import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 import { Suspense } from "react";
 
 async function ExploreContent() {

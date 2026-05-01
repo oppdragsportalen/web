@@ -20,7 +20,7 @@ export function AssignmentCardSkeleton() {
         <Skeleton>
           <Box width="100%" height="40px" />
         </Skeleton>
-      </Box>
+      </Box> 
       <Flex justify="between" align="center" className="mt-2">
         <Skeleton>
           <Box width="100px" height="16px" />

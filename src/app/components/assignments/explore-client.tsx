@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Box, Text, TextField, Spinner } from "@radix-ui/themes";
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
-import { AssignmentCard } from "@/app/components/assignment-card";
-import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
-import { GetAvailableAssignments } from "@/app/actions/get-available-assignments";
+import { AssignmentCard } from "@/app/components/assignments/assignment-card";
+import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
+import { GetAvailableAssignments } from "@/app/actions/assignments/get-available-assignments";
 
 type Assignment = {
   id: string;

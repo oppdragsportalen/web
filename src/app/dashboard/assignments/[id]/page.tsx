@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import AssignmentDetailContent from "@/app/components/assignment-detail-content";
-import AssignmentSkeleton from "@/app/components/assignment-detail-skeleton";
+import AssignmentDetailContent from "@/app/components/assignments/assignment-detail-content";
+import AssignmentSkeleton from "@/app/components/assignments/assignment-detail-skeleton";
 
 export default async function AssignmentDetailPage({
   params,

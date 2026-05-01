@@ -2,22 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Box, Flex, Text } from "@radix-ui/themes";
-import { ChatItem } from "@/app/components/chat-item";
+import { ChatItem } from "@/app/components/messages/chat-item";
 import { createSupabaseClient } from "@/lib/supabase/client";
+import type { Message, Profile } from "@/types";
 
 type Chat = {
   id: string;
-  recipient: {
-    id: string;
-    username: string;
-    display_name: string | null;
-  } | null;
-  lastMessage: {
-    id: string;
-    body: string;
-    sender_id: string;
-    created_at: string;
-  } | null;
+  recipient: Profile | null;
+  lastMessage: Omit<Message, "sender"> | null;
   createdAt: string;
 };
 

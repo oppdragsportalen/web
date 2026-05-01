@@ -1,22 +1,11 @@
 import { Box, Text, Button } from "@radix-ui/themes";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { getChatMessages } from "@/app/actions/get-chat-messages";
+import { getMessages } from "@/app/actions/messages/get-messages";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { ChatDetailClient } from "@/app/components/chat-detail-client";
-
-type Message = {
-  id: string;
-  body: string;
-  sender_id: string;
-  created_at: string;
-  sender: {
-    id: string;
-    username: string;
-    display_name: string | null;
-  };
-};
+import { ChatDetailClient } from "@/app/components/messages/chat-detail-client";
+import type { Message } from "@/types";
 
 type ChatDetailPageProps = {
   params: Promise<{
@@ -36,7 +25,7 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
     redirect("/login");
   }
 
-  const result = await getChatMessages(id);
+  const result = await getMessages(id);
 
   if (result.error) {
     return (
@@ -63,7 +52,7 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
       <ChatDetailClient
         roomId={id}
         currentUserId={user.id}
-        initialMessages={messages as any}
+        initialMessages={messages}
       />
     </>
   );

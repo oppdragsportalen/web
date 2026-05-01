@@ -14,7 +14,7 @@ import {
 } from "@radix-ui/themes";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Pencil1Icon } from "@radix-ui/react-icons";
-import { UpdateAssignment } from "@/app/actions/update-assignment";
+import { UpdateAssignment } from "@/app/actions/assignments/update-assignment";
 import {
   utcToLocalDatetime,
   getLocalNowDatetime,

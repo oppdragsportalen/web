@@ -3,12 +3,7 @@ import { Box, Text } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AssignmentCard } from "./assignment-card";
-
-type Profile = {
-  id: string;
-  display_name: string | null;
-  username: string | null;
-};
+import type { Profile } from "@/types";
 
 async function getProfileMapByIds(userIds: string[]) {
   const uniqueUserIds = [...new Set(userIds.filter(Boolean))];
@@ -93,7 +88,9 @@ export default async function AssignmentAuthoredList({
           {authoredError.message}
         </Text>
       ) : authoredCount === 0 ? (
-        <Text size="2">You haven't created any assignments yet.</Text>
+        <Text size="2" color="gray">
+          You haven't created any assignments yet.
+        </Text>
       ) : (
         <Box>
           {(authored ?? []).map((a: any) => (

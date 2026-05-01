@@ -3,16 +3,16 @@ import { Box, Card, Text, Button, Flex } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import TimeBasedGreeting from "@/app/components/time-based-greeting";
-import { CreateAssignmentDialog } from "@/app/components/create-assignment-dialog";
+import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
 import {
   PlusIcon,
   FileTextIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
 import Link from "next/link";
-import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
-import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
-import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
+import AssignmentAssignedList from "@/app/components/assignments/assignment-assigned-list";
+import AssignmentAuthoredList from "@/app/components/assignments/assignment-authored-list";
+import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 
 function AssignmentListSkeleton() {
   return (
@@ -40,17 +40,21 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  const [{ count: assignedCount }, { count: authoredCount }] = await Promise.all([
-    supabase
-      .from("assignment_claims")
-      .select("assignment_id, assignments:assignment_id(id)", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .not("assignments.id", "is", null),
-    supabase
-      .from("assignments")
-      .select("id", { count: "exact", head: true })
-      .eq("creator_id", user.id),
-  ]);
+  const [{ count: assignedCount }, { count: authoredCount }] =
+    await Promise.all([
+      supabase
+        .from("assignment_claims")
+        .select("assignment_id, assignments:assignment_id(id)", {
+          count: "exact",
+          head: true,
+        })
+        .eq("user_id", user.id)
+        .not("assignments.id", "is", null),
+      supabase
+        .from("assignments")
+        .select("id", { count: "exact", head: true })
+        .eq("creator_id", user.id),
+    ]);
 
   return (
     <div className="p-4 min-w-137.5">

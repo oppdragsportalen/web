@@ -2,10 +2,10 @@ import { Suspense } from "react";
 import { Box, Tabs } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import AssignmentAuthoredList from "@/app/components/assignment-authored-list";
-import AssignmentAssignedList from "@/app/components/assignment-assigned-list";
-import { AssignmentCardSkeleton } from "@/app/components/assignment-card-skeleton";
-import AssignmentSearch from "@/app/components/assignment-search";
+import AssignmentAuthoredList from "@/app/components/assignments/assignment-authored-list";
+import AssignmentAssignedList from "@/app/components/assignments/assignment-assigned-list";
+import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
+import AssignmentSearch from "@/app/components/assignments/assignment-search";
 
 function AssignmentListSkeleton() {
   return (
