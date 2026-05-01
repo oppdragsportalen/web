@@ -1,8 +1,11 @@
 "use server";
 
 import { createSupabaseServer } from "@/lib/supabase/server";
+import type { Message } from "@/types/message";
 
-export async function getMessages(roomId: string) {
+export async function getMessages(
+  roomId: string
+): Promise<{ error: string } | { success: true; messages: Message[] }> {
   if (!roomId) {
     return { error: "Room ID is required" };
   }
@@ -36,8 +39,8 @@ export async function getMessages(roomId: string) {
   }
 
   // Get sender profiles
-  let messagesWithSenders = messages;
-  if (messages.length > 0) {
+  let messagesWithSenders: Message[] = [];
+  if (messages && messages.length > 0) {
     const senderIds = [...new Set(messages.map((m) => m.sender_id))];
     const { data: senders, error: sendersError } = await supabase
       .from("profiles")
@@ -51,8 +54,8 @@ export async function getMessages(roomId: string) {
     // Merge sender data into messages
     messagesWithSenders = messages.map((message) => ({
       ...message,
-      sender: senders.find((s) => s.id === message.sender_id),
-    }));
+      sender: senders!.find((s) => s.id === message.sender_id),
+    })) as Message[];
   }
 
   // Verify user is a participant of this room

@@ -5,7 +5,6 @@ import { getMessages } from "@/app/actions/messages/get-messages";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ChatDetailClient } from "@/app/components/messages/chat-detail-client";
-import type { Message } from "@/types";
 
 type ChatDetailPageProps = {
   params: Promise<{
@@ -27,7 +26,7 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
 
   const result = await getMessages(id);
 
-  if (result.error) {
+  if ("error" in result) {
     return (
       <Box p="4">
         <Link href="/dashboard/messages">

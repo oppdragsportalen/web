@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AssignmentActionButton } from "@/app/components/assignments/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
-import type { Assignment } from "@/types";
+import type { Assignment, ClaimStatus } from "@/types";
 
 async function getAssignment(
   id: string,
@@ -71,7 +71,7 @@ async function getAssignment(
   return {
     assignment: {
       ...assignment,
-      claimStatus: claim?.status,
+      claimStatus: claim?.status as any,
       ...(assignedProfile && { assigned_profile: assignedProfile }),
       ...(creatorProfile && { creator_profile: creatorProfile }),
     },
@@ -209,19 +209,21 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
                 </Text>
               </Card>
             </Box>
-            <Box>
+            {assignment.creator_profile && (
               <Box>
-                <Text size="2" weight="medium" color="gray">
-                  Created By
-                </Text>
+                <Box>
+                  <Text size="2" weight="medium" color="gray">
+                    Created By
+                  </Text>
+                </Box>
+                <Card>
+                  <Text size="2" className="whitespace-nowrap">
+                    {assignment.creator_profile.display_name} (@
+                    {assignment.creator_profile.username})
+                  </Text>
+                </Card>
               </Box>
-              <Card>
-                <Text size="2" className="whitespace-nowrap">
-                  {assignment.creator_profile.display_name} (@
-                  {assignment.creator_profile.username})
-                </Text>
-              </Card>
-            </Box>
+            )}
             {assignment.visibility === "restricted" &&
               assignment.assigned_profile && (
                 <Box>

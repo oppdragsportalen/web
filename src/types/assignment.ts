@@ -1,4 +1,5 @@
 import type { Profile } from "./profile";
+import type { ClaimStatus } from "./index";
 
 export type Assignment = {
   id: string;
@@ -8,7 +9,9 @@ export type Assignment = {
   visibility: "public" | "restricted";
   created_at: string;
   creator_id: string;
-  claimStatus?: string;
+  claimStatus?: ClaimStatus;
   assigned_profile?: Profile;
-  creator_profile: Profile;
+  creator_profile?: Profile;
+  claimed_by_profile?: Profile;
+  assignedUsername?: string;
 };
