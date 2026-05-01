@@ -24,79 +24,126 @@ export function ChatDetailClient({
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const subscriptionRef = useRef<any>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Refetch messages from database
-  const refetchMessages = async (supabase: any) => {
+  // Fetch sender profile for a message
+  const fetchSenderProfile = async (supabase: any, senderId: string) => {
     try {
-      // Fetch messages without join
-      const { data: allMessages } = await supabase
-        .from("messages")
-        .select("id, body, sender_id, created_at")
-        .eq("room_id", roomId)
-        .order("created_at", { ascending: true });
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id, username, display_name")
+        .eq("id", senderId)
+        .single();
 
-      if (!allMessages) return;
-
-      // Get unique sender IDs
-      const senderIds = [...new Set(allMessages.map((m: any) => m.sender_id))];
-
-      // Fetch sender profiles
-      let profiles: any[] = [];
-      if (senderIds.length > 0) {
-        const { data: profilesData } = await supabase
-          .from("profiles")
-          .select("id, username, display_name")
-          .in("id", senderIds);
-        profiles = profilesData || [];
-      }
-
-      // Merge profiles with messages
-      const messagesWithSenders = allMessages.map((msg: any) => {
-        const profile = profiles.find((p: any) => p.id === msg.sender_id);
-        return {
-          id: msg.id,
-          body: msg.body,
-          sender_id: msg.sender_id,
-          created_at: msg.created_at,
-          sender: profile || {
-            id: msg.sender_id,
-            username: "",
-            display_name: null,
-          },
-        };
-      });
-
-      setMessages(messagesWithSenders);
+      return (
+        profile || {
+          id: senderId,
+          username: "",
+          display_name: null,
+        }
+      );
     } catch (e) {
-      console.error("Failed to refetch messages:", e);
+      console.error("Failed to fetch sender profile:", e);
+      return {
+        id: senderId,
+        username: "",
+        display_name: null,
+      };
     }
   };
 
-  // Setup polling for new messages
+  // Setup Supabase Realtime subscriptions
   useEffect(() => {
     const supabase = createSupabaseClient();
     let isActive = true;
 
-    // Refetch immediately on mount
-    refetchMessages(supabase);
+    const setupSubscriptions = async () => {
+      // Subscribe to changes in the messages table for this room
+      const channel = supabase
+        .channel(`messages:${roomId}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "messages",
+            filter: `room_id=eq.${roomId}`,
+          },
+          async (payload) => {
+            if (!isActive) return;
 
-    // Then set up polling every 2 seconds
-    pollingIntervalRef.current = setInterval(() => {
-      if (isActive) {
-        refetchMessages(supabase);
-      }
-    }, 2000);
+            const newMsg = payload.new;
+            const sender = await fetchSenderProfile(supabase, newMsg.sender_id);
+
+            const messageWithSender: Message = {
+              id: newMsg.id,
+              body: newMsg.body,
+              sender_id: newMsg.sender_id,
+              created_at: newMsg.created_at,
+              sender,
+            };
+
+            setMessages((prev) => [...prev, messageWithSender]);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "DELETE",
+            schema: "public",
+            table: "messages",
+            filter: `room_id=eq.${roomId}`,
+          },
+          (payload) => {
+            if (!isActive) return;
+
+            const deletedId = payload.old.id;
+            setMessages((prev) => prev.filter((msg) => msg.id !== deletedId));
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "messages",
+            filter: `room_id=eq.${roomId}`,
+          },
+          async (payload) => {
+            if (!isActive) return;
+
+            const updatedMsg = payload.new;
+            const sender = await fetchSenderProfile(supabase, updatedMsg.sender_id);
+
+            const messageWithSender: Message = {
+              id: updatedMsg.id,
+              body: updatedMsg.body,
+              sender_id: updatedMsg.sender_id,
+              created_at: updatedMsg.created_at,
+              sender,
+            };
+
+            setMessages((prev) =>
+              prev.map((msg) => (msg.id === updatedMsg.id ? messageWithSender : msg))
+            );
+          }
+        )
+        .subscribe();
+
+      subscriptionRef.current = channel;
+    };
+
+    setupSubscriptions();
 
     return () => {
       isActive = false;
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
+      if (subscriptionRef.current) {
+        supabase.removeChannel(subscriptionRef.current);
       }
     };
   }, [roomId]);
@@ -117,12 +164,7 @@ export function ChatDetailClient({
       return;
     }
 
-    // Refetch messages after a short delay to ensure server has processed
-    setTimeout(() => {
-      const supabase = createSupabaseClient();
-      refetchMessages(supabase);
-      setIsSending(false);
-    }, 300);
+    setIsSending(false);
   };
 
   const handleDeleteMessage = async (messageId: string) => {
@@ -131,9 +173,6 @@ export function ChatDetailClient({
       alert(result.error);
       return;
     }
-    // Refetch messages after delete
-    const supabase = createSupabaseClient();
-    refetchMessages(supabase);
   };
 
   return (
