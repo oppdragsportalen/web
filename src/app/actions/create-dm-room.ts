@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export async function createDMRoom(recipientUsername: string) {
@@ -19,24 +20,20 @@ export async function createDMRoom(recipientUsername: string) {
     return { error: "Not logged in" };
   }
 
-  const { data: recipientProfile, error: recipientError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", normalizedUsername)
-    .maybeSingle();
+  const { data: recipientId, error: recipientError } = await supabase.rpc(
+    "get_user_id_by_username",
+    { input_username: normalizedUsername }
+  );
 
-  if (recipientError) {
-    return { error: recipientError.message };
-  }
-
-  if (!recipientProfile) {
+  if (recipientError || !recipientId) {
     return { error: "User not found" };
   }
 
-  const recipientId = recipientProfile.id;
-
   if (recipientId === currentUser.id) {
-    return { error: "Cannot message yourself" };
+    return {
+      error:
+        "You cannot message yourself",
+    };
   }
 
   const { data: newRoom, error: createError } = await supabase
@@ -49,6 +46,7 @@ export async function createDMRoom(recipientUsername: string) {
     .single();
 
   if (!createError) {
+    revalidatePath("/dashboard/messages");
     return { roomId: newRoom.id };
   }
 
@@ -66,6 +64,7 @@ export async function createDMRoom(recipientUsername: string) {
     }
 
     if (existingRoom1) {
+      revalidatePath("/dashboard/messages");
       return { roomId: existingRoom1.id };
     }
 
@@ -81,6 +80,7 @@ export async function createDMRoom(recipientUsername: string) {
     }
 
     if (existingRoom2) {
+      revalidatePath("/dashboard/messages");
       return { roomId: existingRoom2.id };
     }
   }

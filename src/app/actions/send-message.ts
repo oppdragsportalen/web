@@ -38,6 +38,7 @@ export async function sendMessage(roomId: string, body: string) {
   }
 
   revalidatePath(`/dashboard/messages/${roomId}`);
+  revalidatePath("/dashboard/messages");
 
   return { message };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Text, TextField, Button, Spinner } from "@radix-ui/themes";
+import { Box, Text, TextField, Button } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { sendMessage } from "@/app/actions/send-message";
 import { deleteMessage } from "@/app/actions/delete-message";
@@ -34,142 +34,117 @@ export function ChatDetailClient({
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [error, setError] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Real-time subscription
+  // Refetch messages from database
+  const refetchMessages = async (supabase: any) => {
+    try {
+      // Fetch messages without join
+      const { data: allMessages } = await supabase
+        .from("messages")
+        .select("id, body, sender_id, created_at")
+        .eq("room_id", roomId)
+        .order("created_at", { ascending: true });
+
+      if (!allMessages) return;
+
+      // Get unique sender IDs
+      const senderIds = [...new Set(allMessages.map((m: any) => m.sender_id))];
+
+      // Fetch sender profiles
+      let profiles: any[] = [];
+      if (senderIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from("profiles")
+          .select("id, username, display_name")
+          .in("id", senderIds);
+        profiles = profilesData || [];
+      }
+
+      // Merge profiles with messages
+      const messagesWithSenders = allMessages.map((msg: any) => {
+        const profile = profiles.find((p: any) => p.id === msg.sender_id);
+        return {
+          id: msg.id,
+          body: msg.body,
+          sender_id: msg.sender_id,
+          created_at: msg.created_at,
+          sender: profile || {
+            id: msg.sender_id,
+            username: "",
+            display_name: null,
+          },
+        };
+      });
+
+      setMessages(messagesWithSenders);
+    } catch (e) {
+      console.error("Failed to refetch messages:", e);
+    }
+  };
+
+  // Setup polling for new messages
   useEffect(() => {
     const supabase = createSupabaseClient();
     let isActive = true;
 
-    const setupRealtime = async () => {
-      // Ensure auth state is loaded before subscribing to RLS-protected changes.
-      await supabase.auth.getSession();
+    // Refetch immediately on mount
+    refetchMessages(supabase);
 
-      const channel = supabase
-        .channel(`messages-${roomId}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "messages",
-            filter: `room_id=eq.${roomId}`,
-          },
-          async (payload: any) => {
-            if (!isActive) return;
-
-            const inserted = payload.new;
-
-            const { data: senderProfile } = await supabase
-              .from("profiles")
-              .select("id, username, display_name")
-              .eq("id", inserted.sender_id)
-              .maybeSingle();
-
-            setMessages((prev) => {
-              if (prev.some((m) => m.id === inserted.id)) {
-                return prev;
-              }
-
-              return [
-                ...prev,
-                {
-                  id: inserted.id,
-                  body: inserted.body,
-                  sender_id: inserted.sender_id,
-                  created_at: inserted.created_at,
-                  sender: {
-                    id: inserted.sender_id,
-                    username: senderProfile?.username ?? "",
-                    display_name: senderProfile?.display_name ?? null,
-                  },
-                },
-              ];
-            });
-          }
-        )
-        .on(
-          "postgres_changes",
-          {
-            event: "DELETE",
-            schema: "public",
-            table: "messages",
-            filter: `room_id=eq.${roomId}`,
-          },
-          (payload: any) => {
-            if (!isActive) return;
-            const deletedId = payload.old.id;
-            setMessages((prev) => prev.filter((m) => m.id !== deletedId));
-          }
-        );
-
-      channel.subscribe((status) => {
-        if (!isActive) return;
-
-        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
-          setError(
-            "Realtime connection failed. Check Supabase Realtime replication for messages table."
-          );
-        }
-      });
-
-      return channel;
-    };
-
-    let activeChannel: ReturnType<typeof supabase.channel> | null = null;
-    setupRealtime().then((channel) => {
-      if (!isActive) {
-        if (channel) {
-          supabase.removeChannel(channel);
-        }
-        return;
+    // Then set up polling every 2 seconds
+    pollingIntervalRef.current = setInterval(() => {
+      if (isActive) {
+        refetchMessages(supabase);
       }
-      activeChannel = channel ?? null;
-    });
+    }, 2000);
 
     return () => {
       isActive = false;
-      if (activeChannel) {
-        supabase.removeChannel(activeChannel);
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
       }
     };
   }, [roomId]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!newMessage.trim()) return;
 
     setIsSending(true);
-    const result = await sendMessage(roomId, newMessage);
+    const messageText = newMessage;
+
+    const result = await sendMessage(roomId, messageText);
+    setNewMessage("");
 
     if (result.error) {
-      setError(result.error);
+      alert(result.error);
       setIsSending(false);
       return;
     }
 
-    // Clear message. Realtime subscription will append it.
-    setNewMessage("");
-    setError("");
-    setIsSending(false);
+    // Refetch messages after a short delay to ensure server has processed
+    setTimeout(() => {
+      const supabase = createSupabaseClient();
+      refetchMessages(supabase);
+      setIsSending(false);
+    }, 300);
   };
 
   const handleDeleteMessage = async (messageId: string) => {
     const result = await deleteMessage(messageId, roomId);
-
     if (result.error) {
-      setError(result.error);
+      alert(result.error);
       return;
     }
-
-    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    // Refetch messages after delete
+    const supabase = createSupabaseClient();
+    refetchMessages(supabase);
   };
 
   return (
@@ -222,7 +197,6 @@ export function ChatDetailClient({
                     wordBreak: "break-word",
                     position: "relative",
                   }}
-                  className="group"
                 >
                   <Text size="2">{message.body}</Text>
                   <Box
@@ -234,7 +208,7 @@ export function ChatDetailClient({
                       gap: "8px",
                     }}
                   >
-                    <Text size="1" color={isOwn ? "gray" : "gray"}>
+                    <Text size="1" color={isOwn ? "gray" : "gray"} suppressHydrationWarning>
                       {formatTimeAgo(message.created_at)}
                     </Text>
                     {isOwn && (
@@ -280,15 +254,9 @@ export function ChatDetailClient({
           style={{ flex: 1 }}
         />
         <Button type="submit" disabled={isSending || !newMessage.trim()}>
-          {isSending ? <Spinner /> : "Send"}
+          Send
         </Button>
       </form>
-
-      {error && (
-        <Text color="red" size="2" style={{ marginTop: "8px" }}>
-          {error}
-        </Text>
-      )}
     </Box>
   );
 }

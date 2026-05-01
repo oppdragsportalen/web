@@ -4,20 +4,6 @@ import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getMaxDeadlineUTC } from "@/lib/timezone";
 
-async function getUserIdByUsername(username: string) {
-  const normalizedUsername = username.trim().toLowerCase();
-  if (!normalizedUsername) return null;
-
-  const supabase = await createSupabaseServer();
-  const { data } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", normalizedUsername)
-    .maybeSingle();
-
-  return data?.id ?? null;
-}
-
 export async function CreateAssignment(formData: FormData) {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
@@ -89,7 +75,14 @@ export async function CreateAssignment(formData: FormData) {
       return { error: "Please enter a valid username" };
     }
 
-    const userId = await getUserIdByUsername(username);
+    const normalizedUsername = username.trim().toLowerCase();
+    const { data: userId, error: userIdError } = await supabase.rpc(
+      "get_user_id_by_username",
+      { input_username: normalizedUsername }
+    );
+    if (userIdError) {
+      console.error("Error getting user ID:", userIdError);
+    }
 
     if (!userId) {
       await supabase.from("assignments").delete().eq("id", assignment.id);

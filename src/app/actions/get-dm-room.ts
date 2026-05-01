@@ -19,21 +19,14 @@ export async function getDMRoom(recipientUsername: string) {
     return { error: "Not logged in" };
   }
 
-  const { data: recipientProfile, error: recipientError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("username", normalizedUsername)
-    .maybeSingle();
+  const { data: recipientId, error: recipientError } = await supabase.rpc(
+    "get_user_id_by_username",
+    { input_username: normalizedUsername }
+  );
 
-  if (recipientError) {
-    return { error: recipientError.message };
-  }
-
-  if (!recipientProfile) {
+  if (recipientError || !recipientId) {
     return { error: "User not found" };
   }
-
-  const recipientId = recipientProfile.id;
 
   if (recipientId === currentUser.id) {
     return { error: "Cannot message yourself" };
