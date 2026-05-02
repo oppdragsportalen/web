@@ -82,7 +82,7 @@ const AccountInformationDataList = ({ user, profile }: Props) => {
         </DataList.Item>
         <DataList.Item>
           <DataList.Label minWidth="2px">Username</DataList.Label>
-          <DataList.Value>@{profile.username}</DataList.Value>
+          <DataList.Value>{profile.username}</DataList.Value>
         </DataList.Item>
       </DataList.Root>
     </Box>

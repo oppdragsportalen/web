@@ -81,7 +81,7 @@ export async function UpdateAssignment(formData: FormData) {
     const userId = await getUserIdByUsername(username);
 
     if (!userId) {
-      return { error: `No user found with username: @${username}` };
+      return { error: `No user found with username: ${username}` };
     }
 
     if (userId === user.id) {

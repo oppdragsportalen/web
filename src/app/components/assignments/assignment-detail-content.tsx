@@ -277,8 +277,10 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
                 </Box>
                 <Card>
                   <Text size="2" className="whitespace-nowrap">
-                    {assignment.creator_profile.display_name} (@
-                    {assignment.creator_profile.username})
+                    <Badge mr="1" variant="outline" color="gray">
+                      <strong>{assignment.creator_profile.username}</strong>
+                    </Badge>{" "}
+                    {assignment.creator_profile.display_name}
                   </Text>
                 </Card>
               </Box>
@@ -293,8 +295,12 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {assignment.claimed_by_profile.display_name} (@
-                      {assignment.claimed_by_profile.username})
+                      <Badge mr="1" variant="outline" color="gray">
+                        <strong>
+                          {assignment.claimed_by_profile.username}
+                        </strong>
+                      </Badge>{" "}
+                      {assignment.claimed_by_profile.display_name}
                     </Text>
                   </Card>
                 </Box>
@@ -309,8 +315,10 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {assignment.assigned_profile.display_name} (@
-                      {assignment.assigned_profile.username})
+                      <Badge mr="1" variant="outline" color="gray">
+                        <strong>{assignment.assigned_profile.username}</strong>
+                      </Badge>{" "}
+                      {assignment.assigned_profile.display_name}
                     </Text>
                   </Card>
                 </Box>

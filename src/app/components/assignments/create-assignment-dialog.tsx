@@ -172,7 +172,7 @@ export function CreateAssignmentDialog({
                 <TextField.Root
                   id="assignedUsername"
                   name="assignedUsername"
-                  placeholder="username"
+                  placeholder="Enter username"
                   size="3"
                   required={isRestricted}
                   aria-required={isRestricted}

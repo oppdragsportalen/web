@@ -9,7 +9,10 @@ import type { Assignment, ClaimStatus } from "@/types";
 async function getAssignment(
   id: string,
   userId: string,
-): Promise<{ assignment: Assignment | null; error: { message: string } | null }> {
+): Promise<{
+  assignment: Assignment | null;
+  error: { message: string } | null;
+}> {
   const supabase = await createSupabaseServer();
 
   const { data: assignment, error } = await supabase
@@ -218,8 +221,10 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
                 </Box>
                 <Card>
                   <Text size="2" className="whitespace-nowrap">
-                    {assignment.creator_profile.display_name} (@
-                    {assignment.creator_profile.username})
+                    <Badge mr="1" variant="outline" color="gray">
+                      <strong>{assignment.creator_profile.username}</strong>
+                    </Badge>{" "}
+                    {assignment.creator_profile.display_name}
                   </Text>
                 </Card>
               </Box>
@@ -234,8 +239,10 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
                   </Box>
                   <Card>
                     <Text size="2" className="whitespace-nowrap">
-                      {assignment.assigned_profile.display_name} (@
-                      {assignment.assigned_profile.username})
+                      <Badge mr="1" variant="outline" color="gray">
+                        <strong>{assignment.assigned_profile.username}</strong>
+                      </Badge>{" "}
+                      {assignment.assigned_profile.display_name}
                     </Text>
                   </Card>
                 </Box>

@@ -86,7 +86,7 @@ export async function CreateAssignment(formData: FormData) {
 
     if (!userId) {
       await supabase.from("assignments").delete().eq("id", assignment.id);
-      return { error: `No user found with username: @${username}` };
+      return { error: `No user found with username: ${username}` };
     }
 
     // Prevent self-assignment

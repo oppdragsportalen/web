@@ -68,10 +68,15 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
           {assignment.assigned_profile && (
             <Box>
               <Tooltip
-                content={`Assigned to ${assignment.assigned_profile?.display_name} (@${assignment.assigned_profile?.username}) `}
+                content={
+                  <span>
+                    Assigned to{" "}
+                    <strong>{assignment.assigned_profile?.username}</strong>{" "}
+                    {assignment.assigned_profile?.display_name}
+                  </span>
+                }
               >
                 <Text size="2" color="gray">
-                  {/* {assignment.assigned_profile?.display_name}*/}@
                   {assignment.assigned_profile.username}
                 </Text>
               </Tooltip>
@@ -80,10 +85,15 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
           {assignment.creator_profile && (
             <Box>
               <Tooltip
-                content={`Created by ${assignment.creator_profile?.display_name} (@${assignment.creator_profile?.username}) `}
+                content={
+                  <span>
+                    Created by{" "}
+                    <strong>{assignment.creator_profile?.username}</strong>{" "}
+                    {assignment.creator_profile?.display_name}
+                  </span>
+                }
               >
                 <Text size="2" color="gray">
-                  {/* {assignment.creator_profile.display_name} */}@
                   {assignment.creator_profile.username}
                 </Text>
               </Tooltip>
