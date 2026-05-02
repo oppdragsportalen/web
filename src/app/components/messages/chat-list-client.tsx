@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Flex, Text } from "@radix-ui/themes";
 import { ChatItem } from "@/app/components/messages/chat-item";
 import { createSupabaseClient } from "@/lib/supabase/client";
@@ -23,7 +23,6 @@ export function ChatListClient({
   currentUserId,
 }: ChatListClientProps) {
   const [chats, setChats] = useState<Chat[]>(initialChats);
-  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch latest chats from database
   const refetchChats = async (supabase: any) => {
@@ -108,25 +107,97 @@ export function ChatListClient({
     }
   };
 
+  // Supabase Realtime subscriptions
   useEffect(() => {
     const supabase = createSupabaseClient();
     let isActive = true;
+    let currentRoomIds: string[] = [];
+    let roomsChannel: any = null;
+    let messagesChannel: any = null;
 
-    // Refetch immediately on mount
-    refetchChats(supabase);
+    const runRefetch = async () => {
+      if (!isActive) return;
+      const { data: rooms } = await supabase
+        .from("dm_rooms")
+        .select("id")
+        .or(`user_a.eq.${currentUserId},user_b.eq.${currentUserId}`)
+        .order("created_at", { ascending: false });
 
-    // Then set up polling every 3 seconds
-    pollingIntervalRef.current = setInterval(() => {
-      if (isActive) {
-        refetchChats(supabase);
+      if (rooms) {
+        currentRoomIds = rooms.map((r) => r.id);
       }
-    }, 3000);
+      await refetchChats(supabase);
+    };
+
+    const handleNewRoom = async (payload: any) => {
+      const room = payload.new;
+      if (room.user_a !== currentUserId && room.user_b !== currentUserId)
+        return;
+
+      // Add the new room ID to tracking
+      if (!currentRoomIds.includes(room.id)) {
+        currentRoomIds.push(room.id);
+      }
+
+      // Fetch the new room's data and add it to UI
+      await refetchChats(supabase);
+    };
+
+    const setupSubscriptions = () => {
+      roomsChannel = supabase.channel(`dm-rooms:${currentUserId}`);
+      roomsChannel.on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "dm_rooms" },
+        handleNewRoom,
+      );
+      roomsChannel.subscribe();
+
+      messagesChannel = supabase.channel(`dm-messages:${currentUserId}`);
+      messagesChannel.on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "messages" },
+        async (payload: any) => {
+          const msgRoomId = payload.new?.room_id || payload.old?.room_id;
+          if (msgRoomId && currentRoomIds.includes(msgRoomId)) {
+            await refetchChats(supabase);
+          }
+        },
+      );
+      messagesChannel.subscribe();
+    };
+
+    (async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          await runRefetch();
+          setupSubscriptions();
+        } else {
+          const { data } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+              if (session?.user) {
+                runRefetch().then(() => {
+                  setupSubscriptions();
+                });
+                if (data?.subscription) data.subscription.unsubscribe();
+              }
+            },
+          );
+        }
+      } catch (e) {
+        console.error("Authentication failed", e);
+        await runRefetch();
+        setupSubscriptions();
+      }
+    })();
 
     return () => {
       isActive = false;
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
+      roomsChannel?.unsubscribe();
+      messagesChannel?.unsubscribe();
     };
   }, [currentUserId]);
 
