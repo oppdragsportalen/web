@@ -59,7 +59,7 @@ export function ChatListClient({
 
       // Get unique other user IDs
       const otherUserIds = rooms.map((room: any) =>
-        room.user_a === currentUserId ? room.user_b : room.user_a
+        room.user_a === currentUserId ? room.user_b : room.user_a,
       );
 
       // Fetch profiles for other users
@@ -76,7 +76,8 @@ export function ChatListClient({
       const updatedChats = rooms.map((room: any) => {
         const recipient = profiles.find(
           (p: any) =>
-            p.id === (room.user_a === currentUserId ? room.user_b : room.user_a)
+            p.id ===
+            (room.user_a === currentUserId ? room.user_b : room.user_a),
         );
         const lastMessage = lastMessagesByRoom[room.id];
 
@@ -209,7 +210,7 @@ export function ChatListClient({
             No Messages
           </Text>
           <Text color="gray" align="center">
-            Start a new chat to begin messaging
+            Send a message to start a conversation
           </Text>
         </Flex>
       ) : (

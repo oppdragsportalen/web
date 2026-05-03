@@ -3,9 +3,14 @@
 import { createSupabaseServer } from "@/lib/supabase/server";
 import type { Message } from "@/types/message";
 
-export async function getMessages(
-  roomId: string
-): Promise<{ error: string } | { success: true; messages: Message[] }> {
+export async function getMessages(roomId: string): Promise<
+  | { error: string }
+  | {
+      success: true;
+      messages: Message[];
+      receiver: { id: string; username: string; display_name: string };
+    }
+> {
   if (!roomId) {
     return { error: "Room ID is required" };
   }
@@ -29,7 +34,7 @@ export async function getMessages(
       body,
       sender_id,
       created_at
-    `
+    `,
     )
     .eq("room_id", roomId)
     .order("created_at", { ascending: true });
@@ -73,5 +78,18 @@ export async function getMessages(
     return { error: "Unauthorized" };
   }
 
-  return { success: true, messages: messagesWithSenders };
+  const receiverId = room.user_a === user.id ? room.user_b : room.user_a;
+
+  // Get receiver profile
+  const { data: receiver, error: receiverError } = await supabase
+    .from("profiles")
+    .select("id, username, display_name")
+    .eq("id", receiverId)
+    .single();
+
+  if (receiverError) {
+    return { error: "Receiver not found" };
+  }
+
+  return { success: true, messages: messagesWithSenders, receiver };
 }

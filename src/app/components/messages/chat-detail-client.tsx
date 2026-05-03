@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Text, TextField, Button } from "@radix-ui/themes";
+import {
+  Box,
+  Text,
+  TextField,
+  Card,
+  Button,
+  Flex,
+  ContextMenu,
+} from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { sendMessage } from "@/app/actions/messages/send-message";
 import { deleteMessage } from "@/app/actions/messages/delete-message";
@@ -89,7 +97,7 @@ export function ChatDetailClient({
             };
 
             setMessages((prev) => [...prev, messageWithSender]);
-          }
+          },
         )
         .on(
           "postgres_changes",
@@ -104,7 +112,7 @@ export function ChatDetailClient({
 
             const deletedId = payload.old.id;
             setMessages((prev) => prev.filter((msg) => msg.id !== deletedId));
-          }
+          },
         )
         .on(
           "postgres_changes",
@@ -118,7 +126,10 @@ export function ChatDetailClient({
             if (!isActive) return;
 
             const updatedMsg = payload.new;
-            const sender = await fetchSenderProfile(supabase, updatedMsg.sender_id);
+            const sender = await fetchSenderProfile(
+              supabase,
+              updatedMsg.sender_id,
+            );
 
             const messageWithSender: Message = {
               id: updatedMsg.id,
@@ -129,9 +140,11 @@ export function ChatDetailClient({
             };
 
             setMessages((prev) =>
-              prev.map((msg) => (msg.id === updatedMsg.id ? messageWithSender : msg))
+              prev.map((msg) =>
+                msg.id === updatedMsg.id ? messageWithSender : msg,
+              ),
             );
-          }
+          },
         )
         .subscribe();
 
@@ -176,32 +189,11 @@ export function ChatDetailClient({
   };
 
   return (
-    <Box
-      p="4"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "calc(100vh - 180px)",
-      }}
-    >
-      {/* Messages Container */}
-      <Box
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          marginBottom: "16px",
-          paddingRight: "8px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-        }}
-      >
+    <Box pt="0" p="4" className="h-full min-w-sm">
+      <Box className="flex flex-1 mb-10 pt-44 min-h-full">
         {messages.length === 0 ? (
-          <Box style={{ textAlign: "center", padding: "32px" }}>
+          <Box className="text-center py-56">
             <Text color="gray">No messages yet</Text>
-            <Text color="gray" size="2" style={{ marginTop: "8px" }}>
-              Start the conversation
-            </Text>
           </Box>
         ) : (
           messages.map((message) => {
@@ -215,48 +207,39 @@ export function ChatDetailClient({
                   marginBottom: "8px",
                 }}
               >
-                <Box
-                  style={{
-                    maxWidth: "70%",
-                    backgroundColor: isOwn ? "#0ea5e9" : "#e5e7eb",
-                    color: isOwn ? "white" : "black",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    wordBreak: "break-word",
-                    position: "relative",
-                  }}
-                >
-                  <Text size="2">{message.body}</Text>
-                  <Box
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginTop: "4px",
-                      gap: "8px",
-                    }}
-                  >
-                    <Text size="1" color={isOwn ? "gray" : "gray"} suppressHydrationWarning>
-                      {formatTimeAgo(message.created_at)}
-                    </Text>
-                    {isOwn && (
-                      <button
+                <ContextMenu.Root>
+                  <ContextMenu.Trigger>
+                    <Card
+                      variant="ghost"
+                      m="3"
+                      className={`max-w-9/12 wrap-break-words ${
+                        isOwn
+                          ? "bg-blue-500 text-white dark:bg-blue-600"
+                          : "bg-neutral-200 dark:bg-neutral-800 dark:text-white"
+                      }`}
+                    >
+                      <Text size="2">{message.body}</Text>
+
+                      <Flex justify="end" align="end">
+                        <Text size="1" suppressHydrationWarning>
+                          {formatTimeAgo(message.created_at)}
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </ContextMenu.Trigger>
+
+                  {isOwn && (
+                    <ContextMenu.Content>
+                      <ContextMenu.Item
+                        color="red"
                         onClick={() => handleDeleteMessage(message.id)}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          cursor: "pointer",
-                          padding: "2px",
-                          color: "inherit",
-                          opacity: 0.6,
-                        }}
-                        title="Delete message"
                       >
-                        <TrashIcon width="14" height="14" />
-                      </button>
-                    )}
-                  </Box>
-                </Box>
+                        <TrashIcon />
+                        Delete Message
+                      </ContextMenu.Item>
+                    </ContextMenu.Content>
+                  )}
+                </ContextMenu.Root>
               </Box>
             );
           })
@@ -264,27 +247,38 @@ export function ChatDetailClient({
         <div ref={messagesEndRef} />
       </Box>
 
-      {/* Input Area */}
-      <form
-        onSubmit={handleSendMessage}
+      <Flex
+        align="end"
+        className="sticky bottom-0 h-16 p-4 -mx-4"
         style={{
-          display: "flex",
-          gap: "8px",
-          borderTop: "1px solid #e5e7eb",
-          paddingTop: "16px",
+          backdropFilter: "blur(4px)",
+          WebkitBackdropFilter: "blur(4px)",
+          background: `
+          linear-gradient(
+            to top,
+            rgba(var(--color-background-rgb), 0.95) 0%,
+            rgba(var(--color-background-rgb), 0) 100%
+          )
+        `,
+          maskImage:
+            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
         }}
       >
-        <TextField.Root
-          placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          disabled={isSending}
-          style={{ flex: 1 }}
-        />
-        <Button type="submit" disabled={isSending || !newMessage.trim()}>
-          Send
-        </Button>
-      </form>
+        <form className="flex flex-1 gap-3" onSubmit={handleSendMessage}>
+          <TextField.Root
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            disabled={isSending}
+            style={{ flex: 1 }}
+          />
+          <Button type="submit" disabled={isSending || !newMessage.trim()}>
+            Send
+          </Button>
+        </form>
+      </Flex>
     </Box>
   );
 }

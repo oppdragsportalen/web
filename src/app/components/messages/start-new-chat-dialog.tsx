@@ -1,10 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, Flex, Button, TextField, Box, Text } from "@radix-ui/themes";
+import {
+  Dialog,
+  Flex,
+  Button,
+  TextField,
+  Box,
+  Text,
+  Callout,
+  Spinner,
+  IconButton,
+} from "@radix-ui/themes";
 import { getDMRoom } from "@/app/actions/messages/get-dm-room";
 import { createDMRoom } from "@/app/actions/messages/create-dm-room";
 import { useRouter } from "next/navigation";
+import {
+  ExclamationTriangleIcon,
+  Cross1Icon,
+  ArrowRightIcon,
+} from "@radix-ui/react-icons";
 
 type StartNewChatDialogProps = {
   trigger?: React.ReactNode;
@@ -52,46 +67,70 @@ export function StartNewChatDialog({ trigger }: StartNewChatDialogProps) {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>
-        {trigger || <Button>Start New Chat</Button>}
-      </Dialog.Trigger>
+      <Dialog.Trigger>{trigger || <Button>New Message</Button>}</Dialog.Trigger>
 
       <Dialog.Content>
-        <Dialog.Title>Start New Chat</Dialog.Title>
+        <Dialog.Title>
+          <Flex justify="between">
+            <Text>New Message</Text>
+            <Dialog.Close>
+              <IconButton variant="ghost" color="gray">
+                <Cross1Icon />
+              </IconButton>
+            </Dialog.Close>
+          </Flex>
+        </Dialog.Title>
         <Dialog.Description>
           Enter the username of the person you want to message
         </Dialog.Description>
 
-        <Box className="my-4">
-          <TextField.Root
-            placeholder="Enter username"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              setError("");
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleStart();
-              }
-            }}
-            disabled={isLoading}
-          />
+        <Box className="mt-4">
+          <Flex gap="2">
+            <TextField.Root
+              className="flex-1"
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleStart();
+                }
+              }}
+              disabled={isLoading}
+            />
+
+            <IconButton onClick={handleStart} disabled={isLoading}>
+              {isLoading ? <Spinner /> : <ArrowRightIcon />}
+            </IconButton>
+          </Flex>
+
           {error && (
-            <Text color="red" size="2" mt="8">
-              {error}
-            </Text>
+            <Callout.Root
+              color="red"
+              mt="2"
+              size="1"
+              role="alert"
+              aria-live="polite"
+            >
+              <Callout.Icon>
+                <ExclamationTriangleIcon />
+              </Callout.Icon>
+              <Callout.Text>{error}</Callout.Text>
+            </Callout.Root>
           )}
         </Box>
 
-        <Flex justify="end" gap="2">
+        {/* <Flex justify="end" gap="2">
           <Dialog.Close>
-            <Button variant="soft">Cancel</Button>
+            <Button variant="outline">Cancel</Button>
           </Dialog.Close>
           <Button onClick={handleStart} disabled={isLoading}>
-            {isLoading ? "Loading..." : "Start Chat"}
+            {isLoading ? "Loading..." : "Start Conversation"}
           </Button>
-        </Flex>
+        </Flex> */}
       </Dialog.Content>
     </Dialog.Root>
   );

@@ -1,11 +1,10 @@
-import { Box, Flex, Text } from "@radix-ui/themes";
+import { Box, Flex, Text, Button } from "@radix-ui/themes";
 import { getUserChats } from "@/app/actions/messages/get-user-chats";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { ChatListClient } from "@/app/components/messages/chat-list-client";
 import { StartNewChatDialog } from "@/app/components/messages/start-new-chat-dialog";
 import { redirect } from "next/navigation";
-
-
+import { Pencil2Icon } from "@radix-ui/react-icons";
 
 export default async function MessagesPage() {
   const supabase = await createSupabaseServer();
@@ -34,7 +33,14 @@ export default async function MessagesPage() {
     <Box p="4" className="min-w-sm">
       <Flex justify="between" className="mt-4 mb-10" gap="4">
         <h1 className="text-3xl font-bold">Messages</h1>
-        <StartNewChatDialog />
+        <StartNewChatDialog
+          trigger={
+            <Button>
+              <Pencil2Icon />
+              New Message
+            </Button>
+          }
+        />
       </Flex>
       <ChatListClient initialChats={chats} currentUserId={user.id} />
     </Box>

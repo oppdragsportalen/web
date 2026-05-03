@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, Card } from "@radix-ui/themes";
+import { Box, Text, Card, Tooltip, Flex } from "@radix-ui/themes";
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/date-utils";
 import type { Profile } from "@/types";
@@ -38,29 +38,38 @@ export function ChatItem({
 
   return (
     <Link href={`/dashboard/messages/${id}`}>
-      <Card style={{ cursor: "pointer", marginBottom: "8px" }}>
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <Box>
-            <Text weight="bold" size="3">
-              {displayName}
+      <Card className="mb-3 p-3 cursor-pointer hover:outline outline-(--accent-8) -outline-offset-1">
+        <Flex justify="between" align="center" className="mb-2">
+          <Text weight="bold" size="3">
+            {displayName}
+          </Text>
+          <Flex gap="2">
+            <Text color="gray" size="1">
+              {lastMessageTime}
             </Text>
-            <Text color="gray" size="2">
-              @{recipient.username}
+          </Flex>
+        </Flex>
+        <Flex justify="between">
+          <Box>
+            <Text size="2" color="gray">
+              {lastMessagePreview}
             </Text>
           </Box>
-          <Text color="gray" size="1">
-            {lastMessageTime}
-          </Text>
-        </Box>
-        <Text color="gray" size="2" style={{ marginTop: "8px" }}>
-          {lastMessagePreview}
-        </Text>
+
+          <Box>
+            <Tooltip
+              content={
+                <span>
+                  <strong>{recipient.username}</strong> {displayName}
+                </span>
+              }
+            >
+              <Text size="2" color="gray">
+                {recipient.username}
+              </Text>
+            </Tooltip>
+          </Box>
+        </Flex>
       </Card>
     </Link>
   );
