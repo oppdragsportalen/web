@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: January 26, 2026
+              Last updated: May 5, 2026
             </Text>
 
             <Box mb="6">
@@ -22,9 +22,11 @@ export default function TermsOfServicePage() {
               </Heading>
               <Text as="p" size="3" mb="3">
                 Oppdragsportalen is an assignment management platform that
-                enables users to create, and manage tasks and assignments. Users
+                enables users to create and manage tasks and assignments. Users
                 can create public assignments visible to all platform users or
                 private assignments accessible only to specified individuals.
+                The platform also includes direct messaging functionality for
+                communication between users.
               </Text>
               <Text as="p" size="3" mb="3">
                 By creating an account and using Oppdragsportalen, you accept
@@ -55,9 +57,12 @@ export default function TermsOfServicePage() {
                 <Text as="div" size="3" mb="2">
                   • Managing access to your private assignments
                 </Text>
-                {/* <Text as="div" size="3" mb="2">
-                • Updating assignment status (in progress, finished)
-              </Text> */}
+                <Text as="div" size="3" mb="2">
+                • Updating assignment status
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • Sending and receiving direct messages with other users
+                </Text>
               </Box>
             </Box>
 
@@ -118,6 +123,12 @@ export default function TermsOfServicePage() {
                 </Text>
               </Box>
               <Text as="p" size="3" mb="3">
+                You are responsible for all messages you send. Messages stored
+                in our database are not encrypted and should not contain
+                sensitive personal information or passwords. You agree not to
+                use messaging to harass, threaten, or spam other users.
+              </Text>
+              <Text as="p" size="3" mb="3">
                 You also agree not to:
               </Text>
               <Box ml="4" mb="3">
@@ -133,6 +144,9 @@ export default function TermsOfServicePage() {
                 </Text>
                 <Text as="div" size="3" mb="2">
                   • Impersonate others or create fake accounts
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • Send unsolicited commercial or spam messages
                 </Text>
               </Box>
             </Box>

@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: March 8, 2026
+              Last updated: May 5, 2026
             </Text>
 
             <Box mb="6">
@@ -53,6 +53,11 @@ export default function PrivacyPolicyPage() {
                 you interact with the platform, including login times and
                 assignment activity.
               </Text>
+              <Text as="p" size="3" mb="3">
+                <strong>Messages:</strong> We store direct messages you send
+                to other users, including message content, timestamps, and
+                recipient information. Messages are not encrypted.
+              </Text>
             </Box>
 
             <Box mb="6">
@@ -83,6 +88,9 @@ export default function PrivacyPolicyPage() {
                 <Text as="div" size="3" mb="2">
                   • Improve platform features and user experience
                 </Text>
+                <Text as="div" size="3" mb="2">
+                  • Enable direct messaging between users
+                </Text>
               </Box>
             </Box>
 
@@ -104,6 +112,11 @@ export default function PrivacyPolicyPage() {
               <Text as="p" size="3" mb="3">
                 <strong>Profile Visibility:</strong> Your display name and
                 username are visible to all users.
+              </Text>
+              <Text as="p" size="3" mb="3">
+                <strong>Direct Messages:</strong> Messages are only visible to
+                you and the recipient. Message content is stored in
+                our database and is not encrypted.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Third-Party Services:</strong> We use Supabase, a secure
@@ -156,6 +169,11 @@ export default function PrivacyPolicyPage() {
                 password.
               </Text>
               <Text as="p" size="3" mb="3">
+                <strong>Messages:</strong> Direct messages are stored without encryption. Do not send sensitive information via
+                messages that you would not want accessible by database
+                administrators.
+              </Text>
+              <Text as="p" size="3" mb="3">
                 However, no method of transmission over the internet is 100%
                 secure. While we strive to protect your data using best
                 practices, we cannot guarantee absolute security.
@@ -189,6 +207,10 @@ export default function PrivacyPolicyPage() {
                 <Text as="div" size="3" mb="2">
                   • <strong>Account Deletion:</strong> Delete your account and
                   all associated data
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • <strong>Delete Messages:</strong> Remove individual messages
+                  from your conversations
                 </Text>
               </Box>
             </Box>
