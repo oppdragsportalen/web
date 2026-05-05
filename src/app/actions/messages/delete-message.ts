@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export async function deleteMessage(messageId: string, roomId: string) {
@@ -27,8 +26,6 @@ export async function deleteMessage(messageId: string, roomId: string) {
   if (error) {
     return { error: error.message };
   }
-
-  revalidatePath(`/dashboard/messages/${roomId}`);
 
   return { success: true };
 }

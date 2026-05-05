@@ -159,6 +159,12 @@ export function ChatListClient({
         { event: "*", schema: "public", table: "messages" },
         async (payload: any) => {
           const msgRoomId = payload.new?.room_id || payload.old?.room_id;
+
+          if (payload.eventType === "DELETE") {
+            await refetchChats(supabase);
+            return;
+          }
+
           if (msgRoomId && currentRoomIds.includes(msgRoomId)) {
             await refetchChats(supabase);
           }

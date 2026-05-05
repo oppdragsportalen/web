@@ -105,7 +105,6 @@ export function ChatDetailClient({
             event: "DELETE",
             schema: "public",
             table: "messages",
-            filter: `room_id=eq.${roomId}`,
           },
           (payload) => {
             if (!isActive) return;
@@ -146,7 +145,19 @@ export function ChatDetailClient({
             );
           },
         )
-        .subscribe();
+        .subscribe((status, err) => {
+          if (status === "SUBSCRIBED") {
+            console.log(`Subscribed to room ${roomId}`);
+          } else if (status === "CHANNEL_ERROR") {
+            console.error(`Channel error for room ${roomId}:`, err);
+          } else if (status === "TIMED_OUT") {
+            console.warn(`Subscription timed out for room ${roomId}`);
+            // Retry subscription
+            if (isActive) {
+              setupSubscriptions();
+            }
+          }
+        });
 
       subscriptionRef.current = channel;
     };
@@ -181,8 +192,17 @@ export function ChatDetailClient({
   };
 
   const handleDeleteMessage = async (messageId: string) => {
+    const messageToDelete = messages.find((msg) => msg.id === messageId);
+
+    // Optimistic update - remove message immediately from UI
+    setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
+
     const result = await deleteMessage(messageId, roomId);
     if (result.error) {
+      // Restore message if deletion fails
+      if (messageToDelete) {
+        setMessages((prev) => [...prev, messageToDelete]);
+      }
       alert(result.error);
       return;
     }
@@ -190,7 +210,11 @@ export function ChatDetailClient({
 
   return (
     <Box pt="0" p="4" className="h-full min-w-sm">
-      <Box className="flex flex-1 mb-10 pt-44 min-h-full">
+      <Flex
+        direction="column"
+        justify="end"
+        className="flex flex-1 mb-10 pt-44 min-h-full"
+      >
         {messages.length === 0 ? (
           <Box className="text-center py-56">
             <Text color="gray">No messages yet</Text>
@@ -245,7 +269,7 @@ export function ChatDetailClient({
           })
         )}
         <div ref={messagesEndRef} />
-      </Box>
+      </Flex>
 
       <Flex
         align="end"
