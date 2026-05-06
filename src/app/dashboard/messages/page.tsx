@@ -5,8 +5,10 @@ import { ChatListClient } from "@/app/components/messages/chat-list-client";
 import { StartNewChatDialog } from "@/app/components/messages/start-new-chat-dialog";
 import { redirect } from "next/navigation";
 import { Pencil2Icon } from "@radix-ui/react-icons";
+import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
+import { Suspense } from "react";
 
-export default async function MessagesPage() {
+async function MessagesContent() {
   const supabase = await createSupabaseServer();
 
   const {
@@ -29,6 +31,10 @@ export default async function MessagesPage() {
 
   const chats = result.chats || [];
 
+  return <ChatListClient initialChats={chats} currentUserId={user.id} />;
+}
+
+export default async function MessagesPage() {
   return (
     <Box p="4" className="min-w-sm">
       <Flex justify="between" className="mt-4 mb-10" gap="4">
@@ -42,7 +48,18 @@ export default async function MessagesPage() {
           }
         />
       </Flex>
-      <ChatListClient initialChats={chats} currentUserId={user.id} />
+      <Suspense
+        fallback={
+          <>
+            <AssignmentCardSkeleton />
+            <AssignmentCardSkeleton />
+            <AssignmentCardSkeleton />
+            <AssignmentCardSkeleton />
+          </>
+        }
+      >
+        <MessagesContent />
+      </Suspense>
     </Box>
   );
 }
