@@ -5,6 +5,8 @@ import { getMessages } from "@/app/actions/messages/get-messages";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { ChatDetailClient } from "@/app/components/messages/chat-detail-client";
+import ChatDetailSkeleton from "@/app/components/messages/chat-detail-skeleton";
+import { Suspense } from "react";
 
 type ChatDetailPageProps = {
   params: Promise<{
@@ -12,8 +14,7 @@ type ChatDetailPageProps = {
   }>;
 };
 
-export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
-  const { id } = await params;
+async function ChatDetailContent({ roomID }: { roomID: string }) {
   const supabase = await createSupabaseServer();
 
   const {
@@ -24,7 +25,7 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
     redirect("/login");
   }
 
-  const result = await getMessages(id);
+  const result = await getMessages(roomID);
 
   if ("error" in result) {
     return (
@@ -42,7 +43,7 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
   const messages = result.messages || [];
 
   return (
-    <Box className="flex-col min-h-full relative">
+    <>
       <Box
         p="4"
         className="sticky top-0 left-0 w-full h-16 z-20"
@@ -81,11 +82,23 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
 
       <Box className="-mt-16 min-h-full overflow-scroll absolute inset-0">
         <ChatDetailClient
-          roomId={id}
+          roomId={roomID}
           currentUserId={user.id}
           initialMessages={messages}
         />
       </Box>
+    </>
+  );
+}
+
+export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
+  const { id } = await params;
+
+  return (
+    <Box className="flex-col min-h-full relative">
+      <Suspense fallback={<ChatDetailSkeleton />}>
+        <ChatDetailContent roomID={id} />
+      </Suspense>
     </Box>
   );
 }
