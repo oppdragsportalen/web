@@ -70,7 +70,14 @@ export default function SignUpPage() {
 
             <Button
               style={{
-                backgroundColor: "#161b22",
+                backgroundColor: "#21262d",
+                transition: "background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#2d323a";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#21262d";
               }}
               size="3"
               onClick={handleSubmit}

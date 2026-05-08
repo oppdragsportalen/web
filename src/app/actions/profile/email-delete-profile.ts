@@ -6,14 +6,29 @@ import { createSupabaseAdmin } from "@/lib/supabase/admin";
 import { redirect } from "next/navigation";
 
 export async function DeleteProfile(formData: FormData) {
+  const password = (formData.get("password") as string) ?? "";
+  if (!password) {
+    return { error: "Password is required" };
+  }
+
   const supabase = await createSupabaseServer();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!user || !user.email) {
     redirect("/login");
+  }
+
+  // Verify password
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password,
+  });
+
+  if (signInError) {
+    return { error: "Invalid password" };
   }
 
   const admin = createSupabaseAdmin();

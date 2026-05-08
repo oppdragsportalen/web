@@ -53,6 +53,7 @@ export function DeleteAccountDialog({
       open={open}
       onOpenChange={(isOpen) => {
         onOpenChange(isOpen);
+
         if (!isOpen) {
           setConfirmText("");
           setError("");
@@ -62,13 +63,16 @@ export function DeleteAccountDialog({
     >
       <AlertDialog.Content maxWidth="450px" className="min-w-80">
         <AlertDialog.Title>Delete Account</AlertDialog.Title>
+
         <Box my="3">
           <Callout.Root color="red" size="1">
             <Callout.Icon>
               <ExclamationTriangleIcon />
             </Callout.Icon>
+
             <Callout.Text>
-              All your profile data and assignments will be permanently deleted.
+              All your profile data and assignments will be permanently
+              deleted.
             </Callout.Text>
           </Callout.Root>
         </Box>
@@ -84,7 +88,7 @@ export function DeleteAccountDialog({
                 mb="2"
                 style={{ display: "block" }}
               >
-                Type "<strong>Delete my account</strong>"
+                Type <strong>"Delete my account"</strong>
               </Text>
 
               <TextField.Root
