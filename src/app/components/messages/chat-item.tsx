@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Text, Card, Tooltip, Flex } from "@radix-ui/themes";
+import { Box, Text, Card, Tooltip, Flex, Avatar } from "@radix-ui/themes";
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/date-utils";
 import type { Profile } from "@/types";
@@ -40,9 +40,17 @@ export function ChatItem({
     <Link href={`/dashboard/messages/${id}`}>
       <Card className="mb-3 p-3 cursor-pointer hover:outline outline-(--accent-8) -outline-offset-1">
         <Flex justify="between" align="center" className="mb-2">
-          <Text weight="bold" size="3">
-            {displayName}
-          </Text>
+          <Flex align="center" gap="2">
+            <Avatar
+              size="2"
+              src={recipient.avatar_url || undefined}
+              alt={displayName}
+              fallback={displayName.charAt(0).toUpperCase()}
+            />
+            <Text weight="bold" size="3">
+              {displayName}
+            </Text>
+          </Flex>
           <Flex gap="2">
             <Text color="gray" size="1">
               {lastMessageTime}

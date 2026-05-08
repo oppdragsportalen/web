@@ -58,6 +58,7 @@ export async function GET(request: Request) {
       username: username,
       display_name:
         user.user_metadata?.full_name || user.user_metadata?.name || base,
+      avatar_url: user.user_metadata?.avatar_url,
     });
   }
 

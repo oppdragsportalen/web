@@ -8,7 +8,7 @@ export async function getMessages(roomId: string): Promise<
   | {
       success: true;
       messages: Message[];
-      receiver: { id: string; username: string; display_name: string };
+      receiver: { id: string; username: string; display_name: string; avatar_url: string | null };
     }
 > {
   if (!roomId) {
@@ -49,7 +49,7 @@ export async function getMessages(roomId: string): Promise<
     const senderIds = [...new Set(messages.map((m) => m.sender_id))];
     const { data: senders, error: sendersError } = await supabase
       .from("profiles")
-      .select("id, username, display_name")
+      .select("id, username, display_name, avatar_url")
       .in("id", senderIds);
 
     if (sendersError) {
@@ -83,7 +83,7 @@ export async function getMessages(roomId: string): Promise<
   // Get receiver profile
   const { data: receiver, error: receiverError } = await supabase
     .from("profiles")
-    .select("id, username, display_name")
+    .select("id, username, display_name, avatar_url")
     .eq("id", receiverId)
     .single();
 

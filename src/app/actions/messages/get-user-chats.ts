@@ -44,7 +44,7 @@ export async function getUserChats() {
 
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
-    .select("id, username, display_name")
+    .select("id, username, display_name, avatar_url")
     .in("id", otherUserIds);
 
   if (profilesError) {

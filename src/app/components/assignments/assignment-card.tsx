@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Card, Box, Text, Badge, Flex, Tooltip } from "@radix-ui/themes";
+import { Card, Box, Text, Badge, Flex, Tooltip, Avatar } from "@radix-ui/themes";
 import { formatDateToLocal } from "@/lib/timezone";
 import type { Profile } from "@/types";
 
@@ -54,7 +54,7 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
             {getStatusBadge(assignment.status)}
           </Flex>
         </Flex>
-        <Flex justify="between">
+        <Flex justify="between" mt="4">
           <Box>
             <Text size="2" color="gray">
               Due:{" "}
@@ -66,7 +66,13 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
             </Text>
           </Box>
           {assignment.assigned_profile && (
-            <Box>
+            <Flex align="center" gap="2">
+              <Avatar
+              size="1"
+                src={assignment.assigned_profile.avatar_url || undefined}
+                alt={assignment.assigned_profile.display_name || assignment.assigned_profile.username}
+                fallback={assignment.assigned_profile.username.charAt(0).toUpperCase()}
+              />
               <Tooltip
                 content={
                   <span>
@@ -80,10 +86,16 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
                   {assignment.assigned_profile.username}
                 </Text>
               </Tooltip>
-            </Box>
+            </Flex>
           )}
           {assignment.creator_profile && (
-            <Box>
+            <Flex align="center" gap="2">
+              <Avatar
+                size="1"
+                src={assignment.creator_profile.avatar_url || undefined}
+                alt={assignment.creator_profile.display_name || assignment.creator_profile.username}
+                fallback={assignment.creator_profile.username.charAt(0).toUpperCase()}
+              />
               <Tooltip
                 content={
                   <span>
@@ -97,7 +109,7 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
                   {assignment.creator_profile.username}
                 </Text>
               </Tooltip>
-            </Box>
+            </Flex>
           )}
         </Flex>
       </Card>

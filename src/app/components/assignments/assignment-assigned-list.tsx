@@ -7,6 +7,7 @@ type Profile = {
   id: string;
   display_name: string | null;
   username: string | null;
+  avatar_url: string | null;
 };
 
 async function getProfileMapByIds(userIds: string[]) {
@@ -20,7 +21,7 @@ async function getProfileMapByIds(userIds: string[]) {
   const supabase = await createSupabaseServer();
   const { data } = await supabase
     .from("profiles")
-    .select("id, display_name, username")
+    .select("id, display_name, username, avatar_url")
     .in("id", uniqueUserIds);
 
   (data ?? []).forEach((profile) => {

@@ -15,6 +15,7 @@ create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   display_name text,
   username text,
+  avatar_url text,
   role text check (role in ('user','admin')) default 'user',
   created_at timestamptz default now()
 );
@@ -358,6 +359,32 @@ $$;
 -- ============================================
 -- TRIGGERS
 -- ============================================
+
+-- Sync avatar_url from auth.users metadata when profile is created
+create or replace function sync_avatar_url_on_profile_create()
+returns trigger as $$
+declare
+  avatar_url text;
+begin
+  if new.avatar_url is null then
+    select raw_user_meta_data->>'avatar_url'
+    into avatar_url
+    from auth.users
+    where id = new.id;
+
+    if avatar_url is not null then
+      new.avatar_url := avatar_url;
+    end if;
+  end if;
+
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create or replace trigger on_profile_insert_sync_avatar
+  before insert on public.profiles
+  for each row
+  execute function sync_avatar_url_on_profile_create();
 
 -- Sync display_name from profiles to auth.users metadata
 create or replace function sync_display_name_to_auth()

@@ -13,7 +13,7 @@ import {
   Checkbox,
 } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { signUp } from "@/app/actions/auth/signup";
+import { signUp } from "@/app/actions/auth/email-signup";
 import { useState } from "react";
 import Link from "next/link";
 import LightRays from "@/app/components/light-rays";

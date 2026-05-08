@@ -25,7 +25,7 @@ export async function Navbar() {
   if (user) {
     const { data } = await supabase
       .from("profiles")
-      .select("display_name")
+      .select("display_name, avatar_url")
       .eq("id", user.id)
       .single();
     profile = data;
@@ -78,6 +78,7 @@ export async function Navbar() {
                       <Text size="2">{displayName}</Text>
                       <Avatar
                         size="2"
+                        src={profile?.avatar_url || undefined}
                         alt={displayName}
                         fallback={displayName.charAt(0).toUpperCase()}
                       />

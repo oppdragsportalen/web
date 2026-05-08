@@ -12,7 +12,7 @@ import {
   Link as RadixLink,
 } from "@radix-ui/themes";
 import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { login } from "@/app/actions/auth/login";
+import { login } from "@/app/actions/auth/email-login";  
 import { useState } from "react";
 import Link from "next/link";
 import LightRays from "@/app/components/light-rays";
