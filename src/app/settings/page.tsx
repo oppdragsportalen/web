@@ -10,9 +10,9 @@ import {
   AlertDialog,
   Skeleton,
 } from "@radix-ui/themes";
-import { logout } from "@/app/actions/auth/login";
+import { logout } from "@/app/actions/auth/auth";
 import { EditProfileDialog } from "../components/profile/edit-profile-dialog";
-import { DeleteAccountDialog } from "../components/profile/delete-account-dialog";
+import { DeleteAccountDialog } from "../components/profile/email-delete-account-dialog";
 import AccountInformationDataList from "../components/profile/account-information-data-list";
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabase/client";

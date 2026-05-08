@@ -10,10 +10,9 @@ import {
   Heading,
   Callout,
   Link as RadixLink,
-  Checkbox,
 } from "@radix-ui/themes";
-import { InfoCircledIcon } from "@radix-ui/react-icons";
-import { signUp } from "@/app/actions/auth/signup";
+import { InfoCircledIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
+import { auth } from "@/app/actions/auth/auth";
 import { useState } from "react";
 import Link from "next/link";
 import LightRays from "@/app/components/light-rays";
@@ -24,7 +23,7 @@ export default function SignUpPage() {
   async function handleSubmit() {
     setError("");
 
-    const result = await signUp();
+    const result = await auth();
 
     if (result?.error) {
       setError(result.error);
@@ -69,7 +68,16 @@ export default function SignUpPage() {
               Create Account
             </Heading>
 
-            <Button onClick={handleSubmit}>Continue with GitHub</Button>
+            <Button
+              style={{
+                backgroundColor: "#161b22",
+              }}
+              size="3"
+              onClick={handleSubmit}
+            >
+              <GitHubLogoIcon width={20} height={20} />
+              <Text size="3">Continue with GitHub</Text>
+            </Button>
 
             <Box
               className="overflow-hidden transition-all duration-300"

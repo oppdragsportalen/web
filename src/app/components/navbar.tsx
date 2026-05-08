@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@radix-ui/themes";
 import { ExitIcon, GearIcon, PlusIcon } from "@radix-ui/react-icons";
-import { logout } from "@/app/actions/auth/login";
+import { logout } from "@/app/actions/auth/auth";
 import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
 
 export async function Navbar() {
