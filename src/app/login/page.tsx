@@ -7,6 +7,8 @@ import {
   Text,
   Button,
   Heading,
+  Separator,
+  Badge,
   Callout,
   Link as RadixLink,
 } from "@radix-ui/themes";
@@ -15,6 +17,7 @@ import { auth } from "@/app/actions/auth/auth";
 import { useState } from "react";
 import Link from "next/link";
 import LightRays from "../components/light-rays";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
@@ -44,24 +47,42 @@ export default function LoginPage() {
           saturation={1}
         />
       </Box>
-      <Flex justify="center" align="center" py="9" px="4" className="min-w-80">
-        <Box width="100%" maxWidth="450px">
-          <Card size="3">
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        className="slide-up px-6 pt-24 pb-10 text-center"
+      >
+        <Image
+          width={100}
+          height={100}
+          alt="appicon"
+          src="/favicon.ico"
+          className="w-16 sm:w-20 md:w-24"
+        />
+        <Badge
+          size="2"
+          variant="surface"
+          color="gray"
+          radius="full"
+          className="mt-1"
+        >
+          Assign. Track. Complete.
+        </Badge>
+      </Flex>
+      <Flex justify="center" align="center" pb="9" px="4" className="min-w-80">
+        <Box width="100%" maxWidth="450px" className="slide-up">
+          <Card size="3" className="slide-up">
             <Flex direction="column" gap="4">
-              <Heading size="6" mb="2" as="h1">
+              <Heading size="5" mb="2" as="h1">
                 Log In
               </Heading>
 
               <Button
                 style={{
-                  backgroundColor: "#21262d",
+                  backgroundColor: "#111",
                   transition: "background-color 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#2d323a";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#21262d";
+                  cursor: "pointer",
                 }}
                 size="3"
                 onClick={handleSubmit}
@@ -89,12 +110,42 @@ export default function LoginPage() {
                 )}
               </Box>
 
-              <Text size="2" color="gray">
+              <Text size="1" mt="-4" mb="4">
                 Don't have an account?{" "}
                 <RadixLink asChild color="green">
                   <Link href="/signup">Sign up</Link>
                 </RadixLink>
               </Text>
+
+              <Separator size="4" />
+
+              <Box>
+                <Flex gap="2" align="start">
+                  <Text as="label" size="1" htmlFor="terms" color="gray">
+                    By continuing, you agree to the{" "}
+                    <RadixLink asChild color="blue">
+                      <Link
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Terms of Service
+                      </Link>
+                    </RadixLink>{" "}
+                    and{" "}
+                    <RadixLink asChild color="blue">
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Privacy Policy
+                      </Link>
+                    </RadixLink>
+                    .
+                  </Text>
+                </Flex>
+              </Box>
             </Flex>
           </Card>
         </Box>

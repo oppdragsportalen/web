@@ -1,4 +1,11 @@
-import { Box, Text, Flex, IconButton, Button } from "@radix-ui/themes";
+import {
+  Box,
+  Text,
+  Flex,
+  IconButton,
+  Avatar,
+  Separator,
+} from "@radix-ui/themes";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { getMessages } from "@/app/actions/messages/get-messages";
@@ -28,16 +35,7 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
   const result = await getMessages(roomID);
 
   if ("error" in result) {
-    return (
-      <Box p="4">
-        <Link href="/dashboard/messages">
-          <Button variant="soft" className="mb-10">
-            <ArrowLeftIcon /> Back to Messages
-          </Button>
-        </Link>
-        <Text color="red">{result.error}</Text>
-      </Box>
-    );
+    redirect("/dashboard/messages");
   }
 
   const messages = result.messages || [];
@@ -63,14 +61,21 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
             "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
         }}
       >
-        <Flex gap="2">
+        <Flex gap="2" align="center">
           <Link href="/dashboard/messages">
             <IconButton variant="soft">
               <ArrowLeftIcon />
             </IconButton>
           </Link>
+          <Separator orientation="vertical" size="1" mx="2" />
           <Flex>
             <Flex align="center" gap="2">
+              <Avatar
+                size="2"
+                src={result.receiver.avatar_url || undefined}
+                alt={result.receiver.username}
+                fallback={result.receiver.username.charAt(0).toUpperCase()}
+              />
               <Text weight="bold" size="3">
                 {result.receiver.display_name}
               </Text>

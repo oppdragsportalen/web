@@ -67,7 +67,7 @@ export function ChatListClient({
       if (otherUserIds.length > 0) {
         const { data: profilesData } = await supabase
           .from("profiles")
-          .select("id, username, display_name")
+          .select("id, username, display_name, avatar_url")
           .in("id", otherUserIds);
         profiles = profilesData || [];
       }
@@ -88,6 +88,7 @@ export function ChatListClient({
                 id: recipient.id,
                 username: recipient.username,
                 display_name: recipient.display_name,
+                avatar_url: recipient.avatar_url,
               }
             : null,
           lastMessage: lastMessage

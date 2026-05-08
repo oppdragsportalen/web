@@ -1,24 +1,45 @@
 @import "tailwindcss";
 
-
 html {
-  height: 100%;
-  overscroll-behavior: none;
-  overscroll-behavior-y: none;
+    height: 100%;
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
 }
 
 body {
-  height: 100%;
-  overflow: auto;
-  overscroll-behavior: contain;
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
 }
 
 ::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 @media (prefers-color-scheme: dark) {
-  body:has([data-hide-navbar-border="true"]) .navbar {
-    border-bottom-color: transparent;
-  }
+    body:has([data-hide-navbar-border="true"]) .navbar {
+        border-bottom-color: transparent;
+    }
+}
+
+.slide-up {
+    animation: slideUp 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(80px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }

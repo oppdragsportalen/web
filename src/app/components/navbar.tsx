@@ -14,6 +14,7 @@ import {
 import { ExitIcon, GearIcon, PlusIcon } from "@radix-ui/react-icons";
 import { logout } from "@/app/actions/auth/auth";
 import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
+import Image from "next/image";
 
 export async function Navbar() {
   const supabase = await createSupabaseServer();
@@ -40,11 +41,16 @@ export async function Navbar() {
         className="navbar h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
       >
         <Link href="/" className="no-underline mr-16">
-          <Box>
-            <Text size="3" weight="bold" className="cursor-pointer">
-              Oppdragsportalen
-            </Text>
-          </Box>
+          <Flex gap="2" align="center" className="min-w-44">
+            {/* <Box>
+              <Image width={20} height={20} alt="appicon" src="/favicon.ico" />
+            </Box> */}
+            <Box>
+              <Text size="3" weight="bold">
+                Oppdragsportalen
+              </Text>
+            </Box>
+          </Flex>
         </Link>
 
         {user && displayName && (

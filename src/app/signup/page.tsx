@@ -9,6 +9,7 @@ import {
   Button,
   Heading,
   Callout,
+  Badge,
   Link as RadixLink,
 } from "@radix-ui/themes";
 import { InfoCircledIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
@@ -16,6 +17,7 @@ import { auth } from "@/app/actions/auth/auth";
 import { useState } from "react";
 import Link from "next/link";
 import LightRays from "@/app/components/light-rays";
+import Image from "next/image";
 
 export default function SignUpPage() {
   const [error, setError] = useState("");
@@ -40,7 +42,8 @@ export default function SignUpPage() {
       data-hide-navbar-border="true"
       justify="center"
       align="center"
-      py="9"
+      direction="column"
+      pb="9"
       px="4"
       className="min-w-80"
     >
@@ -61,23 +64,41 @@ export default function SignUpPage() {
           saturation={1}
         />
       </Box>
-      <Box width="100%" maxWidth="450px">
-        <Card size="3">
+      <Flex
+        direction="column"
+        align="center"
+        justify="center"
+        className="slide-up px-6 pt-24 pb-10 text-center"
+      >
+        <Image
+          width={100}
+          height={100}
+          alt="appicon"
+          src="/favicon.ico"
+          className="w-16 sm:w-20 md:w-24"
+        />
+        <Badge
+          size="2"
+          variant="surface"
+          color="gray"
+          radius="full"
+          className="mt-1"
+        >
+          Assign. Track. Complete.
+        </Badge>
+      </Flex>
+      <Box width="100%" maxWidth="450px" className="slide-up">
+        <Card size="3" className="slide-up">
           <Flex direction="column" gap="4">
-            <Heading size="6" mb="2" as="h1">
+            <Heading size="5" mb="2" as="h1">
               Create Account
             </Heading>
 
             <Button
               style={{
-                backgroundColor: "#21262d",
+                backgroundColor: "#111",
                 transition: "background-color 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#2d323a";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#21262d";
+                cursor: "pointer",
               }}
               size="3"
               onClick={handleSubmit}
@@ -105,7 +126,7 @@ export default function SignUpPage() {
               )}
             </Box>
 
-            <Text size="2" color="gray">
+            <Text size="1" mt="-4" mb="4" >
               Already have an account?{" "}
               <RadixLink asChild color="green">
                 <Link href="/login">Log in</Link>
@@ -134,6 +155,7 @@ export default function SignUpPage() {
                     Privacy Policy
                   </Link>
                 </RadixLink>
+                .
               </Text>
             </Flex>
           </Box>

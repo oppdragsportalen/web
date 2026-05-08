@@ -31,7 +31,7 @@ export default async function Home() {
         direction="column"
         align="center"
         justify="center"
-        className="px-6 pt-24 pb-24 text-center md:pt-40"
+        className="px-6 pt-40 pb-24 text-center"
       >
         <Image
           width={100}
