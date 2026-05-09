@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Box, Flex, Text } from "@radix-ui/themes";
+import { Flex, Text } from "@radix-ui/themes";
 
 export function Footer() {
   return (

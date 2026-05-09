@@ -32,7 +32,8 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 1. Create a Supabase project.
 2. Run `database/schema.sql` in the Supabase SQL Editor to create tables, RLS policies and helper functions.
-3. Enable email/password auth in the Supabase Dashboard.
+<!-- 3. Enable email/password auth in the Supabase Dashboard. -->
+3. Configure GitHub OAuth in the Supabase Dashboard.
 
 ### 4. Run Development Server
 

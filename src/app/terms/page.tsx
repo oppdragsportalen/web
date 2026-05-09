@@ -1,5 +1,4 @@
 import { Box, Card, Heading, Text, Flex } from "@radix-ui/themes";
-import Link from "next/link";
 import { Footer } from "@/app/components/footer";
 
 export default function TermsOfServicePage() {
