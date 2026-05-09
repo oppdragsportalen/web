@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: May 5, 2026
+              Last updated: May 9, 2026
             </Text>
 
             <Box mb="6">
@@ -34,9 +34,14 @@ export default function PrivacyPolicyPage() {
               </Heading>
               <Text as="p" size="3" mb="3">
                 <strong>Account Information:</strong> When you create an
+                account using GitHub OAuth, we collect your GitHub username,
+                display name, and email address from your GitHub profile.
+              </Text>
+              {/* <Text as="p" size="3" mb="3">
+                <strong>Account Information (Email/Password):</strong> When you create an
                 account, we collect your name, username, email address, and
                 password encrypted.
-              </Text>
+              </Text> */}
               <Text as="p" size="3" mb="3">
                 <strong>Assignment Data:</strong> We store assignments you
                 create, including titles, descriptions, deadlines, and
@@ -143,8 +148,12 @@ export default function PrivacyPolicyPage() {
               <Box ml="4" mb="3">
                 <Text as="div" size="3" mb="2">
                   • <strong>Authentication:</strong> Powered by Supabase Auth
-                  with secure password hashing (bcrypt)
+                  with GitHub OAuth
                 </Text>
+                {/* <Text as="div" size="3" mb="2">
+                  • <strong>Authentication:</strong> Powered by Supabase Auth
+                  with secure password hashing (bcrypt)
+                </Text> */}
                 <Text as="div" size="3" mb="2">
                   • <strong>Encryption at Rest:</strong> All data is encrypted
                   in the Supabase database using AES-256 encryption
@@ -163,10 +172,16 @@ export default function PrivacyPolicyPage() {
                   Type II compliant infrastructure
                 </Text>
               </Box>
-              <Text as="p" size="3" mb="3">
+              {/* <Text as="p" size="3" mb="3">
                 Your password is never stored in plain text - it is securely
                 hashed before being saved. Even administrators cannot view your
                 password.
+              </Text> */}
+              <Text as="p" size="3" mb="3">
+                <strong>GitHub OAuth:</strong> Your GitHub account credentials
+                are handled securely by GitHub and Supabase. We never store your
+                GitHub password. Authentication is delegated to GitHub's secure
+                OAuth 2.0 protocol.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Messages:</strong> Direct messages are stored without encryption. Do not send sensitive information via

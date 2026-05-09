@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
             </Heading>
 
             <Text as="div" size="2" color="gray" mb="6">
-              Last updated: May 5, 2026
+              Last updated: May 9, 2026
             </Text>
 
             <Box mb="6">
@@ -58,7 +58,7 @@ export default function TermsOfServicePage() {
                   • Managing access to your private assignments
                 </Text>
                 <Text as="div" size="3" mb="2">
-                • Updating assignment status
+                  • Updating assignment status
                 </Text>
                 <Text as="div" size="3" mb="2">
                   • Sending and receiving direct messages with other users
@@ -71,8 +71,29 @@ export default function TermsOfServicePage() {
                 3. User Accounts and Responsibilities
               </Heading>
               <Text as="p" size="3" mb="3">
+                To use Oppdragsportalen, you must create an account using your
+                GitHub account via OAuth authentication. You agree to:
+              </Text>
+              {/* <Text as="p" size="3" mb="3">
                 To use Oppdragsportalen, you must create an account with a valid
                 email address and name. You agree to:
+              </Text> */}
+              <Box ml="4" mb="3">
+                <Text as="div" size="3" mb="2">
+                  • Provide accurate GitHub profile information
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • Keep your GitHub account secure and confidential
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • Be responsible for all activities under your account
+                </Text>
+                <Text as="div" size="3" mb="2">
+                  • Notify us immediately of any unauthorized access
+                </Text>
+              </Box>
+              {/* <Text as="p" size="3" mb="3">
+                You agree to:
               </Text>
               <Box ml="4" mb="3">
                 <Text as="div" size="3" mb="2">
@@ -87,7 +108,7 @@ export default function TermsOfServicePage() {
                 <Text as="div" size="3" mb="2">
                   • Notify us immediately of any unauthorized access
                 </Text>
-              </Box>
+              </Box> */}
               <Text as="p" size="3" mb="3">
                 You may not share your account credentials or allow others to
                 use your account. Accounts are personal and non-transferable.

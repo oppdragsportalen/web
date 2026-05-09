@@ -18,11 +18,11 @@ export function Footer() {
         </Text>
 
         <Flex gap="4" align="baseline" wrap="nowrap">
-          <Text asChild size="1" color="gray">
+          {/* <Text asChild size="1" color="gray">
             <Link href="/faq" className="hover:underline no-underline">
               FAQ
             </Link>
-          </Text>
+          </Text> */}
 
           <Text asChild size="1" color="gray">
             <Link href="/terms" className="hover:underline no-underline">
