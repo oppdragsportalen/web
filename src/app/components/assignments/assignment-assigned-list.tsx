@@ -95,13 +95,13 @@ export default async function AssignmentAssignedList({
           You haven't taken any assignments yet. Explore and take assignments to
           get started.
         </Text>
-        <Box>
+        {/* <Box>
           <Link href="/dashboard/explore" underline="none">
             <Button mt="2" size="2" variant="solid">
               Explore assignments
             </Button>
           </Link>
-        </Box>
+        </Box> */}
       </Box>
     );
   }

@@ -13,6 +13,8 @@ import Link from "next/link";
 import AssignmentAssignedList from "@/app/components/assignments/assignment-assigned-list";
 import AssignmentAuthoredList from "@/app/components/assignments/assignment-authored-list";
 import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
+import { ChatListClient } from "@/app/components/messages/chat-list-client";
+import { getUserChats } from "@/app/actions/messages/get-user-chats";
 
 function AssignmentListSkeleton() {
   return (
@@ -20,6 +22,27 @@ function AssignmentListSkeleton() {
       <AssignmentCardSkeleton />
       <AssignmentCardSkeleton />
     </Box>
+  );
+}
+
+async function MessagesContent({
+  userId,
+  limit,
+}: {
+  userId: string;
+  limit: number;
+}) {
+  const result = await getUserChats({ limit: limit });
+  if (result.error) {
+    return (
+      <Box p="4">
+        <Text color="red">{result.error}</Text>
+      </Box>
+    );
+  }
+  const chats = result.chats || [];
+  return (
+    <ChatListClient initialChats={chats} currentUserId={userId} limit={limit} />
   );
 }
 
@@ -40,21 +63,28 @@ export default async function DashboardPage() {
     .eq("id", user.id)
     .single();
 
-  const [{ count: assignedCount }, { count: authoredCount }] =
-    await Promise.all([
-      supabase
-        .from("assignment_claims")
-        .select("assignment_id, assignments:assignment_id(id)", {
-          count: "exact",
-          head: true,
-        })
-        .eq("user_id", user.id)
-        .not("assignments.id", "is", null),
-      supabase
-        .from("assignments")
-        .select("id", { count: "exact", head: true })
-        .eq("creator_id", user.id),
-    ]);
+  const [
+    { count: assignedCount },
+    { count: authoredCount },
+    { count: messagesCount },
+  ] = await Promise.all([
+    supabase
+      .from("assignment_claims")
+      .select("assignment_id, assignments:assignment_id(id)", {
+        count: "exact",
+        head: true,
+      })
+      .eq("user_id", user.id)
+      .not("assignments.id", "is", null),
+    supabase
+      .from("assignments")
+      .select("id", { count: "exact", head: true })
+      .eq("creator_id", user.id),
+    supabase
+      .from("dm_rooms")
+      .select("id", { count: "exact", head: true })
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`),
+  ]);
 
   return (
     <div className="p-4 min-w-137.5">
@@ -117,6 +147,23 @@ export default async function DashboardPage() {
             ) : null}
           </Card>
         </Flex>
+      </Box>
+
+      <Box my="8">
+        <Text className="text-xl font-bold">Messages</Text>
+
+        <Box mt="4">
+          <Card>
+            <Suspense fallback={<AssignmentListSkeleton />}>
+              <MessagesContent userId={user.id} limit={3} />
+            </Suspense>
+            {messagesCount ? (
+              <Button variant="outline" mt="3">
+                <Link href="/dashboard/messages">View all</Link>
+              </Button>
+            ) : null}
+          </Card>
+        </Box>
       </Box>
     </div>
   );

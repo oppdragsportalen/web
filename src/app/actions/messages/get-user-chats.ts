@@ -2,7 +2,7 @@
 
 import { createSupabaseServer } from "@/lib/supabase/server";
 
-export async function getUserChats() {
+export async function getUserChats({ limit }: { limit?: number } = {}) {
   const supabase = await createSupabaseServer();
 
   const {
@@ -14,7 +14,7 @@ export async function getUserChats() {
   }
 
   // Get all DM rooms where user is a participant (either user_a or user_b)
-  const { data: rooms, error: roomsError } = await supabase
+  let query = supabase
     .from("dm_rooms")
     .select(
       `
@@ -28,10 +28,16 @@ export async function getUserChats() {
         sender_id,
         created_at
       )
-    `
+    `,
     )
     .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
     .order("created_at", { ascending: false });
+
+  if (limit != null && limit > 0) {
+    query = query.limit(limit);
+  }
+
+  const { data: rooms, error: roomsError } = await query;
 
   if (roomsError) {
     return { error: roomsError.message };
@@ -39,7 +45,7 @@ export async function getUserChats() {
 
   // Get other user IDs and fetch their profiles
   const otherUserIds = rooms.map((room) =>
-    room.user_a === user.id ? room.user_b : room.user_a
+    room.user_a === user.id ? room.user_b : room.user_a,
   );
 
   const { data: profiles, error: profilesError } = await supabase
@@ -56,12 +62,15 @@ export async function getUserChats() {
     const recipientId = room.user_a === user.id ? room.user_b : room.user_a;
     const recipient = profiles.find((p) => p.id === recipientId) ?? null;
     const lastMessage =
-      room.messages?.reduce((latest, message) => {
-        if (!latest) return message;
-        return new Date(message.created_at) > new Date(latest.created_at)
-          ? message
-          : latest;
-      }, null as (typeof room.messages)[number] | null) ?? null;
+      room.messages?.reduce(
+        (latest, message) => {
+          if (!latest) return message;
+          return new Date(message.created_at) > new Date(latest.created_at)
+            ? message
+            : latest;
+        },
+        null as (typeof room.messages)[number] | null,
+      ) ?? null;
 
     return {
       id: room.id,

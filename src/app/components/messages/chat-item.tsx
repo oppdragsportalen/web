@@ -38,7 +38,7 @@ export function ChatItem({
 
   return (
     <Link href={`/dashboard/messages/${id}`}>
-      <Card className="mb-3 p-3 cursor-pointer hover:outline outline-(--accent-8) -outline-offset-1">
+      <Card className="p-3 cursor-pointer hover:outline outline-(--accent-8) -outline-offset-1">
         <Flex justify="between" align="center" className="mb-2">
           <Flex align="center" gap="2">
             <Avatar

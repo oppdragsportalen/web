@@ -74,7 +74,7 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
                 size="2"
                 src={result.receiver.avatar_url || undefined}
                 alt={result.receiver.username}
-                fallback={result.receiver.username.charAt(0).toUpperCase()}
+                fallback={result.receiver.display_name.charAt(0).toUpperCase()}
               />
               <Text weight="bold" size="3">
                 {result.receiver.display_name}

@@ -16,23 +16,31 @@ type Chat = {
 type ChatListClientProps = {
   initialChats: Chat[];
   currentUserId: string;
+  limit?: number;
 };
 
 export function ChatListClient({
   initialChats,
   currentUserId,
+  limit,
 }: ChatListClientProps) {
   const [chats, setChats] = useState<Chat[]>(initialChats);
 
   // Fetch latest chats from database
-  const refetchChats = async (supabase: any) => {
+  const refetchChats = async (supabase: any, limit?: number) => {
+    let query = supabase
+      .from("dm_rooms")
+      .select("id, user_a, user_b, created_at")
+      .or(`user_a.eq.${currentUserId},user_b.eq.${currentUserId}`)
+      .order("created_at", { ascending: false });
+
+    if (typeof limit === "number" && limit > 0) {
+      query = query.range(0, limit - 1);
+    }
+
     try {
       // Fetch rooms without join
-      const { data: rooms } = await supabase
-        .from("dm_rooms")
-        .select("id, user_a, user_b, created_at")
-        .or(`user_a.eq.${currentUserId},user_b.eq.${currentUserId}`)
-        .order("created_at", { ascending: false });
+      const { data: rooms } = await query;
 
       if (!rooms) return;
 
@@ -128,7 +136,7 @@ export function ChatListClient({
       if (rooms) {
         currentRoomIds = rooms.map((r) => r.id);
       }
-      await refetchChats(supabase);
+      await refetchChats(supabase, limit);
     };
 
     const handleNewRoom = async (payload: any) => {
@@ -142,7 +150,7 @@ export function ChatListClient({
       }
 
       // Fetch the new room's data and add it to UI
-      await refetchChats(supabase);
+      await refetchChats(supabase, limit);
     };
 
     const setupSubscriptions = () => {
@@ -162,12 +170,12 @@ export function ChatListClient({
           const msgRoomId = payload.new?.room_id || payload.old?.room_id;
 
           if (payload.eventType === "DELETE") {
-            await refetchChats(supabase);
+            await refetchChats(supabase, limit);
             return;
           }
 
           if (msgRoomId && currentRoomIds.includes(msgRoomId)) {
-            await refetchChats(supabase);
+            await refetchChats(supabase, limit);
           }
         },
       );
@@ -222,16 +230,18 @@ export function ChatListClient({
         </Flex>
       ) : (
         <Box>
-          {chats.map((chat) => (
-            <ChatItem
-              key={chat.id}
-              id={chat.id}
-              recipient={chat.recipient}
-              lastMessage={chat.lastMessage}
-              createdAt={chat.createdAt}
-              currentUserId={currentUserId}
-            />
-          ))}
+          <Flex gap="3" direction="column">
+            {chats.map((chat) => (
+              <ChatItem
+                key={chat.id}
+                id={chat.id}
+                recipient={chat.recipient}
+                lastMessage={chat.lastMessage}
+                createdAt={chat.createdAt}
+                currentUserId={currentUserId}
+              />
+            ))}
+          </Flex>
         </Box>
       )}
     </Box>

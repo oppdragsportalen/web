@@ -85,27 +85,29 @@ export function StartNewChatDialog({ trigger }: StartNewChatDialogProps) {
         </Dialog.Description>
 
         <Box className="mt-4">
-          <Flex gap="2">
-            <TextField.Root
-              className="flex-1"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                setError("");
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleStart();
-                }
-              }}
-              disabled={isLoading}
-            />
-
-            <IconButton onClick={handleStart} disabled={isLoading}>
-              {isLoading ? <Spinner /> : <ArrowRightIcon />}
-            </IconButton>
-          </Flex>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleStart();
+            }}
+          >
+            <Flex gap="2">
+              <TextField.Root
+                className="flex-1"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  setError("");
+                }}
+                disabled={isLoading}
+                required
+              />
+              <IconButton type="submit" disabled={isLoading}>
+                {isLoading ? <Spinner /> : <ArrowRightIcon />}
+              </IconButton>
+            </Flex>
+          </form>
 
           {error && (
             <Callout.Root
