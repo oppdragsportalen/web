@@ -211,16 +211,16 @@ export function ChatDetailClient({
   };
 
   return (
-    <Box pt="0" p="4" className="h-full min-w-sm">
+    <Box pt="0" px="4" className="h-full min-w-sm">
       <Flex
         direction="column"
         justify="end"
-        className="flex flex-1 mb-10 pt-44 min-h-full"
+        className="flex flex-1 mb-10 pt-44 min-h-[calc(100%-6.5rem)] "
       >
         {messages.length === 0 ? (
-          <Box className="text-center py-56">
+          <Flex className="text-center h-full" justify="center" align="center">
             <Text color="gray">No messages yet</Text>
-          </Box>
+          </Flex>
         ) : (
           messages.map((message) => {
             const isOwn = message.sender_id === currentUserId;
@@ -275,7 +275,7 @@ export function ChatDetailClient({
 
       <Flex
         align="end"
-        className="sticky bottom-0 h-16 p-4 -mx-4"
+        className="sticky bottom-0 h-16 -ml-16 pl-16 p-4 -mr-4"
         style={{
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",

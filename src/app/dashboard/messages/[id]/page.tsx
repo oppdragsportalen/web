@@ -43,8 +43,7 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
   return (
     <>
       <Box
-        p="4"
-        className="sticky top-0 left-0 w-full h-16 z-20"
+        className="sticky top-0 left-0 w-full h-16 z-20 p-4 pl-20"
         style={{
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",
@@ -85,7 +84,7 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
         </Flex>
       </Box>
 
-      <Box className="-mt-16 min-h-full overflow-scroll absolute inset-0">
+      <Box className="-mt-16 pl-16 overflow-scroll absolute inset-0">
         <ChatDetailClient
           roomId={roomID}
           currentUserId={user.id}
@@ -100,8 +99,14 @@ export default async function ChatDetailPage({ params }: ChatDetailPageProps) {
   const { id } = await params;
 
   return (
-    <Box className="flex-col min-h-full relative">
-      <Suspense fallback={<ChatDetailSkeleton />}>
+    <Box className="flex-col min-h-full relative -ml-16">
+      <Suspense
+        fallback={
+          <Box className="pl-16">
+            <ChatDetailSkeleton />
+          </Box>
+        }
+      >
         <ChatDetailContent roomID={id} />
       </Suspense>
     </Box>

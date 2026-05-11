@@ -91,25 +91,45 @@ export default async function DashboardPage() {
       <Box className="mt-4 mb-10">
         <TimeBasedGreeting displayName={profile.display_name} />
       </Box>
-      <Flex className="gap-2">
-        <CreateAssignmentDialog
-          trigger={
-            <Button variant="solid">
-              <PlusIcon /> Create Assignment
+
+      <Box
+        className="bg-(--color-background) z-10 sticky py-4 top-0 -ml-16 pl-16 -mr-4 pr-4 "
+        style={{
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          background: `
+            linear-gradient(
+              to bottom,
+              rgba(var(--color-background-rgb), 0.95) 0%,
+              rgba(var(--color-background-rgb), 0) 100%
+            )
+          `,
+          maskImage:
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+        }}
+      >
+        <Flex className="gap-2">
+          <CreateAssignmentDialog
+            trigger={
+              <Button variant="solid">
+                <PlusIcon /> Create Assignment
+              </Button>
+            }
+          />
+          <Link href="/dashboard/explore">
+            <Button variant="surface">
+              <MagnifyingGlassIcon /> Explore
             </Button>
-          }
-        />
-        <Link href="/dashboard/explore">
-          <Button variant="surface">
-            <MagnifyingGlassIcon /> Explore
-          </Button>
-        </Link>
-        <Link href="/dashboard/assignments">
-          <Button variant="surface">
-            <FileTextIcon /> My Assignments
-          </Button>
-        </Link>
-      </Flex>
+          </Link>
+          <Link href="/dashboard/assignments">
+            <Button variant="surface">
+              <FileTextIcon /> My Assignments
+            </Button>
+          </Link>
+        </Flex>
+      </Box>
 
       <Box my="8">
         <Text className="text-xl font-bold">Assignments</Text>

@@ -93,7 +93,7 @@ export async function Navbar() {
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <DropdownMenu.Item asChild>
-                    <Link href="/settings" className="no-underline">
+                    <Link href="/dasahboard/settings" className="no-underline">
                       <Flex align="center" gap="2">
                         <GearIcon />
                         <Text>Settings</Text>

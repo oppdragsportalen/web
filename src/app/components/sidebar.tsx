@@ -1,18 +1,32 @@
 "use client";
 
-import { Box, Flex, Text } from "@radix-ui/themes";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import {
-  GearIcon,
-  HomeIcon,
-  FileTextIcon,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarRail,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+
+import {
+  DashboardIcon,
   MagnifyingGlassIcon,
   ChatBubbleIcon,
+  FileTextIcon,
+  GearIcon,
 } from "@radix-ui/react-icons";
+import { Text } from "@radix-ui/themes";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Home", icon: HomeIcon },
+  { href: "/dashboard", label: "Dashboard", icon: DashboardIcon },
   { href: "/dashboard/explore", label: "Explore", icon: MagnifyingGlassIcon },
   { href: "/dashboard/messages", label: "Messages", icon: ChatBubbleIcon },
   {
@@ -20,61 +34,72 @@ const NAV_ITEMS = [
     label: "My Assignments",
     icon: FileTextIcon,
   },
-  { href: "/settings", label: "Settings", icon: GearIcon },
+  { href: "/dashboard/settings", label: "Settings", icon: GearIcon },
 ];
 
-export function Sidebar() {
+export function AppSidebar() {
   const pathname = usePathname();
-  return (
-    <Box className="w-auto border-r border-gray-200 dark:border-neutral-800 h-full overflow-scroll">
-      <Flex direction="column" gap="1" p="2">
-        {NAV_ITEMS.map((item) => (
-          <SidebarLink
-            key={item.href}
-            href={item.href}
-            label={item.label}
-            icon={item.icon}
-            isActive={
-              item.href === "/dashboard"
-                ? pathname === item.href
-                : pathname.startsWith(item.href)
-            }
-          />
-        ))}
-      </Flex>
-    </Box>
-  );
-}
 
-function SidebarLink({
-  href,
-  label,
-  icon: Icon,
-  isActive,
-}: {
-  href: string;
-  label: string;
-  icon: React.ComponentType<{ width: string; height: string }>;
-  isActive: boolean;
-}) {
   return (
-    <Link href={href} style={{ textDecoration: "none" }}>
-      <Flex
-        align="center"
-        gap="3"
-        px="3"
-        py="2"
-        className={`rounded-md w-44 transition-colors ${
-          isActive
-            ? "bg-(--accent-a3) text-(--accent-11)"
-            : "hover:bg-(--gray-a3) text-(--gray-11)"
-        }`}
-      >
-        <Icon width="18" height="18" />
-        <Text size="2" weight={isActive ? "bold" : "regular"}>
-          {label}
-        </Text>
-      </Flex>
-    </Link>
+    <Sidebar variant="floating" collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <Link href="/">
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                  <Image
+                    width={100}
+                    height={100}
+                    alt="appicon"
+                    src="/pencil.png"
+                    className="w-16 sm:w-20 md:w-24 rounded-sm"
+                  />
+                </div>
+                <div className="flex flex-col gap-0.5 leading-none">
+                  <Text size="3" weight="bold">
+                    Oppdragsportalen
+                  </Text>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </Link>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            {NAV_ITEMS.map((item) => {
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href);
+
+              return (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    tooltip={item.label}
+                  >
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.label}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarRail />
+
+      <SidebarFooter>
+        <SidebarTrigger />
+      </SidebarFooter>
+    </Sidebar>
   );
 }

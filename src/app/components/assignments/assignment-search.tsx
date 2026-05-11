@@ -35,7 +35,7 @@ export default function AssignmentSearch() {
 
   return (
     <Box
-      className="bg-(--color-background) z-10 sticky py-4 top-0 -mx-4 px-4"
+      className="bg-(--color-background) z-10 sticky py-4 top-0 -ml-16 pl-16 -mr-4 pr-4"
       style={{
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
