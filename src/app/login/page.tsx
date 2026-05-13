@@ -18,22 +18,28 @@ import { useState } from "react";
 import Link from "next/link";
 import LightRays from "../components/light-rays";
 import Image from "next/image";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit() {
+    setIsLoading(true);
     setError("");
 
     const result = await auth();
 
     if (result?.error) {
       setError(result.error);
+      setIsLoading(false);
       return;
     }
 
     if (result?.url) {
       window.location.href = result.url;
+      setIsLoading(false);
+      
     }
   }
 
@@ -87,8 +93,17 @@ export default function LoginPage() {
                 size="3"
                 onClick={handleSubmit}
               >
-                <GitHubLogoIcon width={20} height={20} />
-                <Text size="3">Continue with GitHub</Text>
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    Please wait
+                  </>
+                ) : (
+                  <>
+                    <GitHubLogoIcon width={20} height={20} />
+                    <Text size="3">Continue with GitHub</Text>
+                  </>
+                )}
               </Button>
 
               <Box
