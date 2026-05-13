@@ -229,18 +229,18 @@ export function AppSidebar({ profile }: AppSidebarProps) {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Log out</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure you want to log out? You'll need to sign in
-                    again to access your account.
+                    Are you sure you want to log out? You&apos;ll need to sign
+                    in again to access your account.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <form action={logout}>
+                <form action={logout}>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction variant="destructive" type="submit">
                       Log out
                     </AlertDialogAction>
-                  </form>
-                </AlertDialogFooter>
+                  </AlertDialogFooter>
+                </form>
               </AlertDialogContent>
             </AlertDialog>
           </SidebarMenuItem>
