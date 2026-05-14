@@ -82,13 +82,12 @@ export function AppSidebar({ profile }: AppSidebarProps) {
           <Link href="/">
             <SidebarMenuItem>
               <SidebarMenuButton size="lg">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-neutral-800 text-sidebar-primary-foreground">
                   <Image
                     width={100}
                     height={100}
                     alt="appicon"
                     src="/pencil.png"
-                    className="w-16 sm:w-20 md:w-24 rounded-sm"
                   />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">

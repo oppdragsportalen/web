@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Box, Card, Text, Button, Flex } from "@radix-ui/themes";
+import { Box, Text, Flex } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import TimeBasedGreeting from "@/app/components/time-based-greeting";
@@ -15,6 +15,8 @@ import AssignmentAuthoredList from "@/app/components/assignments/assignment-auth
 import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 import { ChatListClient } from "@/app/components/messages/chat-list-client";
 import { getUserChats } from "@/app/actions/messages/get-user-chats";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 function AssignmentListSkeleton() {
   return (
@@ -113,21 +115,21 @@ export default async function DashboardPage() {
         <Flex className="gap-2">
           <CreateAssignmentDialog
             trigger={
-              <Button variant="solid">
+              <Button variant="default">
                 <PlusIcon /> Create Assignment
               </Button>
             }
           />
-          <Link href="/dashboard/explore">
-            <Button variant="surface">
+          <Button variant="secondary" asChild>
+            <Link href="/dashboard/explore">
               <MagnifyingGlassIcon /> Explore
-            </Button>
-          </Link>
-          <Link href="/dashboard/assignments">
-            <Button variant="surface">
+            </Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link href="/dashboard/assignments">
               <FileTextIcon /> My Assignments
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </Flex>
       </Box>
 
@@ -135,36 +137,38 @@ export default async function DashboardPage() {
         <Text className="text-xl font-bold">Assignments</Text>
 
         <Flex gap="4" className="mt-4 flex-col lg:flex-row lg:items-start">
-          <Card size="2" className="flex-1 h-fit self-start w-full">
-            <Flex justify="between" align="center" mb="4">
-              <Text size="4" className="font-bold">
-                Assigned
-              </Text>
-            </Flex>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <AssignmentAssignedList limit={5} />
-            </Suspense>
-            {assignedCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/assignments">View all</Link>
-              </Button>
-            ) : null}
+          <Card className="flex-1 h-fit self-start w-full">
+            <CardHeader>
+              <CardTitle>Assigned</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAssignedList limit={5} />
+              </Suspense>
+              {assignedCount ? (
+                <Button variant="outline">
+                  <Link href="/dashboard/assignments">View all</Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
 
-          <Card size="2" className="flex-1 h-fit self-start w-full">
-            <Flex justify="between" align="center" mb="4">
-              <Text size="4" className="font-bold">
-                Authored
-              </Text>
-            </Flex>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <AssignmentAuthoredList limit={5} />
-            </Suspense>
-            {authoredCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/assignments?tab=authored">View all</Link>
-              </Button>
-            ) : null}
+          <Card className="flex-1 h-fit self-start w-full">
+            <CardHeader>
+              <CardTitle>Authored</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAuthoredList limit={5} />
+              </Suspense>
+              {authoredCount ? (
+                <Button variant="outline">
+                  <Link href="/dashboard/assignments?tab=authored">
+                    View all
+                  </Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
         </Flex>
       </Box>
@@ -174,14 +178,16 @@ export default async function DashboardPage() {
 
         <Box mt="4">
           <Card>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <MessagesContent userId={user.id} limit={3} />
-            </Suspense>
-            {messagesCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/messages">View all</Link>
-              </Button>
-            ) : null}
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <MessagesContent userId={user.id} limit={3} />
+              </Suspense>
+              {messagesCount ? (
+                <Button variant="outline" className="mt-3">
+                  <Link href="/dashboard/messages">View all</Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
         </Box>
       </Box>

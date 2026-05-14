@@ -92,7 +92,7 @@ export default async function AssignmentAssignedList({
     return (
       <Box>
         <Text size="2" color="gray">
-          You haven't taken any assignments yet. Explore and take assignments to
+          You haven&apos;t taken any assignments yet. Explore and take assignments to
           get started.
         </Text>
         {/* <Box>
