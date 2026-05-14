@@ -1,9 +1,17 @@
 "use client";
 
-import { Box, Text, Card, Tooltip, Flex, Avatar } from "@radix-ui/themes";
+import { Box, Text, Flex } from "@radix-ui/themes";
 import Link from "next/link";
 import { formatTimeAgo } from "@/lib/date-utils";
 import type { Profile } from "@/types";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 type ChatItemProps = {
   id: string;
@@ -38,46 +46,60 @@ export function ChatItem({
 
   return (
     <Link href={`/dashboard/messages/${id}`}>
-      <Card className="p-3 cursor-pointer hover:outline outline-(--accent-8) -outline-offset-1">
-        <Flex justify="between" align="center" className="mb-2">
-          <Flex align="center" gap="2">
-            <Avatar
-              size="2"
-              src={recipient.avatar_url || undefined}
-              alt={displayName}
-              fallback={displayName.charAt(0).toUpperCase()}
-            />
-            <Text weight="bold" size="3">
-              {displayName}
-            </Text>
-          </Flex>
-          <Flex gap="2">
-            <Text color="gray" size="1">
-              {lastMessageTime}
-            </Text>
-          </Flex>
-        </Flex>
-        <Flex justify="between">
-          <Box>
-            <Text size="2" color="gray">
-              {lastMessagePreview}
-            </Text>
-          </Box>
-
-          <Box>
-            <Tooltip
-              content={
-                <span>
-                  <strong>{recipient.username}</strong> {displayName}
-                </span>
-              }
-            >
-              <Text size="2" color="gray">
-                {recipient.username}
+      <Card
+        size="sm"
+        className="cursor-pointer hover:outline outline-(--accent-8)"
+      >
+        <CardHeader>
+          <Flex justify="between" align="center">
+            <CardTitle>
+              <Flex align="center" gap="2">
+                <Avatar>
+                  <AvatarImage
+                    src={recipient.avatar_url || undefined}
+                    alt={displayName}
+                  />
+                  <AvatarFallback>
+                    {displayName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <Text weight="bold" size="3">
+                  {displayName}
+                </Text>
+              </Flex>
+            </CardTitle>
+            <Box>
+              <Text color="gray" size="1">
+                {lastMessageTime}
               </Text>
-            </Tooltip>
-          </Box>
-        </Flex>
+            </Box>
+          </Flex>
+        </CardHeader>
+        <CardContent>
+          <Flex justify="between">
+            <Box>
+              <Text size="2" color="gray">
+                {lastMessagePreview}
+              </Text>
+            </Box>
+            <Box>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipContent>
+                    <span>
+                      <strong>{recipient.username}</strong> {displayName}
+                    </span>
+                  </TooltipContent>
+                  <TooltipTrigger>
+                    <Text size="2" color="gray">
+                      {recipient.username}
+                    </Text>
+                  </TooltipTrigger>
+                </Tooltip>
+              </TooltipProvider>
+            </Box>
+          </Flex>
+        </CardContent>
       </Card>
     </Link>
   );

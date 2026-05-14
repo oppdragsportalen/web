@@ -89,7 +89,7 @@ export default async function AssignmentAuthoredList({
         </Text>
       ) : authoredCount === 0 ? (
         <Text size="2" color="gray">
-          You haven't created any assignments yet.
+          You haven&apos;t created any assignments yet.
         </Text>
       ) : (
         <Box>

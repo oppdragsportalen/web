@@ -115,7 +115,7 @@ export default async function DashboardPage() {
         <Flex className="gap-2">
           <CreateAssignmentDialog
             trigger={
-              <Button variant="default">
+              <Button variant="default" className="cursor-pointer">
                 <PlusIcon /> Create Assignment
               </Button>
             }
