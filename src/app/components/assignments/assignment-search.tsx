@@ -1,9 +1,14 @@
 "use client";
 
-import { TextField, Box } from "@radix-ui/themes";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Box } from "@radix-ui/themes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Search } from "lucide-react";
 
 export default function AssignmentSearch() {
   const router = useRouter();
@@ -52,16 +57,17 @@ export default function AssignmentSearch() {
           "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
       }}
     >
-      <TextField.Root
-        type="search"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search for assignments"
-      >
-        <TextField.Slot>
-          <MagnifyingGlassIcon />
-        </TextField.Slot>
-      </TextField.Root>
+      <InputGroup>
+        <InputGroupInput
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search for assignments"
+        />
+        <InputGroupAddon>
+          <Search />
+        </InputGroupAddon>
+      </InputGroup>
     </Box>
   );
 }

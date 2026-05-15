@@ -392,7 +392,6 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
             align="center"
             gap="3"
             wrap="wrap"
-            mt="2"
             className="w-full"
           >
             <Text size="2" color="gray">

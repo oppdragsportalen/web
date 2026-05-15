@@ -1,10 +1,25 @@
-import { Card, Box, Text, Flex, Badge, Separator } from "@radix-ui/themes";
+import { Box, Text, Flex, Separator } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { AssignmentActionButton } from "@/app/components/assignments/assignment-action-button";
 import { formatDateToLocal } from "@/lib/timezone";
 import type { Assignment, ClaimStatus } from "@/types";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Globe,
+  Lock,
+  Check,
+  Clock,
+  CheckCircle,
+  PlusCircle,
+} from "lucide-react";
 
 async function getAssignment(
   id: string,
@@ -85,23 +100,49 @@ async function getAssignment(
 function getStatusBadge(status?: string) {
   switch (status) {
     case "accepted":
-      return <Badge color="blue">Accepted</Badge>;
+      return (
+        <Badge className="bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300">
+          <Check data-icon="inline-start" />
+          Accepted
+        </Badge>
+      );
     case "in_progress":
-      return <Badge color="amber">In Progress</Badge>;
+      return (
+        <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+          <Clock data-icon="inline-start" />
+          In Progress
+        </Badge>
+      );
     case "finished":
-      return <Badge color="green">Completed</Badge>;
+      return (
+        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+          <CheckCircle data-icon="inline-start" />
+          Completed
+        </Badge>
+      );
     default:
-      return <Badge color="gray">Available</Badge>;
+      return (
+        <Badge variant="outline">
+          <PlusCircle data-icon="inline-start" />
+          Available
+        </Badge>
+      );
   }
 }
 
-function getVisibilityBadge(visibility?: string) {
+function getVisibilityBadge(visibility: string) {
   switch (visibility) {
     case "public":
-      return <Badge color="cyan">Public</Badge>;
+      return (
+        <Badge className="bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300">
+          <Globe data-icon="inline-start" />
+          Public
+        </Badge>
+      );
     default:
       return (
-        <Badge color="gray" variant="outline">
+        <Badge variant="outline">
+          <Lock data-icon="inline-start" />
           Restricted
         </Badge>
       );
@@ -142,131 +183,153 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
       </Box>
 
       <Card>
-        <Flex justify="between" align="start" gap="4" mb="5">
-          <Box>
-            <Text size="5" weight="bold" className="leading-tight">
-              {assignment.title}
-            </Text>
-          </Box>
-
-          <Flex gap="2" wrap="wrap" align="center">
-            {getVisibilityBadge(assignment.visibility)}
-            {getStatusBadge(assignment.claimStatus)}
-          </Flex>
-        </Flex>
-
-        {assignment.description && (
-          <Box mb="5">
+        <CardHeader>
+          <Flex justify="between" align="start" gap="4" mb="5">
             <Box>
-              <Text size="2" weight="medium" color="gray">
-                Description
+              <Text size="5" weight="bold" className="leading-tight">
+                {assignment.title}
               </Text>
             </Box>
-            <Card>
-              <Text size="2">{assignment.description}</Text>
-            </Card>
-          </Box>
-        )}
 
-        <Box mb="5">
-          <div className="flex flex-wrap gap-4">
-            <Box>
+            <Flex gap="2" wrap="wrap" align="center">
+              {getVisibilityBadge(assignment.visibility)}
+              {getStatusBadge(assignment.claimStatus)}
+            </Flex>
+          </Flex>
+        </CardHeader>
+        <CardContent>
+          {assignment.description && (
+            <Box mb="5">
               <Box>
                 <Text size="2" weight="medium" color="gray">
-                  Deadline
+                  Description
                 </Text>
               </Box>
               <Card>
-                <Text size="2" className="whitespace-nowrap">
-                  {formatDateToLocal(assignment.deadline)}
-                </Text>
+                <CardContent>
+                  <Text size="2">{assignment.description}</Text>
+                </CardContent>
               </Card>
             </Box>
-            <Box>
-              <Box>
-                <Text size="2" weight="medium" color="gray">
-                  Status
-                </Text>
-              </Box>
-              <Card>
-                <Text size="2" className="capitalize whitespace-nowrap">
-                  {(() => {
-                    const status = assignment.claimStatus;
-                    if (status === "accepted") return "Accepted";
-                    if (status === "in_progress") return "In Progress";
-                    if (status === "finished") return "Completed";
-                    return "Available";
-                  })()}
-                </Text>
-              </Card>
-            </Box>
-            <Box>
-              <Box>
-                <Text size="2" weight="medium" color="gray">
-                  Assignment Type
-                </Text>
-              </Box>
-              <Card>
-                <Text size="2" className="capitalize whitespace-nowrap">
-                  {assignment.visibility}
-                </Text>
-              </Card>
-            </Box>
-            {assignment.creator_profile && (
+          )}
+
+          <Box mb="5">
+            <div className="flex flex-wrap gap-4">
               <Box>
                 <Box>
                   <Text size="2" weight="medium" color="gray">
-                    Created By
+                    Deadline
                   </Text>
                 </Box>
                 <Card>
-                  <Text size="2" className="whitespace-nowrap">
-                    <Badge mr="1" variant="outline" color="gray">
-                      <strong>{assignment.creator_profile.username}</strong>
-                    </Badge>{" "}
-                    {assignment.creator_profile.display_name}
-                  </Text>
+                  <CardContent>
+                    <Text size="2" className="whitespace-nowrap">
+                      {formatDateToLocal(assignment.deadline)}
+                    </Text>
+                  </CardContent>
                 </Card>
               </Box>
-            )}
-            {assignment.visibility === "restricted" &&
-              assignment.assigned_profile && (
+              <Box>
+                <Box>
+                  <Text size="2" weight="medium" color="gray">
+                    Status
+                  </Text>
+                </Box>
+                <Card>
+                  <CardContent>
+                    <Text size="2" className="capitalize whitespace-nowrap">
+                      {(() => {
+                        const status = assignment.claimStatus;
+                        if (status === "accepted") return "Accepted";
+                        if (status === "in_progress") return "In Progress";
+                        if (status === "finished") return "Completed";
+                        return "Available";
+                      })()}
+                    </Text>
+                  </CardContent>
+                </Card>
+              </Box>
+              <Box>
+                <Box>
+                  <Text size="2" weight="medium" color="gray">
+                    Assignment Type
+                  </Text>
+                </Box>
+                <Card>
+                  <CardContent>
+                    <Text size="2" className="capitalize whitespace-nowrap">
+                      {assignment.visibility}
+                    </Text>
+                  </CardContent>
+                </Card>
+              </Box>
+              {assignment.creator_profile && (
                 <Box>
                   <Box>
                     <Text size="2" weight="medium" color="gray">
-                      Assigned To
+                      Created By
                     </Text>
                   </Box>
                   <Card>
-                    <Text size="2" className="whitespace-nowrap">
-                      <Badge mr="1" variant="outline" color="gray">
-                        <strong>{assignment.assigned_profile.username}</strong>
-                      </Badge>{" "}
-                      {assignment.assigned_profile.display_name}
-                    </Text>
+                    <CardContent>
+                      <Text size="2" className="whitespace-nowrap">
+                        <Badge variant="outline" color="gray">
+                          <strong>{assignment.creator_profile.username}</strong>
+                        </Badge>{" "}
+                        {assignment.creator_profile.display_name}
+                      </Text>
+                    </CardContent>
                   </Card>
                 </Box>
               )}
-          </div>
-        </Box>
-
-        <Separator size="4" />
-
-        <Flex justify="between" align="center" gap="3" wrap="wrap" mt="2">
-          <Text size="2" color="gray">
-            Created{" "}
-            {new Date(assignment.created_at).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })}
-          </Text>
-          <AssignmentActionButton
-            assignmentId={assignment.id}
-            isTaken={!!assignment.claimStatus}
-            status={assignment.claimStatus}
-          />
-        </Flex>
+              {assignment.visibility === "restricted" &&
+                assignment.assigned_profile && (
+                  <Box>
+                    <Box>
+                      <Text size="2" weight="medium" color="gray">
+                        Assigned To
+                      </Text>
+                    </Box>
+                    <Card>
+                      <CardContent>
+                        <Text size="2" className="whitespace-nowrap">
+                          <Badge variant="outline" color="gray">
+                            <strong>
+                              {assignment.assigned_profile.username}
+                            </strong>
+                          </Badge>{" "}
+                          {assignment.assigned_profile.display_name}
+                        </Text>
+                      </CardContent>
+                    </Card>
+                  </Box>
+                )}
+            </div>
+          </Box>
+        </CardContent>
+        <CardFooter>
+          <Flex
+            justify="between"
+            align="center"
+            gap="3"
+            wrap="wrap"
+            className="w-full"
+          >
+            <Text size="2" color="gray">
+              Created{" "}
+              {new Date(assignment.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+            </Text>
+            <AssignmentActionButton
+              assignmentId={assignment.id}
+              isTaken={!!assignment.claimStatus}
+              status={assignment.claimStatus}
+            />
+          </Flex>
+        </CardFooter>
       </Card>
     </div>
   );
