@@ -1,9 +1,22 @@
 "use client";
 
-import { AlertDialog, Button, Flex } from "@radix-ui/themes";
-import { TrashIcon } from "@radix-ui/react-icons";
+import { Flex } from "@radix-ui/themes";
 import { DeleteAssignment } from "@/app/actions/assignments/delete-assignment";
 import { EditAssignmentDialog } from "@/app/components/assignments/edit-assignment-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 type Props = {
   assignment: {
@@ -20,38 +33,36 @@ export function AssignmentAuthorActions({ assignment }: Props) {
   return (
     <Flex gap="3">
       <EditAssignmentDialog assignment={assignment} />
-      <AlertDialog.Root>
-        <AlertDialog.Trigger>
-          <Button color="red">
-            <TrashIcon />
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="destructive">
+            <Trash2 />
             Delete
           </Button>
-        </AlertDialog.Trigger>
-        <AlertDialog.Content maxWidth="700px">
-          <AlertDialog.Title>Delete assignment</AlertDialog.Title>
-          <AlertDialog.Description size="2">
-            Are you sure you want to delete <strong> {assignment.title}</strong>
-            ? This action is permanent and cannot be undone.
-          </AlertDialog.Description>
-
-          <Flex gap="3" mt="4" justify="end">
-            <AlertDialog.Cancel>
-              <Button variant="soft" color="gray">
-                Cancel
-              </Button>
-            </AlertDialog.Cancel>
-
-            <form action={DeleteAssignment}>
-              <input type="hidden" name="id" value={assignment.id} />
-              <AlertDialog.Action>
-                <Button variant="solid" color="red" type="submit">
-                  Delete
-                </Button>
-              </AlertDialog.Action>
-            </form>
-          </Flex>
-        </AlertDialog.Content>
-      </AlertDialog.Root>
+        </AlertDialogTrigger>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+              <Trash2 />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Delete assignment?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete{" "}
+              <strong> {assignment.title}</strong>? This action is permanent and
+              cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <form action={DeleteAssignment}>
+            <input type="hidden" name="id" value={assignment.id} />
+            <AlertDialogFooter>
+              <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+              <AlertDialogAction variant="destructive" type="submit">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </form>
+        </AlertDialogContent>
+      </AlertDialog>
     </Flex>
   );
 }

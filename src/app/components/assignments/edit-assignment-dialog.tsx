@@ -1,36 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import {
-  AlertDialog,
-  Button,
-  Callout,
-  Flex,
-  SegmentedControl,
-  TextField,
-  Text,
-  TextArea,
-} from "@radix-ui/themes";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { Pencil1Icon } from "@radix-ui/react-icons";
 import { UpdateAssignment } from "@/app/actions/assignments/update-assignment";
 import {
-  utcToLocalDatetime,
   getLocalNowDatetime,
   getLocalMaxDatetime,
   localDatetimeToUTC,
+  utcToLocalDatetime,
 } from "@/lib/timezone";
-
-function UpdateButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" loading={pending}>
-      Update
-    </Button>
-  );
-}
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { TriangleAlert, Maximize2, Minimize2, Edit2 } from "lucide-react";
 type Assignment = {
   id: string;
   title: string;
@@ -39,6 +40,17 @@ type Assignment = {
   visibility: "public" | "restricted";
   assignedUsername?: string;
 };
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={pending}>
+      {pending && <Spinner />}
+      {pending ? "Updating..." : "Update"}
+    </Button>
+  );
+}
 
 export function EditAssignmentDialog({
   assignment,
@@ -50,30 +62,21 @@ export function EditAssignmentDialog({
   const [isRestricted, setIsRestricted] = useState(
     assignment.visibility === "restricted",
   );
-  const [assignedUsername, setAssignedUsername] = useState(
-    assignment.assignedUsername || "",
-  );
-
-  useEffect(() => {
-    if (open) {
-      setIsRestricted(assignment.visibility === "restricted");
-      setAssignedUsername(assignment.assignedUsername || "");
-    }
-  }, [open, assignment.visibility, assignment.assignedUsername]);
+  const [expanded, setExpanded] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
     setError("");
 
-    // Convert local datetime to UTC
     const deadlineLocal = formData.get("deadline") as string;
     const deadlineUTC = localDatetimeToUTC(deadlineLocal);
     if (!deadlineUTC) {
       setError("Invalid deadline format");
       return;
     }
-    formData.set("deadline", deadlineUTC);
 
+    formData.set("deadline", deadlineUTC);
     formData.append("visibility", isRestricted ? "restricted" : "public");
+
     if (isRestricted) {
       formData.append(
         "assignedUsername",
@@ -85,155 +88,154 @@ export function EditAssignmentDialog({
 
     if (result.error) {
       setError(result.error);
-    } else {
-      setOpen(false);
+      return;
     }
+    setOpen(false);
+    setExpanded(false);
   };
 
   return (
-    <AlertDialog.Root open={open} onOpenChange={setOpen}>
-      <AlertDialog.Trigger>
-        <Button>
-          <Pencil1Icon />
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        if (!next) {
+          setError("");
+          setExpanded(false);
+          setIsRestricted(assignment.visibility === "restricted");
+        }
+      }}
+    >
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <Edit2 />
           Edit
         </Button>
-      </AlertDialog.Trigger>
+      </DialogTrigger>
 
-      <AlertDialog.Content style={{ transition: "height 0.2s ease-in-out" }}>
-        <AlertDialog.Title>Edit Assignment</AlertDialog.Title>
+      <DialogContent
+        onInteractOutside={(e) => e.preventDefault()}
+        className={`
+          transition-all duration-300 ease-in-out
+          ${expanded ? "min-w-full min-h-full rounded-none" : "min-w-2xs min-h-125"}
+        `}
+      >
+        <DialogHeader>
+          <div className="flex items-center justify-between">
+            <DialogTitle>Edit Assignment</DialogTitle>
 
-        <form
-          action={handleSubmit}
-          style={{ transition: "all 0.2s ease-in-out" }}
-          aria-label="Edit assignment form"
-        >
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="absolute top-2 right-10"
+              onClick={() => setExpanded((v) => !v)}
+            >
+              {expanded ? (
+                <Minimize2 className="h-3! w-3!" />
+              ) : (
+                <Maximize2 className="h-3! w-3!" />
+              )}
+            </Button>
+          </div>
+        </DialogHeader>
+
+        <form action={handleSubmit} aria-label="Edit assignment form">
           <input type="hidden" name="id" value={assignment.id} />
-          <Flex direction="column" gap="3">
-            <label htmlFor="title">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Title
-              </Text>
-              <TextField.Root
+
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Title</FieldLabel>
+              <Input
                 id="title"
                 name="title"
-                size="3"
                 required
-                aria-required="true"
-                aria-label="Assignment title"
                 defaultValue={assignment.title}
+                aria-label="Assignment title"
               />
-            </label>
+            </Field>
 
-            <label htmlFor="description">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Description
-              </Text>
-              <TextArea
+            <Field>
+              <FieldLabel>Description</FieldLabel>
+              <Textarea
                 id="description"
                 name="description"
-                size="3"
-                rows={3}
+                defaultValue={assignment.description}
                 style={{ maxHeight: "12em", resize: "vertical" }}
                 aria-label="Assignment description"
-                defaultValue={assignment.description}
               />
-            </label>
+            </Field>
 
-            <label htmlFor="deadline">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Deadline
-              </Text>
-              <TextField.Root
+            <Field>
+              <FieldLabel>Deadline</FieldLabel>
+              <Input
                 id="deadline"
                 type="datetime-local"
                 name="deadline"
-                size="3"
                 required
-                aria-required="true"
-                aria-label="Assignment deadline"
-                aria-describedby="deadline-hint"
                 defaultValue={utcToLocalDatetime(assignment.deadline)}
                 min={getLocalNowDatetime()}
                 max={getLocalMaxDatetime()}
+                aria-label="Assignment deadline"
               />
-            </label>
+            </Field>
 
-            <div>
-              <Text
-                as="div"
-                size="2"
-                mb="2"
-                weight="bold"
-                id="assignment-type-label"
-              >
-                Assignment Type
-              </Text>
-              <SegmentedControl.Root
+            <FieldSeparator />
+
+            <Field>
+              <FieldLabel>Assignment Type</FieldLabel>
+              <Tabs
                 value={isRestricted ? "restricted" : "public"}
                 onValueChange={(value) =>
                   setIsRestricted(value === "restricted")
                 }
-                aria-label="Choose assignment type"
-                aria-describedby="assignment-type-label"
               >
-                <SegmentedControl.Item value="public">
-                  Public
-                </SegmentedControl.Item>
-                <SegmentedControl.Item value="restricted">
-                  Restricted
-                </SegmentedControl.Item>
-              </SegmentedControl.Root>
-            </div>
-
-            <div
-              style={{
-                maxHeight: isRestricted ? "200px" : "0",
-                overflow: "hidden",
-                transition:
-                  "max-height 0.3s ease-in-out, opacity 0.3s ease-in-out",
-                opacity: isRestricted ? 1 : 0,
-              }}
+                <TabsList>
+                  <TabsTrigger value="public">Public</TabsTrigger>
+                  <TabsTrigger value="restricted">Restricted</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </Field>
+            <Field
+              className={`overflow-hidden transition-all duration-300 ${
+                isRestricted ? "max-h-50 opacity-100" : "max-h-0 opacity-0"
+              }`}
             >
-              <label htmlFor="assignedUsername">
-                <Text as="div" size="2" mb="1" weight="bold">
-                  Assign to user
-                </Text>
-                <TextField.Root
-                  id="assignedUsername"
-                  name="assignedUsername"
-                  placeholder="username"
-                  size="3"
-                  required={isRestricted}
-                  aria-required={isRestricted}
-                  aria-label="Assigned username"
-                  value={assignedUsername}
-                  onChange={(e) => setAssignedUsername(e.target.value)}
-                  disabled={!isRestricted}
-                  tabIndex={isRestricted ? 0 : -1}
-                />
-              </label>
-            </div>
-
-            {error && (
-              <Callout.Root color="red" role="alert" aria-live="polite">
-                <Callout.Icon>
-                  <ExclamationTriangleIcon />
-                </Callout.Icon>
-                <Callout.Text>{error}</Callout.Text>
-              </Callout.Root>
-            )}
-          </Flex>
-
-          <Flex gap="3" mt="4" justify="end">
-            <AlertDialog.Cancel>
-              <Button variant="soft" color="gray">
-                Cancel
-              </Button>
-            </AlertDialog.Cancel>
-            <UpdateButton />
-          </Flex>
+              <Label htmlFor="assignedUsername">Assign to user</Label>
+              <Input
+                id="assignedUsername"
+                name="assignedUsername"
+                placeholder="Enter username"
+                defaultValue={assignment.assignedUsername || ""}
+                required={isRestricted}
+                disabled={!isRestricted}
+                tabIndex={isRestricted ? 0 : -1}
+                aria-label="Assigned username"
+              />
+            </Field>
+            <Field>
+              {error && (
+                <Alert className="mb-4" variant="destructive">
+                  <>
+                    <TriangleAlert />
+                    <AlertTitle>{error}</AlertTitle>
+                  </>
+                </Alert>
+              )}
+            </Field>
+          </FieldGroup>
+          <DialogFooter
+            className={`
+              transition-all duration-300 ease-in-out
+              ${expanded ? "bg-transparent" : ""}
+            `}
+          >
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <SubmitButton />
+          </DialogFooter>
         </form>
-      </AlertDialog.Content>
-    </AlertDialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 }
