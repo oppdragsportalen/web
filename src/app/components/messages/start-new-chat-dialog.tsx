@@ -1,25 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  Flex,
-  Button,
-  TextField,
-  Box,
-  Text,
-  Callout,
-  Spinner,
-  IconButton,
-} from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { getDMRoom } from "@/app/actions/messages/get-dm-room";
 import { createDMRoom } from "@/app/actions/messages/create-dm-room";
 import { useRouter } from "next/navigation";
+
 import {
-  ExclamationTriangleIcon,
-  Cross1Icon,
-  ArrowRightIcon,
-} from "@radix-ui/react-icons";
+  Dialog,
+  DialogDescription,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Spinner } from "@/components/ui/spinner";
+import { TriangleAlert, ArrowRight } from "lucide-react";
 
 type StartNewChatDialogProps = {
   trigger?: React.ReactNode;
@@ -66,74 +66,58 @@ export function StartNewChatDialog({ trigger }: StartNewChatDialogProps) {
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>{trigger || <Button>New Message</Button>}</Dialog.Trigger>
-
-      <Dialog.Content>
-        <Dialog.Title>
-          <Flex justify="between">
-            <Text>New Message</Text>
-            <Dialog.Close>
-              <IconButton variant="ghost" color="gray">
-                <Cross1Icon />
-              </IconButton>
-            </Dialog.Close>
-          </Flex>
-        </Dialog.Title>
-        <Dialog.Description>
-          Enter the username of the person you want to message
-        </Dialog.Description>
-
-        <Box className="mt-4">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleStart();
-            }}
-          >
-            <Flex gap="2">
-              <TextField.Root
-                className="flex-1"
-                placeholder="Enter username"
-                value={username}
-                onChange={(e) => {
-                  setUsername(e.target.value);
-                  setError("");
-                }}
-                disabled={isLoading}
-                required
-              />
-              <IconButton type="submit" disabled={isLoading}>
-                {isLoading ? <Spinner /> : <ArrowRightIcon />}
-              </IconButton>
-            </Flex>
-          </form>
-
-          {error && (
-            <Callout.Root
-              color="red"
-              mt="2"
-              size="1"
-              role="alert"
-              aria-live="polite"
-            >
-              <Callout.Icon>
-                <ExclamationTriangleIcon />
-              </Callout.Icon>
-              <Callout.Text>{error}</Callout.Text>
-            </Callout.Root>
-          )}
-        </Box>
-
-        {/* <Flex justify="end" gap="2">
-          <Dialog.Close>
-            <Button variant="outline">Cancel</Button>
-          </Dialog.Close>
-          <Button onClick={handleStart} disabled={isLoading}>
-            {isLoading ? "Loading..." : "Start Conversation"}
-          </Button>
-        </Flex> */}
-      </Dialog.Content>
-    </Dialog.Root>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger>{trigger || <Button>New Message</Button>}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>New Message</DialogTitle>
+          <DialogDescription>
+            Enter the username of the person you want to message
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleStart();
+          }}
+        >
+          <FieldGroup>
+            <Field>
+              <Flex className="gap-2">
+                <Input
+                  className="flex-1"
+                  placeholder="Enter username"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    setError("");
+                  }}
+                  disabled={isLoading}
+                  required
+                />
+                <Button
+                  type="submit"
+                  size="icon"
+                  variant="default"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Spinner /> : <ArrowRight />}
+                </Button>
+              </Flex>
+            </Field>
+            {error && (
+              <Field>
+                <Alert variant="destructive">
+                  <>
+                    <TriangleAlert />
+                    <AlertTitle>{error}</AlertTitle>
+                  </>
+                </Alert>
+              </Field>
+            )}
+          </FieldGroup>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
