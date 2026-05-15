@@ -60,7 +60,7 @@ export default async function MessagesPage() {
           <h1 className="text-3xl font-bold">Messages</h1>
           <StartNewChatDialog
             trigger={
-              <Button>
+              <Button className="cursor-pointer">
                 <SquarePen />
                 New Message
               </Button>

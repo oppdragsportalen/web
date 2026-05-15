@@ -67,7 +67,9 @@ export function StartNewChatDialog({ trigger }: StartNewChatDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>{trigger || <Button>New Message</Button>}</DialogTrigger>
+      <DialogTrigger asChild>
+        {trigger || <Button>New Message</Button>}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>New Message</DialogTitle>

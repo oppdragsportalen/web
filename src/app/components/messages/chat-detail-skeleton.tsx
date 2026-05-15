@@ -2,6 +2,7 @@ import React from "react";
 import { Skeleton, Box, Card, Text, Flex, IconButton } from "@radix-ui/themes";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 function ChatDetailSkeleton() {
   return (
@@ -28,9 +29,9 @@ function ChatDetailSkeleton() {
         >
           <Flex gap="2">
             <Link href="/dashboard/messages">
-              <IconButton variant="soft">
+              <Button size="icon" className="cursor-pointer">
                 <ArrowLeftIcon />
-              </IconButton>
+              </Button>
             </Link>
 
             <Flex>

@@ -1,11 +1,4 @@
-import {
-  Box,
-  Text,
-  Flex,
-  IconButton,
-  Avatar,
-  Separator,
-} from "@radix-ui/themes";
+import { Box, Text, Flex, Separator } from "@radix-ui/themes";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { getMessages } from "@/app/actions/messages/get-messages";
@@ -14,6 +7,8 @@ import { redirect } from "next/navigation";
 import { ChatDetailClient } from "@/app/components/messages/chat-detail-client";
 import ChatDetailSkeleton from "@/app/components/messages/chat-detail-skeleton";
 import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 type ChatDetailPageProps = {
   params: Promise<{
@@ -62,19 +57,22 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
       >
         <Flex gap="2" align="center">
           <Link href="/dashboard/messages">
-            <IconButton variant="soft">
+            <Button size="icon" className="cursor-pointer">
               <ArrowLeftIcon />
-            </IconButton>
+            </Button>
           </Link>
           <Separator orientation="vertical" size="1" mx="2" />
           <Flex>
             <Flex align="center" gap="2">
-              <Avatar
-                size="2"
-                src={result.receiver.avatar_url || undefined}
-                alt={result.receiver.username}
-                fallback={result.receiver.display_name.charAt(0).toUpperCase()}
-              />
+              <Avatar>
+                <AvatarImage
+                  src={result.receiver.avatar_url || undefined}
+                  alt={result.receiver.username}
+                />
+                <AvatarFallback>
+                  {result.receiver.display_name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <Text weight="bold" size="3">
                 {result.receiver.display_name}
               </Text>

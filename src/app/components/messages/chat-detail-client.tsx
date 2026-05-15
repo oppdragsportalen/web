@@ -1,21 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Box,
-  Text,
-  TextField,
-  Card,
-  Button,
-  Flex,
-  ContextMenu,
-} from "@radix-ui/themes";
+import { Box, Text, Card, Flex, ContextMenu } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { sendMessage } from "@/app/actions/messages/send-message";
 import { deleteMessage } from "@/app/actions/messages/delete-message";
 import { formatTimeAgo } from "@/lib/date-utils";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import type { Message } from "@/types";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { Button } from "@/components/ui/button";
 
 type ChatDetailClientProps = {
   roomId: string;
@@ -293,13 +287,15 @@ export function ChatDetailClient({
         }}
       >
         <form className="flex flex-1 gap-3" onSubmit={handleSendMessage}>
-          <TextField.Root
-            placeholder="Type a message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={isSending}
-            style={{ flex: 1 }}
-          />
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={isSending}
+              style={{ flex: 1 }}
+            />
+          </InputGroup>
           <Button type="submit" disabled={isSending || !newMessage.trim()}>
             Send
           </Button>
