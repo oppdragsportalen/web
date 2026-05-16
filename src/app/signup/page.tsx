@@ -6,7 +6,6 @@ import {
   Flex,
   Text,
   Separator,
-  Button,
   Heading,
   Callout,
   Badge,
@@ -19,6 +18,7 @@ import Link from "next/link";
 import LightRays from "@/app/components/light-rays";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -105,7 +105,8 @@ export default function SignUpPage() {
                 transition: "background-color 0.2s ease",
                 cursor: "pointer",
               }}
-              size="3"
+              size="lg"
+              className="p-5!"
               onClick={handleSubmit}
             >
               {isLoading ? (
