@@ -79,7 +79,7 @@ export default function ExplorePage() {
   return (
     <div className="p-4 min-w-80">
       <Box className="mt-4 mb-10">
-        <h1 className="text-3xl font-bold">Explore</h1>
+        <h1 className="text-3xl font-bold max-sm:text-xl">Explore</h1>
       </Box>
       <Suspense
         fallback={

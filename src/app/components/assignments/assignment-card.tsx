@@ -91,12 +91,18 @@ export function AssignmentCard({ assignment, detailsHref }: Props) {
     <Link href={detailsHref} style={{ textDecoration: "none" }}>
       <Card className="cursor-pointer hover:outline outline-(--accent-8) mb-3">
         <CardHeader>
-          <Flex justify="between" align="center">
+          <Flex
+            justify="between"
+            align="center"
+            className="max-sm:flex-col-reverse max-sm:items-start! max-sm:gap-2"
+          >
             <CardTitle>{assignment.title}</CardTitle>
-            <Flex gap="2">
-              {getVisibilityBadge(assignment.visibility)}
-              {getStatusBadge(assignment.status)}
-            </Flex>
+            <Box>
+              <Flex gap="2">
+                {getVisibilityBadge(assignment.visibility)}
+                {getStatusBadge(assignment.status)}
+              </Flex>
+            </Box>
           </Flex>
         </CardHeader>
         <CardContent>

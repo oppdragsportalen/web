@@ -24,7 +24,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-1 h-full overflow-hidden min-w-md">
+    <div className="flex flex-1 h-full overflow-hidden min-w-xs">
       <SidebarProvider>
         <AppSidebar profile={profile} />
         <MobileDashboardNavbar profile={profile} />

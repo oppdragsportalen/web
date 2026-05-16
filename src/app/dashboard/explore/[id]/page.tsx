@@ -10,7 +10,7 @@ export default async function AssignmentDetailPage({
   const { id } = await params;
 
   return (
-    <div className="p-4 min-w-xl">
+    <div className="p-4 min-w-80">
       <Suspense fallback={<AssignmentSkeleton />}>
         <ExploreDetailContent id={id} />
       </Suspense>

@@ -89,7 +89,7 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="p-4 min-w-137.5">
+    <div className="p-4 min-w-xs">
       <Box className="mt-4 mb-10">
         <TimeBasedGreeting displayName={profile.display_name} />
       </Box>
@@ -112,7 +112,7 @@ export default async function DashboardPage() {
             "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
         }}
       >
-        <Flex className="gap-2">
+        <Flex className="gap-2 overflow-scroll -mx-4 px-4">
           <CreateAssignmentDialog
             trigger={
               <Button variant="default" className="cursor-pointer">

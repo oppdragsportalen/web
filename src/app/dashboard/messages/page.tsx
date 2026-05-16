@@ -37,7 +37,7 @@ async function MessagesContent() {
 
 export default async function MessagesPage() {
   return (
-    <Box p="4" className="min-w-sm">
+    <Box p="4" className="min-w-xs">
       <Box
         className="bg-(--color-background) z-10 sticky py-4 top-0 -ml-16 pl-16 -mr-4 pr-4"
         style={{
@@ -57,7 +57,7 @@ export default async function MessagesPage() {
         }}
       >
         <Flex justify="between" className="mb-10" gap="4">
-          <h1 className="text-3xl font-bold">Messages</h1>
+          <h1 className="text-3xl font-bold max-sm:text-xl">Messages</h1>
           <StartNewChatDialog
             trigger={
               <Button className="cursor-pointer">

@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -60,9 +59,9 @@ export default function SettingsPage() {
 
   if (!user || !profile) {
     return (
-      <Box p="4" className="min-w-sm">
+      <Box p="4" className="min-w-xs">
         <Flex className="mt-4 mb-10" gap="4">
-          <h1 className="text-3xl font-bold">Settings</h1>
+          <h1 className="text-3xl font-bold max-sm:text-xl">Settings</h1>
         </Flex>
 
         <Skeleton>
@@ -77,9 +76,9 @@ export default function SettingsPage() {
   }
 
   return (
-    <Box p="4" className="min-w-sm">
+    <Box p="4" className="min-w-xs">
       <Flex className="mt-4 mb-10" gap="4">
-        <h1 className="text-3xl font-bold">Settings</h1>
+        <h1 className="text-3xl font-bold max-sm:text-xl">Settings</h1>
       </Flex>
 
       <Card>

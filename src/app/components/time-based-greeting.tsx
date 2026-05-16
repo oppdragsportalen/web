@@ -23,7 +23,7 @@ export default function TimeBasedGreeting({
   }, []);
 
   return (
-    <h1 className="text-3xl font-bold">
+    <h1 className="text-3xl font-bold max-sm:text-xl">
       {greeting}, {displayName}
     </h1>
   );

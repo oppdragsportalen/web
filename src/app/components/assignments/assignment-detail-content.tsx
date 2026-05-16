@@ -7,6 +7,8 @@ import { AssignmentActionButton } from "@/app/components/assignments/assignment-
 import { LocalDateTimeText } from "@/app/components/local-date-time-text";
 import type { Assignment } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -215,30 +217,35 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
   return (
     <div>
       <Box className="mt-4 mb-10">
-        <Flex align="center" gap="2" className="mb-6">
+        <Flex align="center" gap="4" className="mb-6">
           {isAuthor ? (
             <Link href="/dashboard/assignments?tab=authored">
-              <h1 className="text-3xl font-bold text-(--gray-9) hover:underline hover:text-(--color-text)">
-                My Assignments
-              </h1>
+              <Button size="icon" className="cursor-pointer">
+                <ArrowLeftIcon />
+              </Button>
             </Link>
           ) : (
             <Link href="/dashboard/assignments">
-              <h1 className="text-3xl font-bold text-(--gray-9) hover:underline hover:text-(--color-text)">
-                My Assignments
-              </h1>
+              <Button size="icon" className="cursor-pointer">
+                <ArrowLeftIcon />
+              </Button>
             </Link>
           )}
-          <Text size="4" color="gray">
-            /
-          </Text>
-          <h1 className="text-3xl font-bold text-nowrap">{assignment.title}</h1>
+          <h1 className="text-3xl max-sm:text-xl font-bold wrap-break-word whitespace-normal min-w-0">
+            {assignment.title}
+          </h1>
         </Flex>
       </Box>
 
       <Card>
         <CardHeader>
-          <Flex justify="between" align="start" gap="4" mb="5">
+          <Flex
+            justify="between"
+            align="start"
+            gap="4"
+            mb="5"
+            className="max-sm:flex-col-reverse"
+          >
             <Box>
               <Text size="5" weight="bold" className="leading-tight">
                 {assignment.title}

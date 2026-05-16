@@ -211,7 +211,7 @@ export function ChatDetailClient({
   };
 
   return (
-    <Box pt="0" px="4" className="h-full min-w-sm">
+    <Box pt="0" px="4" className="h-full min-w-xs">
       <Flex
         direction="column"
         justify="end"
