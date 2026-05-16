@@ -1,21 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Box,
-  Text,
-  TextField,
-  Card,
-  Button,
-  Flex,
-  ContextMenu,
-} from "@radix-ui/themes";
+import { Box, Text, Card, Flex } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { sendMessage } from "@/app/actions/messages/send-message";
 import { deleteMessage } from "@/app/actions/messages/delete-message";
 import { formatTimeAgo } from "@/lib/date-utils";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import type { Message } from "@/types";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { Button } from "@/components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 type ChatDetailClientProps = {
   roomId: string;
@@ -211,16 +211,16 @@ export function ChatDetailClient({
   };
 
   return (
-    <Box pt="0" p="4" className="h-full min-w-sm">
+    <Box pt="0" px="4" className="h-full min-w-xs">
       <Flex
         direction="column"
         justify="end"
-        className="flex flex-1 mb-10 pt-44 min-h-full"
+        className="flex flex-1 mb-10 pt-44 min-h-[calc(100%-6.5rem)] "
       >
         {messages.length === 0 ? (
-          <Box className="text-center py-56">
+          <Flex className="text-center h-full" justify="center" align="center">
             <Text color="gray">No messages yet</Text>
-          </Box>
+          </Flex>
         ) : (
           messages.map((message) => {
             const isOwn = message.sender_id === currentUserId;
@@ -233,8 +233,8 @@ export function ChatDetailClient({
                   marginBottom: "8px",
                 }}
               >
-                <ContextMenu.Root>
-                  <ContextMenu.Trigger>
+                <ContextMenu>
+                  <ContextMenuTrigger asChild>
                     <Card
                       variant="ghost"
                       m="3"
@@ -252,20 +252,20 @@ export function ChatDetailClient({
                         </Text>
                       </Flex>
                     </Card>
-                  </ContextMenu.Trigger>
+                  </ContextMenuTrigger>
 
                   {isOwn && (
-                    <ContextMenu.Content>
-                      <ContextMenu.Item
-                        color="red"
+                    <ContextMenuContent>
+                      <ContextMenuItem
+                        variant="destructive"
                         onClick={() => handleDeleteMessage(message.id)}
                       >
                         <TrashIcon />
                         Delete Message
-                      </ContextMenu.Item>
-                    </ContextMenu.Content>
+                      </ContextMenuItem>
+                    </ContextMenuContent>
                   )}
-                </ContextMenu.Root>
+                </ContextMenu>
               </Box>
             );
           })
@@ -275,7 +275,7 @@ export function ChatDetailClient({
 
       <Flex
         align="end"
-        className="sticky bottom-0 h-16 p-4 -mx-4"
+        className="sticky bottom-0 h-16 -ml-16 pl-16 p-4 -mr-4"
         style={{
           backdropFilter: "blur(4px)",
           WebkitBackdropFilter: "blur(4px)",
@@ -293,13 +293,15 @@ export function ChatDetailClient({
         }}
       >
         <form className="flex flex-1 gap-3" onSubmit={handleSendMessage}>
-          <TextField.Root
-            placeholder="Type a message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={isSending}
-            style={{ flex: 1 }}
-          />
+          <InputGroup>
+            <InputGroupInput
+              placeholder="Type a message..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={isSending}
+              style={{ flex: 1 }}
+            />
+          </InputGroup>
           <Button type="submit" disabled={isSending || !newMessage.trim()}>
             Send
           </Button>

@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Box, Card, Text, Button, Flex } from "@radix-ui/themes";
+import { Box, Text, Flex } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import TimeBasedGreeting from "@/app/components/time-based-greeting";
@@ -15,6 +15,8 @@ import AssignmentAuthoredList from "@/app/components/assignments/assignment-auth
 import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 import { ChatListClient } from "@/app/components/messages/chat-list-client";
 import { getUserChats } from "@/app/actions/messages/get-user-chats";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 function AssignmentListSkeleton() {
   return (
@@ -87,64 +89,86 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="p-4 min-w-137.5">
+    <div className="p-4 min-w-xs">
       <Box className="mt-4 mb-10">
         <TimeBasedGreeting displayName={profile.display_name} />
       </Box>
-      <Flex className="gap-2">
-        <CreateAssignmentDialog
-          trigger={
-            <Button variant="solid">
-              <PlusIcon /> Create Assignment
-            </Button>
-          }
-        />
-        <Link href="/dashboard/explore">
-          <Button variant="surface">
-            <MagnifyingGlassIcon /> Explore
+
+      <Box
+        className="bg-(--color-background) z-10 sticky py-4 top-0 -ml-16 pl-16 -mr-4 pr-4 "
+        style={{
+          backdropFilter: "blur(16px)",
+          WebkitBackdropFilter: "blur(16px)",
+          background: `
+            linear-gradient(
+              to bottom,
+              rgba(var(--color-background-rgb), 0.95) 0%,
+              rgba(var(--color-background-rgb), 0) 100%
+            )
+          `,
+          maskImage:
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%)",
+        }}
+      >
+        <Flex className="gap-2 overflow-scroll -mx-4 px-4">
+          <CreateAssignmentDialog
+            trigger={
+              <Button variant="default" className="cursor-pointer">
+                <PlusIcon /> Create Assignment
+              </Button>
+            }
+          />
+          <Button variant="secondary" asChild>
+            <Link href="/dashboard/explore">
+              <MagnifyingGlassIcon /> Explore
+            </Link>
           </Button>
-        </Link>
-        <Link href="/dashboard/assignments">
-          <Button variant="surface">
-            <FileTextIcon /> My Assignments
+          <Button variant="secondary" asChild>
+            <Link href="/dashboard/assignments">
+              <FileTextIcon /> My Assignments
+            </Link>
           </Button>
-        </Link>
-      </Flex>
+        </Flex>
+      </Box>
 
       <Box my="8">
         <Text className="text-xl font-bold">Assignments</Text>
 
         <Flex gap="4" className="mt-4 flex-col lg:flex-row lg:items-start">
-          <Card size="2" className="flex-1 h-fit self-start w-full">
-            <Flex justify="between" align="center" mb="4">
-              <Text size="4" className="font-bold">
-                Assigned
-              </Text>
-            </Flex>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <AssignmentAssignedList limit={5} />
-            </Suspense>
-            {assignedCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/assignments">View all</Link>
-              </Button>
-            ) : null}
+          <Card className="flex-1 h-fit self-start w-full">
+            <CardHeader>
+              <CardTitle>Assigned</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAssignedList limit={5} />
+              </Suspense>
+              {assignedCount ? (
+                <Button variant="outline">
+                  <Link href="/dashboard/assignments">View all</Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
 
-          <Card size="2" className="flex-1 h-fit self-start w-full">
-            <Flex justify="between" align="center" mb="4">
-              <Text size="4" className="font-bold">
-                Authored
-              </Text>
-            </Flex>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <AssignmentAuthoredList limit={5} />
-            </Suspense>
-            {authoredCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/assignments?tab=authored">View all</Link>
-              </Button>
-            ) : null}
+          <Card className="flex-1 h-fit self-start w-full">
+            <CardHeader>
+              <CardTitle>Authored</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <AssignmentAuthoredList limit={5} />
+              </Suspense>
+              {authoredCount ? (
+                <Button variant="outline">
+                  <Link href="/dashboard/assignments?tab=authored">
+                    View all
+                  </Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
         </Flex>
       </Box>
@@ -154,14 +178,16 @@ export default async function DashboardPage() {
 
         <Box mt="4">
           <Card>
-            <Suspense fallback={<AssignmentListSkeleton />}>
-              <MessagesContent userId={user.id} limit={3} />
-            </Suspense>
-            {messagesCount ? (
-              <Button variant="outline" mt="3">
-                <Link href="/dashboard/messages">View all</Link>
-              </Button>
-            ) : null}
+            <CardContent>
+              <Suspense fallback={<AssignmentListSkeleton />}>
+                <MessagesContent userId={user.id} limit={3} />
+              </Suspense>
+              {messagesCount ? (
+                <Button variant="outline" className="mt-3">
+                  <Link href="/dashboard/messages">View all</Link>
+                </Button>
+              ) : null}
+            </CardContent>
           </Card>
         </Box>
       </Box>

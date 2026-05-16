@@ -5,7 +5,6 @@ import {
   Box,
   Flex,
   Text,
-  Button,
   Heading,
   Separator,
   Badge,
@@ -18,22 +17,28 @@ import { useState } from "react";
 import Link from "next/link";
 import LightRays from "../components/light-rays";
 import Image from "next/image";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleSubmit() {
+    setIsLoading(true);
     setError("");
 
     const result = await auth();
 
     if (result?.error) {
       setError(result.error);
+      setIsLoading(false);
       return;
     }
 
     if (result?.url) {
       window.location.href = result.url;
+      setIsLoading(false);
     }
   }
 
@@ -84,11 +89,21 @@ export default function LoginPage() {
                   transition: "background-color 0.2s ease",
                   cursor: "pointer",
                 }}
-                size="3"
+                size="lg"
+                className="p-5!"
                 onClick={handleSubmit}
               >
-                <GitHubLogoIcon width={20} height={20} />
-                <Text size="3">Continue with GitHub</Text>
+                {isLoading ? (
+                  <>
+                    <Spinner />
+                    Please wait
+                  </>
+                ) : (
+                  <>
+                    <GitHubLogoIcon width={20} height={20} />
+                    <Text size="3">Continue with GitHub</Text>
+                  </>
+                )}
               </Button>
 
               <Box

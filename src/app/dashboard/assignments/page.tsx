@@ -38,7 +38,7 @@ export default async function AssignmentPage({
   return (
     <div className="p-4 min-w-80">
       <Box className="mt-4 mb-10">
-        <h1 className="text-3xl font-bold">My Assignments</h1>
+        <h1 className="text-3xl font-bold max-sm:text-xl">My Assignments</h1>
       </Box>
       <Box>
         <Tabs.Root defaultValue={defaultTab}>

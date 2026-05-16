@@ -4,6 +4,17 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AssignmentCard } from "./assignment-card";
 import type { Profile } from "@/types";
+import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 async function getProfileMapByIds(userIds: string[]) {
   const uniqueUserIds = [...new Set(userIds.filter(Boolean))];
@@ -88,9 +99,20 @@ export default async function AssignmentAuthoredList({
           {authoredError.message}
         </Text>
       ) : authoredCount === 0 ? (
-        <Text size="2" color="gray">
-          You haven't created any assignments yet.
-        </Text>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileText />
+            </EmptyMedia>
+            <EmptyTitle>No Assignments Yet</EmptyTitle>
+            <EmptyDescription>
+              You haven&apos;t created any assignments yet.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent className="flex-row justify-center gap-2">
+            <CreateAssignmentDialog trigger={<Button>Create Assignment</Button>} />
+          </EmptyContent>
+        </Empty>
       ) : (
         <Box>
           {(authored ?? []).map((a: any) => (

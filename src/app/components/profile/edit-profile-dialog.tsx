@@ -1,16 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  Button,
-  Flex,
-  TextField,
-  Text,
-  Callout,
-} from "@radix-ui/themes";
+import { Flex } from "@radix-ui/themes";
 import { Pencil2Icon } from "@radix-ui/react-icons";
 import { updateProfile } from "@/app/actions/profile/update-profile";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { TriangleAlert } from "lucide-react";
 
 interface EditProfileDialogProps {
   displayName: string;
@@ -52,80 +59,78 @@ export function EditProfileDialog({
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Flex gap="3" mt="2">
-        <Dialog.Trigger>
-          <Button type="button" variant="solid" className="flex-1">
+        <DialogTrigger asChild>
+          <Button>
             <Pencil2Icon />
             Edit profile
           </Button>
-        </Dialog.Trigger>
+        </DialogTrigger>
       </Flex>
 
-      <Dialog.Content maxWidth="450px" className="min-w-80">
-        <Dialog.Title>Edit profile</Dialog.Title>
-
+      <DialogContent className="min-w-80">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+        </DialogHeader>
         <form action={handleSubmit} aria-label="Edit profile form">
-          <Flex direction="column" gap="3">
-            <label htmlFor="displayName">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Name
-              </Text>
-              <TextField.Root
+          <FieldGroup>
+            <Field>
+              <FieldLabel>Name</FieldLabel>
+              <Input
                 id="displayName"
                 name="displayName"
                 defaultValue={displayName}
-                size="3"
                 required
                 aria-required="true"
                 aria-label="Display name"
               />
-            </label>
-            <label htmlFor="username">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Username
-              </Text>
-              <TextField.Root
+            </Field>
+            <Field>
+              <FieldLabel>Username</FieldLabel>
+              <Input
                 id="username"
                 name="username"
                 defaultValue={username}
-                size="3"
                 required
                 aria-required="true"
                 aria-label="Username"
               />
-            </label>
-            <label htmlFor="email">
-              <Text as="div" size="2" mb="1" weight="bold">
-                Email
-              </Text>
-              <TextField.Root
+            </Field>
+            <Field>
+              <FieldLabel>Email</FieldLabel>
+              <Input
                 id="email"
                 name="email"
                 defaultValue={email}
-                size="3"
                 aria-label="Email address"
                 disabled
               />
-            </label>
-            {error && (
-              <Callout.Root color="red" size="1" id="error-message">
-                <Callout.Text>{error}</Callout.Text>
-              </Callout.Root>
-            )}
-            {info && (
-              <Text color="gray" size="2">
-                {info}
-              </Text>
-            )}
-          </Flex>
-
-          <Flex gap="3" mt="4" justify="end">
-            <Dialog.Close>
-              <Button variant="soft" color="gray" type="button">
+            </Field>
+            <Field>
+              {error && (
+                <Alert className="mb-4" variant="destructive">
+                  <>
+                    <TriangleAlert />
+                    <AlertTitle>{error}</AlertTitle>
+                  </>
+                </Alert>
+              )}
+            </Field>
+            <Field>
+              {info && (
+                <Alert className="mb-4">
+                  <AlertTitle>{info}</AlertTitle>
+                </Alert>
+              )}
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="secondary" type="button">
                 Cancel
               </Button>
-            </Dialog.Close>
+            </DialogClose>
             <Button
               type="submit"
               disabled={isLoading}
@@ -135,9 +140,9 @@ export function EditProfileDialog({
             >
               {isLoading ? "Saving..." : "Save"}
             </Button>
-          </Flex>
+          </DialogFooter>
         </form>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 }

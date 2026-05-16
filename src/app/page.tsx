@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Heading, Badge } from "@radix-ui/themes";
+import { Box, Flex, Text, Heading, Badge } from "@radix-ui/themes";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -6,6 +6,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { Footer } from "@/app/components/footer";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import LightRays from "@/app/components/light-rays";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const supabase = await createSupabaseServer();
@@ -18,7 +19,10 @@ export default async function Home() {
   }
 
   return (
-    <div data-hide-navbar-border="true" className="flex min-h-full flex-col min-w-80">
+    <div
+      data-hide-navbar-border="true"
+      className="flex min-h-full flex-col min-w-80"
+    >
       <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-screen overflow-hidden pointer-events-none">
         <LightRays
           className="w-full h-full custom-rays"
@@ -73,13 +77,13 @@ export default async function Home() {
         </Box>
 
         <Flex gap="3" justify="center" wrap="wrap">
-          <Button asChild size="3" variant="solid">
+          <Button asChild size="lg" variant="default">
             <Link href="/signup">
               Get started
               <ArrowRightIcon />
             </Link>
           </Button>
-          <Button asChild size="3" variant="outline" color="gray">
+          <Button asChild size="lg" variant="outline" color="gray">
             <Link href="/login">Log in</Link>
           </Button>
         </Flex>

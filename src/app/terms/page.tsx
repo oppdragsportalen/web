@@ -3,7 +3,7 @@ import { Footer } from "@/app/components/footer";
 
 export default function TermsOfServicePage() {
   return (
-    <Box className="max-w-5xl m-auto min-h-full" minWidth="400px">
+    <Box className="max-w-5xl m-auto min-h-full min-w-80">
       <Flex justify="center" py="9" px="4">
         <Box width="100%" maxWidth="800px">
           <Card size="3">

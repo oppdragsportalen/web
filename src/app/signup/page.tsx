@@ -6,7 +6,6 @@ import {
   Flex,
   Text,
   Separator,
-  Button,
   Heading,
   Callout,
   Badge,
@@ -18,21 +17,27 @@ import { useState } from "react";
 import Link from "next/link";
 import LightRays from "@/app/components/light-rays";
 import Image from "next/image";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
 
 export default function SignUpPage() {
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   async function handleSubmit() {
+    setIsLoading(true);
     setError("");
 
     const result = await auth();
 
     if (result?.error) {
+      setIsLoading(false);
       setError(result.error);
       return;
     }
 
     if (result?.url) {
+      setIsLoading(false);
       window.location.href = result.url;
     }
   }
@@ -100,11 +105,21 @@ export default function SignUpPage() {
                 transition: "background-color 0.2s ease",
                 cursor: "pointer",
               }}
-              size="3"
+              size="lg"
+              className="p-5!"
               onClick={handleSubmit}
             >
-              <GitHubLogoIcon width={20} height={20} />
-              <Text size="3">Continue with GitHub</Text>
+              {isLoading ? (
+                <>
+                  <Spinner />
+                  Please wait
+                </>
+              ) : (
+                <>
+                  <GitHubLogoIcon width={20} height={20} />
+                  <Text size="3">Continue with GitHub</Text>
+                </>
+              )}
             </Button>
 
             <Box
@@ -126,7 +141,7 @@ export default function SignUpPage() {
               )}
             </Box>
 
-            <Text size="1" mt="-4" mb="4" >
+            <Text size="1" mt="-4" mb="4">
               Already have an account?{" "}
               <RadixLink asChild color="green">
                 <Link href="/login">Log in</Link>

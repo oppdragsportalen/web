@@ -1,20 +1,29 @@
 import { createSupabaseServer } from "@/lib/supabase/server";
 import Link from "next/link";
-import {
-  Flex,
-  Text,
-  Button,
-  Avatar,
-  DropdownMenu,
-  Box,
-  Separator,
-  AlertDialog,
-  IconButton,
-} from "@radix-ui/themes";
-import { ExitIcon, GearIcon, PlusIcon } from "@radix-ui/react-icons";
+import { Flex, Text, Button, Box, Separator } from "@radix-ui/themes";
 import { logout } from "@/app/actions/auth/auth";
-import { CreateAssignmentDialog } from "@/app/components/assignments/create-assignment-dialog";
-import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogDescription,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Settings, LogOut, LayoutGrid } from "lucide-react";
 
 export async function Navbar() {
   const supabase = await createSupabaseServer();
@@ -26,7 +35,7 @@ export async function Navbar() {
   if (user) {
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, avatar_url")
+      .select("display_name, username, avatar_url")
       .eq("id", user.id)
       .single();
     profile = data;
@@ -42,9 +51,6 @@ export async function Navbar() {
       >
         <Link href="/" className="no-underline mr-16">
           <Flex gap="2" align="center" className="min-w-44">
-            {/* <Box>
-              <Image width={20} height={20} alt="appicon" src="/favicon.ico" />
-            </Box> */}
             <Box>
               <Text size="3" weight="bold">
                 Oppdragsportalen
@@ -55,86 +61,88 @@ export async function Navbar() {
 
         {user && displayName && (
           <Flex gap="4" align="center">
-            <CreateAssignmentDialog
-              trigger={
-                <IconButton aria-label="Create assignment">
-                  <PlusIcon />
-                </IconButton>
-              }
-            />
-
-            <Link
-              href="/dashboard"
-              className="no-underline  flex items-center justify-center"
-            >
-              <Button variant="ghost" color="gray">
-                <Text size="2" weight="medium" className="cursor-pointer">
-                  Dashboard
-                </Text>
-              </Button>
-            </Link>
-
-            <Separator orientation="vertical" />
-
-            <AlertDialog.Root>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <Button variant="ghost">
-                    <Flex align="center" gap="2">
-                      <Text size="2">{displayName}</Text>
-                      <Avatar
-                        size="2"
-                        src={profile?.avatar_url || undefined}
-                        alt={displayName}
-                        fallback={displayName.charAt(0).toUpperCase()}
-                      />
-                    </Flex>
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item asChild>
-                    <Link href="/settings" className="no-underline">
-                      <Flex align="center" gap="2">
-                        <GearIcon />
-                        <Text>Settings</Text>
-                      </Flex>
+            <AlertDialog>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage
+                      src={profile?.avatar_url}
+                      alt={profile?.username}
+                    />
+                    <AvatarFallback>
+                      {profile?.display_name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                  side="bottom"
+                  align="end"
+                  sideOffset={4}
+                >
+                  <DropdownMenuLabel className="p-0 font-normal">
+                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm text-sidebar-accent-foreground">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={profile?.avatar_url || undefined}
+                          alt={displayName}
+                        />
+                        <AvatarFallback>
+                          {displayName.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="grid flex-1 text-left text-sm leading-tight">
+                        <span className="truncate font-medium">
+                          {profile?.display_name}
+                        </span>
+                        <span className="truncate text-xs">
+                          {profile?.username}
+                        </span>
+                      </div>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <Link href="/dashboard/">
+                      <DropdownMenuItem>
+                        <LayoutGrid />
+                        Dashboard
+                      </DropdownMenuItem>
                     </Link>
-                  </DropdownMenu.Item>
-                  <AlertDialog.Trigger>
-                    <DropdownMenu.Item color="red" className="cursor-pointer">
-                      <Flex align="center" gap="2">
-                        <ExitIcon />
-                        Log out
-                      </Flex>
-                    </DropdownMenu.Item>
-                  </AlertDialog.Trigger>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-
-              <AlertDialog.Content maxWidth="450px" className="min-w-80">
-                <AlertDialog.Title>Log out</AlertDialog.Title>
-                <AlertDialog.Description size="2">
-                  Are you sure you want to log out? You'll need to sign in again
-                  to access your account.
-                </AlertDialog.Description>
-
-                <Flex gap="3" mt="4" justify="end">
-                  <AlertDialog.Cancel>
-                    <Button variant="soft" color="gray">
-                      Cancel
-                    </Button>
-                  </AlertDialog.Cancel>
-
-                  <form action={logout}>
-                    <AlertDialog.Action>
-                      <Button variant="solid" color="red" type="submit">
-                        Log out
-                      </Button>
-                    </AlertDialog.Action>
-                  </form>
-                </Flex>
-              </AlertDialog.Content>
-            </AlertDialog.Root>
+                    <Link href="/dashboard/settings">
+                      <DropdownMenuItem>
+                        <Settings />
+                        Settings
+                      </DropdownMenuItem>
+                    </Link>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <AlertDialogTrigger asChild>
+                    <DropdownMenuItem variant="destructive">
+                      <LogOut />
+                      Log out
+                    </DropdownMenuItem>
+                  </AlertDialogTrigger>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Log out</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to log out? You&apos;ll need to sign
+                    in again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <form action={logout}>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction variant="destructive" type="submit">
+                      Log out
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </form>
+              </AlertDialogContent>
+            </AlertDialog>
           </Flex>
         )}
       </Flex>

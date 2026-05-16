@@ -5,6 +5,16 @@ import { Box, Flex, Text } from "@radix-ui/themes";
 import { ChatItem } from "@/app/components/messages/chat-item";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import type { Message, Profile } from "@/types";
+import { MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 type Chat = {
   id: string;
@@ -220,14 +230,17 @@ export function ChatListClient({
   return (
     <Box>
       {chats.length === 0 ? (
-        <Flex direction="column" align="center" className="mt-30">
-          <Text size="6" weight="bold" align="center">
-            No Messages
-          </Text>
-          <Text color="gray" align="center">
-            Send a message to start a conversation
-          </Text>
-        </Flex>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <MessageCircle />
+            </EmptyMedia>
+            <EmptyTitle>No Messages</EmptyTitle>
+            <EmptyDescription>
+              Send a message to start a conversation
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <Box>
           <Flex gap="3" direction="column">

@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Text, TextField, Spinner } from "@radix-ui/themes";
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
+import { Box, Text } from "@radix-ui/themes";
 import { AssignmentCard } from "@/app/components/assignments/assignment-card";
 import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 import { GetAvailableAssignments } from "@/app/actions/assignments/get-available-assignments";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Spinner } from "@/components/ui/spinner";
+import { Search } from "lucide-react";
 
 type Assignment = {
   id: string;
@@ -130,7 +136,7 @@ export default function ExploreClient({
   return (
     <Box>
       <Box
-        className="bg-(--color-background) z-10 sticky py-4 top-0 -mx-4 px-4"
+        className="bg-(--color-background) z-10 sticky py-4 top-0 -ml-16 pl-16 -mr-4 pr-4"
         style={{
           backdropFilter: "blur(16px)",
           WebkitBackdropFilter: "blur(16px)",
@@ -148,18 +154,21 @@ export default function ExploreClient({
         }}
       >
         <Box>
-          <TextField.Root
-            id="explore-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search for assignments"
-          >
-            <TextField.Slot>
-              <MagnifyingGlassIcon />
-            </TextField.Slot>
-            <TextField.Slot>{isLoading && <Spinner />}</TextField.Slot>
-          </TextField.Root>
+          <InputGroup>
+            <InputGroupInput
+              id="explore-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search for assignments"
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              {isLoading && <Spinner />}
+            </InputGroupAddon>
+          </InputGroup>
         </Box>
       </Box>
 

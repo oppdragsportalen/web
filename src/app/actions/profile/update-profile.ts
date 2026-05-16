@@ -76,6 +76,6 @@ export async function updateProfile(formData: FormData) {
     return { error: error.message };
   }
 
-  revalidatePath("/settings");
+  revalidatePath("/dashboard/settings");
   return { success: true, emailUpdatePending };
 }

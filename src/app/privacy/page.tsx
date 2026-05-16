@@ -3,7 +3,7 @@ import { Footer } from "@/app/components/footer";
 
 export default function PrivacyPolicyPage() {
   return (
-    <Box className="max-w-5xl m-auto min-h-full" minWidth="400px">
+    <Box className="max-w-5xl m-auto min-h-full min-w-80">
       <Flex justify="center" py="9" px="4">
         <Box width="100%" maxWidth="800px">
           <Card size="3">
@@ -32,9 +32,9 @@ export default function PrivacyPolicyPage() {
                 2. Information We Collect
               </Heading>
               <Text as="p" size="3" mb="3">
-                <strong>Account Information:</strong> When you create an
-                account using GitHub OAuth, we collect your GitHub username,
-                display name, and email address from your GitHub profile.
+                <strong>Account Information:</strong> When you create an account
+                using GitHub OAuth, we collect your GitHub username, display
+                name, and email address from your GitHub profile.
               </Text>
               {/* <Text as="p" size="3" mb="3">
                 <strong>Account Information (Email/Password):</strong> When you create an
@@ -58,8 +58,8 @@ export default function PrivacyPolicyPage() {
                 assignment activity.
               </Text>
               <Text as="p" size="3" mb="3">
-                <strong>Messages:</strong> We store direct messages you send
-                to other users, including message content, timestamps, and
+                <strong>Messages:</strong> We store direct messages you send to
+                other users, including message content, timestamps, and
                 recipient information. Messages are not encrypted.
               </Text>
             </Box>
@@ -119,8 +119,8 @@ export default function PrivacyPolicyPage() {
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Direct Messages:</strong> Messages are only visible to
-                you and the recipient. Message content is stored in
-                our database and is not encrypted.
+                you and the recipient. Message content is stored in our database
+                and is not encrypted.
               </Text>
               <Text as="p" size="3" mb="3">
                 <strong>Third-Party Services:</strong> We use Supabase, a secure
@@ -183,9 +183,9 @@ export default function PrivacyPolicyPage() {
                 OAuth 2.0 protocol.
               </Text>
               <Text as="p" size="3" mb="3">
-                <strong>Messages:</strong> Direct messages are stored without encryption. Do not send sensitive information via
-                messages that you would not want accessible by database
-                administrators.
+                <strong>Messages:</strong> Direct messages are stored without
+                encryption. Do not send sensitive information via messages that
+                you would not want accessible by database administrators.
               </Text>
               <Text as="p" size="3" mb="3">
                 However, no method of transmission over the internet is 100%
