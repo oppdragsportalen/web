@@ -1,31 +1,39 @@
 "use client";
 
-import {
-  Card,
-  Box,
-  Flex,
-  Separator,
-  Button,
-  Heading,
-  AlertDialog,
-  Skeleton,
-} from "@radix-ui/themes";
+import { Box, Flex, Skeleton } from "@radix-ui/themes";
 import { logout } from "@/app/actions/auth/auth";
 import { EditProfileDialog } from "@/app/components/profile/edit-profile-dialog";
-import { DeleteAccountDialog } from "@/app/components/profile/email-delete-account-dialog";
+import { DeleteAccountDialog } from "@/app/components/profile/delete-account-dialog";
 import AccountInformationDataList from "@/app/components/profile/account-information-data-list";
 import { useState, useEffect } from "react";
 import { createSupabaseClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
 import { Footer } from "@/app/components/footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogMedia,
+} from "@/components/ui/alert-dialog";
+import { TriangleAlert } from "lucide-react";
 
 export default function SettingsPage() {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showPassphraseConfirm, setShowPassphraseConfirm] = useState(false);
 
   async function loadData() {
     const supabase = createSupabaseClient();
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -53,17 +61,17 @@ export default function SettingsPage() {
   if (!user || !profile) {
     return (
       <Box p="4" className="min-w-sm">
-        <Box>
-          <Flex className="mt-4 mb-10" gap="4">
-            <h1 className="text-3xl font-bold">Settings</h1>
-          </Flex>
+        <Flex className="mt-4 mb-10" gap="4">
+          <h1 className="text-3xl font-bold">Settings</h1>
+        </Flex>
 
-          <Skeleton>
-            <Card size="3">
+        <Skeleton>
+          <Card>
+            <CardContent>
               <Box style={{ height: 300 }} />
-            </Card>
-          </Skeleton>
-        </Box>
+            </CardContent>
+          </Card>
+        </Skeleton>
       </Box>
     );
   }
@@ -73,94 +81,97 @@ export default function SettingsPage() {
       <Flex className="mt-4 mb-10" gap="4">
         <h1 className="text-3xl font-bold">Settings</h1>
       </Flex>
-      <Card size="3">
-        <Flex direction="column" gap="5">
-          <AccountInformationDataList user={user} profile={profile} />
 
-          <EditProfileDialog
-            displayName={profile.display_name}
-            username={profile.username ?? ""}
-            email={user.email ?? ""}
-            loadData={loadData}
-          />
+      <Card>
+        <CardContent>
+          <Flex direction="column" gap="5">
+            <AccountInformationDataList user={user} profile={profile} />
 
-          <Separator my="4" size="4" />
+            <EditProfileDialog
+              displayName={profile.display_name}
+              username={profile.username ?? ""}
+              email={user.email ?? ""}
+              loadData={loadData}
+            />
+          </Flex>
+        </CardContent>
 
-          <Flex direction="row" gap="3">
-            <Box>
-              <AlertDialog.Root>
-                <AlertDialog.Trigger>
-                  <Button variant="outline" color="red" type="submit">
-                    Log out
-                  </Button>
-                </AlertDialog.Trigger>
+        <CardFooter>
+          <Flex direction="row" gap="1">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-destructive text-destructive hover:text-destructive-foreground"
+                >
+                  Log out
+                </Button>
+              </AlertDialogTrigger>
 
-                <AlertDialog.Content maxWidth="450px" className="min-w-80">
-                  <AlertDialog.Title>Log out</AlertDialog.Title>
-                  <AlertDialog.Description size="2">
-                    Are you sure you want to log out? You'll need to sign in
-                    again to access your account.
-                  </AlertDialog.Description>
+              <AlertDialogContent className="min-w-80">
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Log out</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to log out? You&apos;ll need to sign
+                    in again to access your account.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
 
-                  <Flex gap="3" mt="4" justify="end">
-                    <AlertDialog.Cancel>
-                      <Button variant="soft" color="gray">
-                        Cancel
-                      </Button>
-                    </AlertDialog.Cancel>
+                <form action={logout}>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel asChild>
+                      <Button variant="secondary">Cancel</Button>
+                    </AlertDialogCancel>
+                    <Button type="submit" variant="destructive">
+                      Log out
+                    </Button>
+                  </AlertDialogFooter>
+                </form>
+              </AlertDialogContent>
+            </AlertDialog>
 
-                    <form action={logout}>
-                      <AlertDialog.Action>
-                        <Button variant="solid" color="red" type="submit">
-                          Log out
-                        </Button>
-                      </AlertDialog.Action>
-                    </form>
-                  </Flex>
-                </AlertDialog.Content>
-              </AlertDialog.Root>
-            </Box>
+            <AlertDialog
+              open={showDeleteConfirm}
+              onOpenChange={setShowDeleteConfirm}
+            >
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Delete Account</Button>
+              </AlertDialogTrigger>
 
-            <Box>
-              <AlertDialog.Root>
-                <AlertDialog.Trigger>
-                  <Button variant="solid" color="red">
-                    Delete Account
-                  </Button>
-                </AlertDialog.Trigger>
-
-                <AlertDialog.Content maxWidth="450px" className="min-w-80">
-                  <AlertDialog.Title>Delete Account</AlertDialog.Title>
-                  <AlertDialog.Description size="2">
+              <AlertDialogContent className="min-w-80" size="sm">
+                <AlertDialogHeader>
+                  <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                    <TriangleAlert />
+                  </AlertDialogMedia>
+                  <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                  <AlertDialogDescription>
                     Are you sure you want to delete your account? This action
                     cannot be undone.
-                  </AlertDialog.Description>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
 
-                  <Flex gap="3" mt="4" justify="end">
-                    <AlertDialog.Cancel>
-                      <Button variant="soft" color="gray">
-                        Cancel
-                      </Button>
-                    </AlertDialog.Cancel>
-
-                    <Button
-                      variant="solid"
-                      color="red"
-                      onClick={() => setShowDeleteConfirm(true)}
-                    >
-                      Delete
-                    </Button>
-                  </Flex>
-                </AlertDialog.Content>
-              </AlertDialog.Root>
-            </Box>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button variant="secondary">Cancel</Button>
+                  </AlertDialogCancel>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      setShowPassphraseConfirm(true);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <DeleteAccountDialog
+              open={showPassphraseConfirm}
+              onOpenChange={setShowPassphraseConfirm}
+            />
           </Flex>
-
-          <DeleteAccountDialog
-            open={showDeleteConfirm}
-            onOpenChange={setShowDeleteConfirm}
-          />
-        </Flex>
+        </CardFooter>
       </Card>
 
       <Footer />
