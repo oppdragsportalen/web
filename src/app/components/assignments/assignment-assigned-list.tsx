@@ -1,7 +1,18 @@
-import { Box, Text, Link, Button } from "@radix-ui/themes";
+import { Box, Text } from "@radix-ui/themes";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { AssignmentCard } from "./assignment-card";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 type Profile = {
   id: string;
@@ -90,19 +101,22 @@ export default async function AssignmentAssignedList({
 
   if (assignmentCount === 0) {
     return (
-      <Box>
-        <Text size="2" color="gray">
-          You haven&apos;t taken any assignments yet. Explore and take assignments to
-          get started.
-        </Text>
-        {/* <Box>
-          <Link href="/dashboard/explore" underline="none">
-            <Button mt="2" size="2" variant="solid">
-              Explore assignments
-            </Button>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <FileText />
+          </EmptyMedia>
+          <EmptyTitle>No Assignments Yet</EmptyTitle>
+          <EmptyDescription>
+            Explore and take assignments to get started.
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent className="flex-row justify-center gap-2">
+          <Link href="/dashboard/explore">
+            <Button>Explore Assignments</Button>
           </Link>
-        </Box> */}
-      </Box>
+        </EmptyContent>
+      </Empty>
     );
   }
 

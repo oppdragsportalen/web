@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Text, Card, Flex, ContextMenu } from "@radix-ui/themes";
+import { Box, Text, Card, Flex } from "@radix-ui/themes";
 import { TrashIcon } from "@radix-ui/react-icons";
 import { sendMessage } from "@/app/actions/messages/send-message";
 import { deleteMessage } from "@/app/actions/messages/delete-message";
@@ -10,6 +10,12 @@ import { createSupabaseClient } from "@/lib/supabase/client";
 import type { Message } from "@/types";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Button } from "@/components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 
 type ChatDetailClientProps = {
   roomId: string;
@@ -227,8 +233,8 @@ export function ChatDetailClient({
                   marginBottom: "8px",
                 }}
               >
-                <ContextMenu.Root>
-                  <ContextMenu.Trigger>
+                <ContextMenu>
+                  <ContextMenuTrigger asChild>
                     <Card
                       variant="ghost"
                       m="3"
@@ -246,20 +252,20 @@ export function ChatDetailClient({
                         </Text>
                       </Flex>
                     </Card>
-                  </ContextMenu.Trigger>
+                  </ContextMenuTrigger>
 
                   {isOwn && (
-                    <ContextMenu.Content>
-                      <ContextMenu.Item
-                        color="red"
+                    <ContextMenuContent>
+                      <ContextMenuItem
+                        variant="destructive"
                         onClick={() => handleDeleteMessage(message.id)}
                       >
                         <TrashIcon />
                         Delete Message
-                      </ContextMenu.Item>
-                    </ContextMenu.Content>
+                      </ContextMenuItem>
+                    </ContextMenuContent>
                   )}
-                </ContextMenu.Root>
+                </ContextMenu>
               </Box>
             );
           })
