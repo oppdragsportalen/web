@@ -50,13 +50,13 @@ export default async function AssignmentPage({
           <AssignmentSearch />
 
           <Box pt="3">
-            <Tabs.Content value="assigned">
+            <Tabs.Content value="assigned" tabIndex={-1}>
               <Suspense fallback={<AssignmentListSkeleton />}>
                 <AssignmentAssignedList search={q} />
               </Suspense>
             </Tabs.Content>
 
-            <Tabs.Content value="authored">
+            <Tabs.Content value="authored" tabIndex={-1}>
               <Suspense fallback={<AssignmentListSkeleton />}>
                 <AssignmentAuthoredList search={q} />
               </Suspense>

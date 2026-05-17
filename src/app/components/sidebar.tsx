@@ -79,9 +79,9 @@ export function AppSidebar({ profile }: AppSidebarProps) {
     <Sidebar variant="floating" collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
-          <Link href="/">
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg">
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-neutral-800 text-sidebar-primary-foreground">
                   <Image
                     width={100}
@@ -95,9 +95,9 @@ export function AppSidebar({ profile }: AppSidebarProps) {
                     Oppdragsportalen
                   </Text>
                 </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </Link>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 

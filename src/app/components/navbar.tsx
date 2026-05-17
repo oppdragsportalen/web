@@ -49,15 +49,15 @@ export async function Navbar() {
         justify="between"
         className="navbar h-12 border-b border-gray-200 dark:border-neutral-800 items-center gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll"
       >
-        <Link href="/" className="no-underline mr-16">
-          <Flex gap="2" align="center" className="min-w-44">
-            <Box>
+        <Flex gap="2" align="center" className="min-w-44">
+          <Box>
+            <Link href="/" className="no-underline mr-16">
               <Text size="3" weight="bold">
                 Oppdragsportalen
               </Text>
-            </Box>
-          </Flex>
-        </Link>
+            </Link>
+          </Box>
+        </Flex>
 
         {user && displayName && (
           <Flex gap="4" align="center">

@@ -56,11 +56,11 @@ async function ChatDetailContent({ roomID }: { roomID: string }) {
         }}
       >
         <Flex gap="2" align="center">
-          <Link href="/dashboard/messages">
-            <Button size="icon" className="cursor-pointer">
+          <Button size="icon" className="cursor-pointer" asChild>
+            <Link href="/dashboard/messages">
               <ArrowLeftIcon />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <Separator orientation="vertical" size="1" mx="2" />
           <Flex>
             <Flex align="center" gap="2">

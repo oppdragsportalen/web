@@ -146,7 +146,7 @@ export default async function DashboardPage() {
                 <AssignmentAssignedList limit={5} />
               </Suspense>
               {assignedCount ? (
-                <Button variant="outline">
+                <Button variant="outline" asChild>
                   <Link href="/dashboard/assignments">View all</Link>
                 </Button>
               ) : null}
@@ -162,7 +162,7 @@ export default async function DashboardPage() {
                 <AssignmentAuthoredList limit={5} />
               </Suspense>
               {authoredCount ? (
-                <Button variant="outline">
+                <Button variant="outline" asChild>
                   <Link href="/dashboard/assignments?tab=authored">
                     View all
                   </Link>
@@ -183,7 +183,7 @@ export default async function DashboardPage() {
                 <MessagesContent userId={user.id} limit={3} />
               </Suspense>
               {messagesCount ? (
-                <Button variant="outline" className="mt-3">
+                <Button variant="outline" className="mt-3" asChild>
                   <Link href="/dashboard/messages">View all</Link>
                 </Button>
               ) : null}

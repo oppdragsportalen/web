@@ -99,11 +99,11 @@ export default function ExplorePage() {
             <Tabs.Trigger value="restricted">Assigned to you</Tabs.Trigger>
           </Tabs.List>
 
-          <Tabs.Content value="public">
+          <Tabs.Content value="public" tabIndex={-1}>
             <ExploreContent />
           </Tabs.Content>
 
-          <Tabs.Content value="restricted">
+          <Tabs.Content value="restricted" tabIndex={-1}>
             <Suspense
               fallback={
                 <>

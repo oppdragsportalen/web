@@ -219,17 +219,17 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
       <Box className="mt-4 mb-10">
         <Flex align="center" gap="4" className="mb-6">
           {isAuthor ? (
-            <Link href="/dashboard/assignments?tab=authored">
-              <Button size="icon" className="cursor-pointer">
+            <Button size="icon" className="cursor-pointer" asChild>
+              <Link href="/dashboard/assignments?tab=authored">
                 <ArrowLeftIcon />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           ) : (
-            <Link href="/dashboard/assignments">
-              <Button size="icon" className="cursor-pointer">
+            <Button size="icon" className="cursor-pointer" asChild>
+              <Link href="/dashboard/assignments">
                 <ArrowLeftIcon />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           )}
           <h1 className="text-3xl max-sm:text-xl font-bold wrap-break-word whitespace-normal min-w-0">
             {assignment.title}

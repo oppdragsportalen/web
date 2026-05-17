@@ -172,11 +172,11 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
     <div>
       <Box className="mt-4 mb-10">
         <Flex align="center" gap="4" className="mb-6">
-          <Link href="/dashboard/explore">
-            <Button size="icon" className="cursor-pointer">
+          <Button size="icon" className="cursor-pointer" asChild>
+            <Link href="/dashboard/explore">
               <ArrowLeftIcon />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
 
           <h1 className="text-3xl max-sm:text-xl font-bold wrap-break-word whitespace-normal min-w-0">
             {assignment.title}
