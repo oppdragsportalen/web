@@ -6,7 +6,7 @@ Assignment management platform built with Next.js and Supabase. Users can create
 
 - **Framework**: Next.js 16, React 19, TypeScript
 - **Backend / DB**: Supabase (PostgreSQL, Auth, RLS)
-- **UI**: Radix Themes/Icons, Tailwind CSS v4
+- **UI**: Radix Themes/Icons, shadcn/ui, Lucide Icons, Tailwind CSS v4
 
 ## Setup
 
