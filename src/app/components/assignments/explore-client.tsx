@@ -8,6 +8,7 @@ import { GetAvailableAssignments } from "@/app/actions/assignments/get-available
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
@@ -50,7 +51,6 @@ export default function ExploreClient({
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement>(null);
-  const initializedRef = useRef(false);
 
   const loadMore = async () => {
     if (isLoading || !hasMore) return;
@@ -70,41 +70,22 @@ export default function ExploreClient({
     }
   };
 
-  useEffect(() => {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      if (!query.trim()) return;
+  const runSearch = async (q = query) => {
+    const trimmed = q.trim();
+    setIsLoading(true);
+    try {
+      const { assignments: newAssignments, hasMore: moreAvailable } =
+        await fetchAction(0, trimmed);
+
+      setAssignments(newAssignments);
+      setHasMore(moreAvailable);
+      setBatchIndex(1);
+    } catch (error) {
+      console.error("Error searching assignments:", error);
+    } finally {
+      setIsLoading(false);
     }
-
-    let isActive = true;
-
-    const runSearch = async () => {
-      setIsLoading(true);
-      try {
-        const { assignments: newAssignments, hasMore: moreAvailable } =
-          await fetchAction(0, query.trim());
-
-        if (!isActive) return;
-        setAssignments(newAssignments);
-        setHasMore(moreAvailable);
-        setBatchIndex(1);
-      } catch (error) {
-        if (isActive) {
-          console.error("Error searching assignments:", error);
-        }
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    runSearch();
-
-    return () => {
-      isActive = false;
-    };
-  }, [query]);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -122,16 +103,6 @@ export default function ExploreClient({
 
     return () => observer.disconnect();
   }, [hasMore, isLoading, batchIndex, query]);
-
-  if (!query.trim() && assignments.length === 0 && !isLoading) {
-    return (
-      <div className="mt-4">
-        <Text size="2" color="gray">
-          No available assignments yet. Check back later or create your own.
-        </Text>
-      </div>
-    );
-  }
 
   return (
     <Box>
@@ -160,17 +131,35 @@ export default function ExploreClient({
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "NumpadEnter") {
+                  e.preventDefault();
+                  runSearch();
+                }
+              }}
               placeholder="Search for assignments"
             />
-            <InputGroupAddon>
+            <InputGroupButton
+              onClick={() => runSearch()}
+              size="icon-xs"
+              aria-label="Search"
+            >
               <Search />
-            </InputGroupAddon>
+            </InputGroupButton>
             <InputGroupAddon align="inline-end">
               {isLoading && <Spinner />}
             </InputGroupAddon>
           </InputGroup>
         </Box>
       </Box>
+
+      {assignments.length === 0 && !isLoading && !query.trim() && (
+        <div className="mt-4">
+          <Text size="2" color="gray">
+            No available assignments yet. Check back later or create your own.
+          </Text>
+        </div>
+      )}
 
       {assignments.length === 0 && !isLoading && query.trim() ? (
         <Text size="2" color="gray">
