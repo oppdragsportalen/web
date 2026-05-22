@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export async function createDMRoom(recipientUsername: string) {
@@ -46,7 +45,6 @@ export async function createDMRoom(recipientUsername: string) {
     .single();
 
   if (!createError) {
-    revalidatePath("/dashboard/messages");
     return { roomId: newRoom.id };
   }
 
@@ -64,7 +62,6 @@ export async function createDMRoom(recipientUsername: string) {
     }
 
     if (existingRoom1) {
-      revalidatePath("/dashboard/messages");
       return { roomId: existingRoom1.id };
     }
 
@@ -80,7 +77,6 @@ export async function createDMRoom(recipientUsername: string) {
     }
 
     if (existingRoom2) {
-      revalidatePath("/dashboard/messages");
       return { roomId: existingRoom2.id };
     }
   }

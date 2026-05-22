@@ -3,6 +3,8 @@ import { getUserChats } from "@/app/actions/messages/get-user-chats";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { ChatListClient } from "@/app/components/messages/chat-list-client";
 import { StartNewChatDialog } from "@/app/components/messages/start-new-chat-dialog";
+import { getDMRoom } from "@/app/actions/messages/get-dm-room";
+import { createDMRoom } from "@/app/actions/messages/create-dm-room";
 import { redirect } from "next/navigation";
 import { AssignmentCardSkeleton } from "@/app/components/assignments/assignment-card-skeleton";
 import { Suspense } from "react";
@@ -35,7 +37,31 @@ async function MessagesContent() {
   return <ChatListClient initialChats={chats} currentUserId={user.id} />;
 }
 
-export default async function MessagesPage() {
+export default async function MessagesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ to?: string }>;
+}) {
+  const { to } = await searchParams;
+
+  if (to) {
+    const existingRoomResult = await getDMRoom(to);
+
+    if (existingRoomResult.error) {
+      redirect("/dashboard/messages");
+    }
+
+    const roomResult = existingRoomResult.roomId
+      ? existingRoomResult
+      : await createDMRoom(to);
+
+    if (roomResult.error || !roomResult.roomId) {
+      redirect("/dashboard/messages");
+    }
+
+    redirect(`/dashboard/messages/${roomResult.roomId}`);
+  }
+
   return (
     <Box p="4" className="min-w-xs">
       <Box

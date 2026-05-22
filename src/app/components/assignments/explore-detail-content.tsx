@@ -168,6 +168,11 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
     redirect("/dashboard/explore");
   }
 
+  const messageUsername =
+    assignment.creator_profile && assignment.creator_profile.id !== user.id
+      ? assignment.creator_profile.username
+      : null;
+
   return (
     <div>
       <Box className="mt-4 mb-10">
@@ -314,6 +319,18 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
                 )}
             </div>
           </Box>
+          {messageUsername && (
+            <Button variant="outline" className="cursor-pointer" asChild>
+              <Link
+                href={`/dashboard/messages?to=${encodeURIComponent(messageUsername)}`}
+              >
+                Message{" "}
+                <Badge variant="outline" color="gray">
+                  <strong>{messageUsername}</strong>
+                </Badge>
+              </Link>
+            </Button>
+          )}
         </CardContent>
         <CardFooter>
           <Flex

@@ -214,6 +214,16 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
     redirect("/dashboard/assignments");
   }
 
+  const messageTargetProfile = isAuthor
+    ? assignment.visibility === "restricted"
+      ? assignment.assigned_profile
+      : assignment.claimed_by_profile
+    : assignment.creator_profile;
+  const messageUsername =
+    messageTargetProfile && messageTargetProfile.id !== user.id
+      ? messageTargetProfile.username
+      : null;
+
   return (
     <div>
       <Box className="mt-4 mb-10">
@@ -391,6 +401,18 @@ export default async function AssignmentDetailContent({ id }: { id: string }) {
                 )}
             </div>
           </Box>
+          {messageUsername && (
+            <Button variant="outline" className="cursor-pointer" asChild>
+              <Link
+                href={`/dashboard/messages?to=${encodeURIComponent(messageUsername)}`}
+              >
+                Message{" "}
+                <Badge variant="outline" color="gray">
+                  <strong>{messageUsername}</strong>
+                </Badge>
+              </Link>
+            </Button>
+          )}
         </CardContent>
 
         <CardFooter>
