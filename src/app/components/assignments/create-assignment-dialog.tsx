@@ -38,12 +38,12 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert, Maximize2, Minimize2 } from "lucide-react";
+import { RichTextEditor } from "@/app/components/rich-text/rich-text-editor";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -56,21 +56,23 @@ function SubmitButton() {
 }
 
 function CreateAssignmentForm({
-  onClose,
   onSubmit,
   error,
   isRestricted,
   setIsRestricted,
+  description,
+  setDescription,
   className,
 }: {
-  onClose: () => void;
   onSubmit: (formData: FormData) => Promise<void>;
   error: string;
   isRestricted: boolean;
   setIsRestricted: (value: boolean) => void;
+  description: string;
+  setDescription: (value: string) => void;
   className?: string;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded] = useState(false);
   const isMobile = useIsMobile();
 
   const handleSubmit = async (formData: FormData) => {
@@ -97,11 +99,12 @@ function CreateAssignmentForm({
         </Field>
         <Field>
           <FieldLabel>Description</FieldLabel>
-          <Textarea
-            id="description"
+          <RichTextEditor
             name="description"
-            style={{ maxHeight: "12em", resize: "vertical" }}
-            aria-label="Assignment description"
+            value={description}
+            onChange={setDescription}
+            placeholder="Describe the assignment..."
+            ariaLabel="Assignment description"
           />
         </Field>
         <Field>
@@ -193,6 +196,7 @@ export function CreateAssignmentDialog({
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [isRestricted, setIsRestricted] = useState(false);
+  const [description, setDescription] = useState("");
   const [expanded, setExpanded] = useState(false);
   const isMobile = useIsMobile();
 
@@ -223,6 +227,7 @@ export function CreateAssignmentDialog({
     } else {
       setOpen(false);
       setIsRestricted(false);
+      setDescription("");
     }
   };
 
@@ -232,6 +237,7 @@ export function CreateAssignmentDialog({
       setError("");
       setExpanded(false);
       setIsRestricted(false);
+      setDescription("");
     }
   };
 
@@ -264,11 +270,12 @@ export function CreateAssignmentDialog({
             </Flex>
           </DialogHeader>
           <CreateAssignmentForm
-            onClose={() => setOpen(false)}
             onSubmit={handleSubmit}
             error={error}
             isRestricted={isRestricted}
             setIsRestricted={setIsRestricted}
+            description={description}
+            setDescription={setDescription}
           />
         </DialogContent>
       </Dialog>
@@ -287,11 +294,12 @@ export function CreateAssignmentDialog({
         </DrawerHeader>
         <div className="overflow-y-auto flex-1">
           <CreateAssignmentForm
-            onClose={() => setOpen(false)}
             onSubmit={handleSubmit}
             error={error}
             isRestricted={isRestricted}
             setIsRestricted={setIsRestricted}
+            description={description}
+            setDescription={setDescription}
             className="px-4"
           />
         </div>
