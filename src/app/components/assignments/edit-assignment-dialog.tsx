@@ -17,7 +17,6 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
@@ -32,6 +31,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { TriangleAlert, Maximize2, Minimize2, Edit2 } from "lucide-react";
+import { RichTextEditor } from "@/app/components/rich-text/rich-text-editor";
 type Assignment = {
   id: string;
   title: string;
@@ -62,6 +62,7 @@ export function EditAssignmentDialog({
   const [isRestricted, setIsRestricted] = useState(
     assignment.visibility === "restricted",
   );
+  const [description, setDescription] = useState(assignment.description);
   const [expanded, setExpanded] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
@@ -103,6 +104,7 @@ export function EditAssignmentDialog({
           setError("");
           setExpanded(false);
           setIsRestricted(assignment.visibility === "restricted");
+          setDescription(assignment.description);
         }
       }}
     >
@@ -156,12 +158,12 @@ export function EditAssignmentDialog({
 
             <Field>
               <FieldLabel>Description</FieldLabel>
-              <Textarea
-                id="description"
+              <RichTextEditor
                 name="description"
-                defaultValue={assignment.description}
-                style={{ maxHeight: "12em", resize: "vertical" }}
-                aria-label="Assignment description"
+                value={description}
+                onChange={setDescription}
+                placeholder="Describe the assignment..."
+                ariaLabel="Assignment description"
               />
             </Field>
 

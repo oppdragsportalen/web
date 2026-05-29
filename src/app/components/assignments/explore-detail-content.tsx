@@ -14,6 +14,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import { RichTextView } from "@/app/components/rich-text/rich-text-view";
 import {
   Globe,
   Lock,
@@ -220,7 +221,7 @@ export default async function ExploreDetailPage({ id }: { id: string }) {
               </Box>
               <Card>
                 <CardContent>
-                  <Text size="2">{assignment.description}</Text>
+                  <RichTextView content={assignment.description} />
                 </CardContent>
               </Card>
             </Box>
