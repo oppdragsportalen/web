@@ -30,8 +30,12 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Assignment ID is required" };
   }
 
-  if (!title || title.length < 1) {
+  if (!title || title.trim().length < 1) {
     return { error: "Title is required" };
+  }
+
+  if (!description || description.replace(/<[^>]*>/g, "").trim().length === 0) {
+    return { error: "Description is required" };
   }
 
   if (!deadline) {

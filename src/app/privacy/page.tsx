@@ -278,18 +278,18 @@ export default function PrivacyPolicyPage() {
               </Text>
             </Box>
 
-            {/* <Box mb="6">
-            <Heading size="5" mb="3">
-              10. Contact Us
-            </Heading>
-            <Text as="p" size="3">
-              If you have questions about this Privacy Policy or wish to
-              exercise your data rights, please contact us at:
-            </Text>
-            <Text as="p" size="3" mb="2">
-              Email: privacy@oppdragsportalen.no
-            </Text>
-          </Box> */}
+            <Box mb="6">
+              <Heading size="5" mb="3">
+                10. Contact Us
+              </Heading>
+              <Text as="p" size="3">
+                If you have questions about this Privacy Policy or wish to
+                exercise your data rights, please contact us at:
+              </Text>
+              <Text as="p" size="3" mb="2">
+                Email: privacy@oppdragsportalen.vatp.no
+              </Text>
+            </Box>
           </Card>
         </Box>
       </Flex>

@@ -310,18 +310,18 @@ export default function TermsOfServicePage() {
               </Text>
             </Box>
 
-            {/* <Box mb="6">
-            <Heading size="5" mb="3">
-              11. Contact Us
-            </Heading>
-            <Text as="p" size="3" mb="2">
-              If you have questions about these Terms of Service or need to
-              report a violation, please contact us at:
-            </Text>
-            <Text as="p" size="3">
-              Email: support@oppdragsportalen.no
-            </Text>
-          </Box> */}
+            <Box mb="6">
+              <Heading size="5" mb="3">
+                11. Contact Us
+              </Heading>
+              <Text as="p" size="3" mb="2">
+                If you have questions about these Terms of Service or need to
+                report a violation, please contact us at:
+              </Text>
+              <Text as="p" size="3">
+                Email: support@oppdragsportalen.vatp.no
+              </Text>
+            </Box>
           </Card>
         </Box>
       </Flex>
