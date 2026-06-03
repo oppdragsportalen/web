@@ -1,9 +1,17 @@
-import { Box, Card, Heading, Text, Flex } from "@radix-ui/themes";
+import {
+  Box,
+  Card,
+  Heading,
+  Text,
+  Flex,
+  Link as RadixLink,
+} from "@radix-ui/themes";
+import Link from "next/link";
 import { Footer } from "@/app/components/footer";
 
 export default function TermsOfServicePage() {
   return (
-    <Box className="max-w-5xl m-auto min-h-full min-w-80">
+    <Box className="max-w-3xl m-auto min-h-full min-w-80">
       <Flex justify="center" py="9" px="4">
         <Box width="100%" maxWidth="800px">
           <Card size="3">
@@ -153,14 +161,14 @@ export default function TermsOfServicePage() {
               </Text>
               <Box ml="4" mb="3">
                 <Text as="div" size="3" mb="2">
-                  • Attempt to access other users' private assignments without
+                  • Attempt to access other users&apos; private assignments without
                   authorization
                 </Text>
                 <Text as="div" size="3" mb="2">
                   • Scrape or automate access to the platform
                 </Text>
                 <Text as="div" size="3" mb="2">
-                  • Interfere with the platform's security or functionality
+                  • Interfere with the platform&apos;s security or functionality
                 </Text>
                 <Text as="div" size="3" mb="2">
                   • Impersonate others or create fake accounts
@@ -269,7 +277,7 @@ export default function TermsOfServicePage() {
                 9. Limitation of Liability
               </Heading>
               <Text as="p" size="3" mb="3">
-                Oppdragsportalen is provided "as is" without warranties of any
+                Oppdragsportalen is provided &quot;as is&quot; without warranties of any
                 kind. To the fullest extent permitted by law, we disclaim all
                 liability for:
               </Text>
@@ -310,18 +318,21 @@ export default function TermsOfServicePage() {
               </Text>
             </Box>
 
-            {/* <Box mb="6">
-            <Heading size="5" mb="3">
-              11. Contact Us
-            </Heading>
-            <Text as="p" size="3" mb="2">
-              If you have questions about these Terms of Service or need to
-              report a violation, please contact us at:
-            </Text>
-            <Text as="p" size="3">
-              Email: support@oppdragsportalen.no
-            </Text>
-          </Box> */}
+            <Box mb="6">
+              <Heading size="5" mb="3">
+                11. Contact Us
+              </Heading>
+              <Text as="p" size="3" mb="2">
+                If you have questions about these Terms of Service or need to
+                report a violation, please contact us at{" "}
+                <RadixLink asChild>
+                  <Link href="mailto:support@oppdragsportalen.vatp.no">
+                    support@oppdragsportalen.vatp.no
+                  </Link>
+                </RadixLink>
+                .
+              </Text>
+            </Box>
           </Card>
         </Box>
       </Flex>

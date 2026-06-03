@@ -11,8 +11,12 @@ export async function CreateAssignment(formData: FormData) {
   const visibility = formData.get("visibility") as "public" | "restricted";
   const assignedUsername = formData.get("assignedUsername") as string;
 
-  if (!title || title.length < 1) {
+  if (!title || title.trim().length < 1) {
     return { error: "Title is required" };
+  }
+
+  if (!description || description.replace(/<[^>]*>/g, "").trim().length === 0) {
+    return { error: "Description is required" };
   }
 
   if (!deadline) {
@@ -78,7 +82,7 @@ export async function CreateAssignment(formData: FormData) {
     const normalizedUsername = username.trim().toLowerCase();
     const { data: userId, error: userIdError } = await supabase.rpc(
       "get_user_id_by_username",
-      { input_username: normalizedUsername }
+      { input_username: normalizedUsername },
     );
     if (userIdError) {
       console.error("Error getting user ID:", userIdError);

@@ -71,7 +71,7 @@ export default async function Home() {
             color="gray"
             className="max-w-md text-sm sm:text-base md:text-lg"
           >
-            Reduce friction in your workflow. Create, assign, and track
+            A simple platform for organizing work. Create, assign, and track
             assignments instantly.
           </Text>
         </Box>

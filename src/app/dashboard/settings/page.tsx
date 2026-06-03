@@ -81,7 +81,7 @@ export default function SettingsPage() {
         <h1 className="text-3xl font-bold max-sm:text-xl">Settings</h1>
       </Flex>
 
-      <Card>
+      <Card className="mb-10">
         <CardContent>
           <Flex direction="column" gap="5">
             <AccountInformationDataList user={user} profile={profile} />
@@ -95,81 +95,79 @@ export default function SettingsPage() {
           </Flex>
         </CardContent>
 
-        <CardFooter>
-          <Flex direction="row" gap="1">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="border-destructive text-destructive hover:text-destructive-foreground"
-                >
-                  Log out
-                </Button>
-              </AlertDialogTrigger>
+        <CardFooter className="gap-3">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="border-destructive text-destructive hover:text-destructive-foreground"
+              >
+                Log out
+              </Button>
+            </AlertDialogTrigger>
 
-              <AlertDialogContent className="min-w-80">
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Log out</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to log out? You&apos;ll need to sign
-                    in again to access your account.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
+            <AlertDialogContent className="min-w-80">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Log out</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to log out? You&apos;ll need to sign in
+                  again to access your account.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
 
-                <form action={logout}>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel asChild>
-                      <Button variant="secondary">Cancel</Button>
-                    </AlertDialogCancel>
-                    <Button type="submit" variant="destructive">
-                      Log out
-                    </Button>
-                  </AlertDialogFooter>
-                </form>
-              </AlertDialogContent>
-            </AlertDialog>
-
-            <AlertDialog
-              open={showDeleteConfirm}
-              onOpenChange={setShowDeleteConfirm}
-            >
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
-              </AlertDialogTrigger>
-
-              <AlertDialogContent className="min-w-80" size="sm">
-                <AlertDialogHeader>
-                  <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
-                    <TriangleAlert />
-                  </AlertDialogMedia>
-                  <AlertDialogTitle>Delete Account</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete your account? This action
-                    cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-
+              <form action={logout}>
                 <AlertDialogFooter>
                   <AlertDialogCancel asChild>
                     <Button variant="secondary">Cancel</Button>
                   </AlertDialogCancel>
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      setShowDeleteConfirm(false);
-                      setShowPassphraseConfirm(true);
-                    }}
-                  >
-                    Delete
+                  <Button type="submit" variant="destructive">
+                    Log out
                   </Button>
                 </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            <DeleteAccountDialog
-              open={showPassphraseConfirm}
-              onOpenChange={setShowPassphraseConfirm}
-            />
-          </Flex>
+              </form>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog
+            open={showDeleteConfirm}
+            onOpenChange={setShowDeleteConfirm}
+          >
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Delete Account</Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent className="min-w-80" size="sm">
+              <AlertDialogHeader>
+                <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                  <TriangleAlert />
+                </AlertDialogMedia>
+                <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to delete your account? This action
+                  cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+
+              <AlertDialogFooter>
+                <AlertDialogCancel asChild>
+                  <Button variant="secondary">Cancel</Button>
+                </AlertDialogCancel>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setShowPassphraseConfirm(true);
+                  }}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <DeleteAccountDialog
+            open={showPassphraseConfirm}
+            onOpenChange={setShowPassphraseConfirm}
+          />
         </CardFooter>
       </Card>
 

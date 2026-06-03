@@ -45,10 +45,10 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { TriangleAlert, Maximize2, Minimize2 } from "lucide-react";
 import { RichTextEditor } from "@/app/components/rich-text/rich-text-editor";
 
-function SubmitButton() {
+function SubmitButton({ disabled = false }: { disabled?: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending}>
+    <Button type="submit" disabled={pending || disabled}>
       {pending && <Spinner />}
       {pending ? "Creating..." : "Create"}
     </Button>
@@ -63,6 +63,7 @@ function CreateAssignmentForm({
   description,
   setDescription,
   className,
+  expanded,
 }: {
   onSubmit: (formData: FormData) => Promise<void>;
   error: string;
@@ -71,13 +72,19 @@ function CreateAssignmentForm({
   description: string;
   setDescription: (value: string) => void;
   className?: string;
+  expanded: boolean;
 }) {
-  const [expanded] = useState(false);
   const isMobile = useIsMobile();
 
   const handleSubmit = async (formData: FormData) => {
     await onSubmit(formData);
   };
+
+  const descriptionIsValid =
+    description.replace(/<[^>]*>/g, "").trim().length > 0;
+
+  const [title, setTitle] = useState("");
+  const titleIsValid = title.trim().length > 0;
 
   return (
     <form
@@ -92,6 +99,8 @@ function CreateAssignmentForm({
           <Input
             id="title"
             name="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             required
             aria-required="true"
             aria-label="Assignment title"
@@ -173,12 +182,12 @@ function CreateAssignmentForm({
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <SubmitButton />
+          <SubmitButton disabled={!(titleIsValid && descriptionIsValid)} />
         </DialogFooter>
       )}
       {isMobile && (
         <DrawerFooter className="pt-2">
-          <SubmitButton />
+          <SubmitButton disabled={!(titleIsValid && descriptionIsValid)} />
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
           </DrawerClose>
@@ -276,6 +285,7 @@ export function CreateAssignmentDialog({
             setIsRestricted={setIsRestricted}
             description={description}
             setDescription={setDescription}
+            expanded={expanded}
           />
         </DialogContent>
       </Dialog>
@@ -301,6 +311,7 @@ export function CreateAssignmentDialog({
             description={description}
             setDescription={setDescription}
             className="px-4"
+            expanded={false}
           />
         </div>
       </DrawerContent>

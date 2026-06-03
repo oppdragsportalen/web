@@ -1,9 +1,17 @@
-import { Box, Card, Heading, Text, Flex } from "@radix-ui/themes";
+import {
+  Box,
+  Card,
+  Heading,
+  Text,
+  Flex,
+  Link as RadixLink,
+} from "@radix-ui/themes";
+import Link from "next/link";
 import { Footer } from "@/app/components/footer";
 
 export default function PrivacyPolicyPage() {
   return (
-    <Box className="max-w-5xl m-auto min-h-full min-w-80">
+    <Box className="max-w-3xl m-auto min-h-full min-w-80">
       <Flex justify="center" py="9" px="4">
         <Box width="100%" maxWidth="800px">
           <Card size="3">
@@ -179,7 +187,7 @@ export default function PrivacyPolicyPage() {
               <Text as="p" size="3" mb="3">
                 <strong>GitHub OAuth:</strong> Your GitHub account credentials
                 are handled securely by GitHub and Supabase. We never store your
-                GitHub password. Authentication is delegated to GitHub's secure
+                GitHub password. Authentication is delegated to GitHub&apos;s secure
                 OAuth 2.0 protocol.
               </Text>
               <Text as="p" size="3" mb="3">
@@ -273,23 +281,26 @@ export default function PrivacyPolicyPage() {
                 We may update this Privacy Policy to reflect changes in our
                 practices or for legal reasons. We will notify users of
                 significant changes by posting a notice on the platform and
-                updating the "Last updated" date. Your continued use of the
+                updating the &quot;Last updated&quot; date. Your continued use of the
                 platform after changes constitutes acceptance.
               </Text>
             </Box>
 
-            {/* <Box mb="6">
-            <Heading size="5" mb="3">
-              10. Contact Us
-            </Heading>
-            <Text as="p" size="3">
-              If you have questions about this Privacy Policy or wish to
-              exercise your data rights, please contact us at:
-            </Text>
-            <Text as="p" size="3" mb="2">
-              Email: privacy@oppdragsportalen.no
-            </Text>
-          </Box> */}
+            <Box mb="6">
+              <Heading size="5" mb="3">
+                10. Contact Us
+              </Heading>
+              <Text as="p" size="3">
+                If you have questions about this Privacy Policy or wish to
+                exercise your data rights, please contact us at{" "}
+                <RadixLink asChild>
+                  <Link href="mailto:privacy@oppdragsportalen.vatp.no">
+                    privacy@oppdragsportalen.vatp.no
+                  </Link>
+                </RadixLink>
+                .
+              </Text>
+            </Box>
           </Card>
         </Box>
       </Flex>
