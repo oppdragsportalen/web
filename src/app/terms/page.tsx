@@ -195,14 +195,12 @@ export default function TermsOfServicePage() {
 
             <Box mb="6">
               <Heading size="5" mb="3">
-                6. Platform Intellectual Property
+                6. Software License and Intellectual Property
               </Heading>
               <Text as="p" size="3" mb="3">
-                The platform, including its code, design, features, and
-                functionality, is owned by Oppdragsportalen and protected by
-                copyright and other intellectual property laws. You may not
-                copy, modify, distribute, or reverse engineer any part of the
-                platform.
+                Oppdragsportalen's source code is made available under the MIT
+                License. The full MIT License text is included in the project
+                repository and applies to the software codebase.
               </Text>
             </Box>
 

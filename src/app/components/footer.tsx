@@ -10,29 +10,31 @@ export function Footer() {
         justify="center"
         align="baseline"
         wrap="nowrap"
-        minWidth="440px"
-        className="h-12 gap-4 px-4 py-3 overflow-y-hidden overflow-x-scroll min-w-full  "
+        className="gap-4 px-4 py-4 overflow-y-hidden overflow-x-scroll min-w-full max-sm:flex-col items-center!"
       >
         <Text size="1" color="gray" className="whitespace-nowrap">
           © {new Date().getFullYear()} Oppdragsportalen
         </Text>
 
-        <Flex gap="4" align="baseline" wrap="nowrap">
-          {/* <Text asChild size="1" color="gray">
-            <Link href="/faq" className="hover:underline no-underline">
-              FAQ
-            </Link>
-          </Text> */}
-
-          <Text asChild size="1" color="gray">
+        <Flex gap="4" align="center" wrap="nowrap">
+          <Text asChild size="1" color="gray" className="whitespace-nowrap">
             <Link href="/terms" className="hover:underline no-underline">
               Terms of Service
             </Link>
           </Text>
 
-          <Text asChild size="1" color="gray">
+          <Text asChild size="1" color="gray" className="whitespace-nowrap">
             <Link href="/privacy" className="hover:underline no-underline">
               Privacy Policy
+            </Link>
+          </Text>
+
+          <Text asChild size="1" color="gray" className="whitespace-nowrap">
+            <Link
+              href="https://github.com/oppdragsportalen/web"
+              className="hover:underline no-underline"
+            >
+              Source Code
             </Link>
           </Text>
         </Flex>
