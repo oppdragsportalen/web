@@ -134,8 +134,7 @@ export default function PrivacyPolicyPage() {
                 <strong>Third-Party Services:</strong> We use Supabase, a secure
                 database and authentication platform, to store and manage all
                 user data. Supabase processes data on our behalf under strict
-                confidentiality and security agreements. All data stored in
-                Supabase is encrypted both at rest and in transit.
+                confidentiality and security agreements.
               </Text>
               <Text as="p" size="3" mb="3">
                 We do not sell, trade, or rent your personal information to any
@@ -157,13 +156,10 @@ export default function PrivacyPolicyPage() {
                   • <strong>Authentication:</strong> Powered by Supabase Auth
                   with GitHub OAuth
                 </Text>
-                {/* <Text as="div" size="3" mb="2">
-                  • <strong>Authentication:</strong> Powered by Supabase Auth
-                  with secure password hashing (bcrypt)
-                </Text> */}
                 <Text as="div" size="3" mb="2">
-                  • <strong>Encryption at Rest:</strong> All data is encrypted
-                  in the Supabase database using AES-256 encryption
+                  • <strong>Encryption at Rest:</strong> Data stored in Supabase
+                  is encrypted at rest and in transit using industry-standard
+                  security practices.”
                 </Text>
                 <Text as="div" size="3" mb="2">
                   • <strong>Encryption in Transit:</strong> All data
@@ -179,11 +175,6 @@ export default function PrivacyPolicyPage() {
                   Type II compliant infrastructure
                 </Text>
               </Box>
-              {/* <Text as="p" size="3" mb="3">
-                Your password is never stored in plain text - it is securely
-                hashed before being saved. Even administrators cannot view your
-                password.
-              </Text> */}
               <Text as="p" size="3" mb="3">
                 <strong>GitHub OAuth:</strong> Your GitHub account credentials
                 are handled securely by GitHub and Supabase. We never store your

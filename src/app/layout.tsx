@@ -12,7 +12,7 @@ const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "Oppdragsportalen",
-  description: "Digital løsning for oppdragsbestilling",
+  description: "Open-source assignment management platform.",
 };
 
 export default function RootLayout({

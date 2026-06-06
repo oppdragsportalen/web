@@ -71,7 +71,7 @@ export default async function Home() {
             color="gray"
             className="max-w-md text-sm sm:text-base md:text-lg"
           >
-            A simple platform for organizing work. Create, assign, and track
+            An open-source assignment management platform. Create, assign, and track
             assignments instantly.
           </Text>
         </Box>
