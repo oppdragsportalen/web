@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getMaxDeadlineUTC } from "@/lib/timezone";
+import { stripHtmlTagsUntilStable } from "@/lib/rich-text";
 
 async function getUserIdByUsername(username: string) {
   const normalizedUsername = username.trim().toLowerCase();
@@ -34,7 +35,10 @@ export async function UpdateAssignment(formData: FormData) {
     return { error: "Title is required" };
   }
 
-  if (!description || description.replace(/<[^>]*>/g, "").trim().length === 0) {
+  if (
+    !description ||
+    stripHtmlTagsUntilStable(description).trim().length === 0
+  ) {
     return { error: "Description is required" };
   }
 

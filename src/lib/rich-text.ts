@@ -5,7 +5,7 @@ const ENTITY_MAP: Record<string, string> = {
   gt: ">",
   quot: '"',
   apos: "'",
-  '#39': "'",
+  "#39": "'",
 };
 
 function decodeEntities(text: string) {
@@ -17,18 +17,20 @@ function decodeEntities(text: string) {
 export function htmlToPlainText(html: string) {
   if (!html) return "";
 
-  const text = html
-    .replace(/<\s*br\s*\/?\s*>/gi, "\n")
-    .replace(/<\/p>/gi, "\n")
-    .replace(/<\/div>/gi, "\n")
-    .replace(/<\/h[1-6]>/gi, "\n")
-    .replace(/<\/li>/gi, "\n")
-    .replace(/<\/blockquote>/gi, "\n")
-    .replace(/<li[^>]*>/gi, "• ")
-    .replace(/<[^>]+>/g, "")
-    .replace(/\u00a0/g, " ");
+  const text = stripHtmlTagsUntilStable(
+    html
+      .replace(/<\s*br\s*\/?\s*>/gi, "\n")
+      .replace(/<\/p>/gi, "\n")
+      .replace(/<\/div>/gi, "\n")
+      .replace(/<\/h[1-6]>/gi, "\n")
+      .replace(/<\/h[1-6]>/gi, "\n")
+      .replace(/<\/blockquote>/gi, "\n")
+      .replace(/<li[^>]*>/gi, "• ")
+      .replace(/\u00a0/g, " "),
+  );
 
-  return decodeEntities(text)
+  return stripHtmlTagsUntilStable(decodeEntities(text))
+    .replace(/[<>]/g, "")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
@@ -50,4 +52,16 @@ export function richTextPreview(html: string, maxLength = 80) {
   }
 
   return `${plainText.slice(0, maxLength).trimEnd()}...`;
+}
+
+export function stripHtmlTagsUntilStable(input: string): string {
+  let previous: string;
+  let current = input;
+
+  do {
+    previous = current;
+    current = current.replace(/<[^>]*>/g, "");
+  } while (current !== previous);
+
+  return current;
 }

@@ -80,8 +80,7 @@ function CreateAssignmentForm({
     await onSubmit(formData);
   };
 
-  const descriptionIsValid =
-    description.replace(/<[^>]*>/g, "").trim().length > 0;
+  const descriptionIsValid = description.replace(/[<>]/g, "").trim().length > 0;
 
   const [title, setTitle] = useState("");
   const titleIsValid = title.trim().length > 0;
