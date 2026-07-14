@@ -73,7 +73,7 @@ export default function SignUpPage() {
         direction="column"
         align="center"
         justify="center"
-        className="slide-up px-6 pt-24 pb-10 text-center"
+        className="px-6 pt-24 pb-10 text-center"
       >
         <Image
           width={100}
@@ -92,7 +92,7 @@ export default function SignUpPage() {
           Assign. Track. Complete.
         </Badge>
       </Flex>
-      <Box width="100%" maxWidth="450px" className="slide-up">
+      <Box width="100%" maxWidth="450px">
         <Card size="3" className="slide-up">
           <Flex direction="column" gap="4">
             <Heading size="5" mb="2" as="h1">
