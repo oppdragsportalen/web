@@ -5,10 +5,10 @@ import "@radix-ui/themes";
 import { ThemeProvider } from "next-themes";
 import { Theme } from "@radix-ui/themes";
 import { Navbar } from "./components/navbar";
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
   title: "Oppdragsportalen",
@@ -21,13 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn("font-sans", inter.variable)}
+    >
       <body className="antialiased h-screen flex flex-col">
         <ThemeProvider attribute="class">
           <Theme
             appearance="inherit"
             accentColor="green"
-            className="h-full flex flex-col"
+            className="radix-themes h-full flex flex-col"
             radius="large"
           >
             {/*<Navbar />*/}
