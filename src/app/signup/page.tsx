@@ -52,7 +52,7 @@ export default function SignUpPage() {
       px="4"
       className="min-w-80"
     >
-      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-screen overflow-hidden pointer-events-none">
+      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-dvh overflow-hidden pointer-events-none">
         <LightRays
           raysOrigin="top-center"
           raysColor="#30a4ff"

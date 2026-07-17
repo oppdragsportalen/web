@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   return (
     <Box data-hide-navbar-border="true">
-      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-screen overflow-hidden pointer-events-none">
+      <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-dvh overflow-hidden pointer-events-none">
         <LightRays
           className="w-full h-full custom-rays"
           pulsating={false}

@@ -26,7 +26,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("font-sans", inter.variable)}
     >
-      <body className="antialiased h-screen flex flex-col">
+      <body className="antialiased h-dvh flex flex-col">
         <ThemeProvider attribute="class">
           <Theme
             appearance="inherit"
@@ -35,7 +35,7 @@ export default function RootLayout({
             radius="large"
           >
             {/*<Navbar />*/}
-            <div className="flex-1 overflow-scroll">{children}</div>
+            <div className="flex-1 overflow-auto">{children}</div>
           </Theme>
         </ThemeProvider>
       </body>
