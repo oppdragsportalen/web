@@ -92,8 +92,12 @@ export default function SignUpPage() {
           Assign. Track. Complete.
         </Badge>
       </Flex>
+      <Box className="dark:invisible absolute inset-x-10 top-24 bottom-24 -z-10 bg-linear-to-tr from-blue-500/25 via-orange-500/20 to-emerald-400/40 blur-3xl" />
       <Box width="100%" maxWidth="450px">
-        <Card size="3" className="slide-up">
+        <Card
+          size="3"
+          className="slide-up shadow-[0_20px_70px_-15px_rgba(0,0,0,0.3)]"
+        >
           <Flex direction="column" gap="4">
             <Heading size="5" mb="2" as="h1">
               Create Account

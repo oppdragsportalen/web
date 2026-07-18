@@ -23,6 +23,7 @@ export default async function Home() {
       data-hide-navbar-border="true"
       className="flex min-h-full flex-col min-w-80"
     >
+      <Box className="dark:invisible absolute inset-4 -z-10 bg-linear-to-tr from-blue-500/10 via-orange-500/5 to-emerald-400/15 blur-3xl" />
       <Box className="invisible dark:visible fixed inset-0 -z-10 w-screen h-dvh overflow-hidden pointer-events-none">
         <LightRays
           className="w-full h-full custom-rays"

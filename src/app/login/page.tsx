@@ -76,8 +76,12 @@ export default function LoginPage() {
         </Badge>
       </Flex>
       <Flex justify="center" align="center" pb="9" px="4" className="min-w-80">
+        <Box className="dark:invisible absolute inset-x-10 top-24 bottom-24 -z-10 bg-linear-to-tr from-blue-500/25 via-orange-500/20 to-emerald-400/40 blur-3xl" />
         <Box width="100%" maxWidth="450px">
-          <Card size="3" className="slide-up">
+          <Card
+            size="3"
+            className="slide-up shadow-[0_20px_70px_-15px_rgba(0,0,0,0.3)]"
+          >
             <Flex direction="column" gap="4">
               <Heading size="5" mb="2" as="h1">
                 Log In
@@ -126,7 +130,7 @@ export default function LoginPage() {
               </Box>
 
               <Text size="1" mt="-4" mb="4">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <RadixLink asChild color="green">
                   <Link href="/signup">Sign up</Link>
                 </RadixLink>
